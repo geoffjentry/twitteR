@@ -1,0 +1,11 @@
+exportClasses('status', 'user')
+exportMethods(show, favorited, replyToSN)
+
+export('Rtweets')
+export('searchTwitter')
+export('publicTimeline')
+export('userTimeline')
+export('showStatus')
+export('userFriends')
+export('userFollowers')
+export('getUser')
