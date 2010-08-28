@@ -1,5 +1,5 @@
 authMsg <- paste('Twitter has changed their authentication scheme',
-                 'as of 6/2010 and will now require OAuth.',
+                 'as of 8/2010 and will now require OAuth.',
                  'Until there is an R-OAuth solution, these functions',
                  'will not work.')
 

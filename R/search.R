@@ -1,5 +1,5 @@
-Rtweets <- function(session=getCurlHandle(), num=25, ...) {
-    searchTwitter("#rstats", session, num, ...)
+Rtweets <- function(session=getCurlHandle(), n=25, ...) {
+    searchTwitter("#rstats", session, n, ...)
 }
 
 searchTwitter <- function(searchString, session=getCurlHandle(),

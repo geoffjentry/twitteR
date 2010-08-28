@@ -12,65 +12,50 @@
 \begin{document}
 
 \title{Twitter client for R}
-\author{Jeff Gentry}
+\author{Jeff Gentry}g
 \maketitle
 
 \section{IMPORTANT NOTICE}
 
-The old Twitter authentication mechanism is being removed in June,
+The old Twitter authentication mechanism is being removed in August
 2010 in favor of OAuth.  As of this writing there is not an OAuth
 solution for R, so unless someone (or myself) writes such a beast you
-will not be able to access any authenticated aspects of Twitter.
+will not be able to access any authenticated aspects of Twitter.  Many
+functions that you might be familiar with using will no longer work
+properly, if at all.  These have been set to be defunct.
 
 \section{Introduction}
 
 Twitter is a popular service that allows users to broadcast short
 messages ('\emph{tweets}') for others to read.  These can be used to
 communicate wtih friends, to display headlines, for restaurants to
-list daily specials, and more.
-
-The \Rpackage{twitteR} package is intended to provide access to the
-Twitter API within R.  Using the S4 classes \Rclass{user},
-\Rclass{status} and \Rclass{directMessage}, users can read and write
-information via the Twitter server.
-
-\subsection{Disclaimer}
-
-At this time, the package does not yet fully support the Twitter API.
-Currently basic operations are supported but there are still gaps in
-searching capabilities as well as account administration.  Also, many
-commands do not yet support all possible arguments to calls. Lastly,
-because many authenticated action would require a valid Twitter login,
-various operations in this vignette are pregenerated.
+list daily specials, and more.  The \Rpackage{twitteR} package is intended to provide access to the
+Twitter API within R.  Users can make access large amounts of Twitter
+data for data mining and other tasks.  As of this writing, posting tweets, 
+direct messaging and many other tasks are not supported due to lack of
+authentication options.
 
 \section{Getting Started}
 
-The first basic to know is the \Rfunction{initSession} command.  This
-will provide you with a token that you will be passing around to
-most/all of the other calls from the \Rpackage{twitteR} package.  Any
-functionality which does not require you to be authenticated will work
-without a session token, but will not work otherwise.
+As of this writing, the following functionality is supported:
+Searching Twitter, scanning the public timeline, looking at the
+timeline of a specific user and looking at the followers and followees
+of a specific user.  Due to the lack of authentication, protected
+accounts and tweets will not be visible to the \Rpackage{twitteR} package.
+
 <<initialize>>=
 library(twitteR)
 @
 
-To use the \Rfunction{initSession} command, supply your username and
-password, and assign this to a variable:
-
-\begin{Schunk}
-\begin{Sinput}
-> sess <- initSession('myname', 'mypassword')
-\end{Sinput}
-\end{Schunk}
-
 \section{Time to talk about timelines}
 
-Just as there are various \emph{timelines} in Twitter, the
+A Twitter \emph{timeline} is simply a stream of tweets - this might be
+the \emph{public timeline} which is comprised of all public tweets, it
+might be a user's timeline which would be all of their tweets, or it
+might even be a timeline to look at one's friend's tweets.  Just as there are various \emph{timelines} in Twitter, the
 \Rpackage{twitteR} package provides various interfaces to access
 them.  The first and most obvious would be the \emph{public timeline},
-which retrieves the 20 most recent public tweets on Twitter.  As this
-is fully public, we do not need to use our session token, although it
-won't hurt to do so.
+which retrieves the 20 most recent public tweets on Twitter.  
 
 <<publicTimeline>>=
    publicTweets <- publicTimeline()
@@ -78,47 +63,34 @@ won't hurt to do so.
    publicTweets[1:5]
 @
 
-Similarly, we can look at a particular user's timeline.  In this case,
-whether or not you need to include your session token depends on if
-their feed is protected or not.  For this example, let's use a public
-user, \emph{cranatic}.  Note that you can specify either a user's
-screen name, or an actual \Rclass{user} object to the function.
+Similarly, we can look at a particular user's timeline.   This will
+only work properly if that user has a public account, and can take
+either a user's name or an object of class \Rclass{user} (more on this
+later).  For this example, let's use the user \emph{cranatic}.
 
 <<userTimeline>>=
    cranTweets <- userTimeline('cranatic')
    cranTweets[1:5]
 @
 
-The \Rfunction{userTimeline} function currently only supports the
-default of returning the 20 most recent tweets.
+By default this command returns the 20 most recent tweets, as is
+common with all of these functions.  As with most (but not all) of the
+functions, it also provides a mechanism to retrieve an arbitrarily
+large number of tweets (warning:  At least as of now there is no
+protection from overloading the API rate limit so be reasonable with
+your requests).
 
-Suppose you wish to see what your friends are up to, for this we have
-\Rfunction{friendsTimeline}, which will return the 20 most recent
-tweets from your friends.  This function does require you to use your
-login token:
-
-\begin{Schunk}
-\begin{Sinput}
-> friendTweets <- friendsTimeline(sess)
-\end{Sinput}
-\end{Schunk}
-
-Lastly, you can see a list of the 20 most recent tweets in which you
-were mentioned via \Rfunction{mentions}.  As with
-\Rfunction{friendsTimeline}, this requires your login token
-
-\begin{Schunk}
-\begin{Sinput}
-> myMentions <- mentions(sess)
-\end{Sinput}
-\end{Schunk}
+<<<userTimeline2>>=
+   cranTweetsLarge <- userTimeline('cranatic', n=100)
+   length(cranTweetsLarge)
+@ 
 
 \subsection{Searching Twitter}
 
-The \Rfunction{searchTwitter} function can be used to search the
-Twitter timeline.  Example searches are such things as hashtags,
+The \Rfunction{searchTwitter} function can be used to search for
+tweets that match a desired term.  Example searches are such things as hashtags,
 @usernames, and other such things which can also be manipulated with
-basic boolean logic such as AND and OR.  The \Rfunarg{num} argument
+basic boolean logic such as AND and OR.  The \Rfunarg{n} argument
 can be used to specify the number of tweets to return, defaulting to 25.
 
 <<search>>=
@@ -128,23 +100,21 @@ can be used to specify the number of tweets to return, defaulting to 25.
 
 \subsection{Seeing what other R folks are up to}
 
-The \Rfunction{Rtweets} function will retrieve the 20 most recent
+The \Rfunction{Rtweets} function will retrieve the 25 most recent
 tweets that carry the \emph{rstats} hash tag, which is commonly used
-by members of the \emph{R} community.  For this command, using your
-login token is optional - it is unlikely to change the results, but it
-is possible for that to happen:
+by members of the \emph{R} community.  As with other functions, the
+number of returned tweets can be modified.
 
 <<Rtweets>>=
-   rt <- Rtweets()
+   rt <- Rtweets(n=50)
    rt[1:5]
 @
 
 \section{Looking at users}
 
 To take a closer look at a Twitter user (including yourself!), run the
-command \Rfunction{getUser}.  As with many functions, whether or not
-you need to use your login token depends on if this user profile is
-protected or not.
+command \Rfunction{getUser}.  This will only work correctly with users
+who have their profiles public.
 
 <<getUser>>=
    crantastic <- getUser('crantastic')
@@ -152,7 +122,7 @@ protected or not.
 @
 
 Furthermore, we can look at this user's friends, as well as those
-following them (same disclaimer regarding the login token applies):
+following them (same disclaimer regarding public profiles applies here:
 
 <<friendsFollowers>>=
    friends <- userFriends('crantastic')
@@ -190,34 +160,8 @@ the \Rclass{user} class:
   lastStatus(curUser)
 @
 
-\section{Tweeting}
 
-Tweeting, or updating one's status, can be done via the function
-\Rfunction{tweet} (or the identical \Rfunction{updateStatus}).  To do
-this, simply post your message and include your login token.  The
-return value is the \Rclass{status} object that represents your tweet.
-
-\begin{Schunk}
-\begin{Sinput}
-> tweet <- tweet('this is a tweet', sess)
-\end{Sinput}
-\end{Schunk}
-
-\subsection{When your tweet goes awry}
-
-Suppose you realize you've made a typo, or said something you
-shouldn't have.  For this, we have \Rfunction{deleteStatus}, which
-takes an object of class \Rclass{status} and your login token.
-Assuming you have the authority to delete the \Rclass{status} object,
-it will be removed.
-
-\begin{Schunk}
-\begin{Sinput}
-> deleteStatus(tweet, sess)
-\end{Sinput}
-\end{Schunk}
-
-\subsection{The status class}
+\section{Dissecting a tweet}
 
 The \Rclass{status} class has the following methods defined:
 
@@ -232,42 +176,6 @@ The \Rclass{status} class has the following methods defined:
 \item \em{replyToUID}: If this is a reply, the user this is in reply to
 \item \em{favorited}: If this reply is favorited
 \item \em{statusSource}: Source of the tweet
-\end{itemize}
-
-\section{Direct messages, aka DMs}
-
-Direct Messages (DMs) can be sent with the \Rfunction{dmSend} command,
-which takes your message, the user (either a string or a \Rclass{user}
-object), and your login token:
-
-\begin{Schunk}
-\begin{Sinput}
-> dm <- dmSend('this is a test', 'crantastic', sess)
-\end{Sinput}
-\end{Schunk}
-
-You can also see the DMs that you've sent and received:
-
-\begin{Schunk}
-\begin{Sinput}
-> sent <- dmSent(sess)
-> rcvd <- dmGet(sess)
-\end{Sinput}
-\end{Schunk}
-
-These functions all return objects of class \Rclass{directMessage},
-which have the following methods:
-
-\begin{itemize}
-\item \em{text}: Retrieves the text of the message
-\item \em{recipient}:  Retrives the \Rclass{user} object of the recipient
-\item \em{recipientSN}: Retrieves the screen name of the recipient
-\item \em{recipientID}: Retrieves the ID of the recipient
-\item \em{sender}: Retrieves the \Rclass{user} object of the sender
-\item \em{senderSN}: Retrieves the screen name of the sender
-\item \em{senderID}: Retrieves the ID of the sender
-\item \em{id}: Retrieves the ID
-\item \em{created}: Retrieves the creation date
 \end{itemize}
 
 \section{Session Information}
