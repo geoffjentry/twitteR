@@ -27,10 +27,8 @@ userTimeline(user, n=20, session=getCurlHandle(), ...)
 \author{ Jeff Gentry }
 \seealso{ \code{\link{getUser}}, \code{\link{status}}}
 \examples{
-    \dontrun{
         pt <- publicTimeline()
         pt
         ut <- userTimeline('barackobama', n=100)
-   }
 }
 \keyword{ interface }

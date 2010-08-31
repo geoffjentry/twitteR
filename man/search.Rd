@@ -26,8 +26,6 @@ searchTwitter(searchString, session = getCurlHandle(), n=25, ...)
 \author{Jeff Gentry}
 \seealso{ \code{\link{status}} }
 \examples{
-    \dontrun{
-           searchTwitter("#rstats", n=100)
-    }
+	searchTwitter("#rstats", n=100)
 }
 \keyword{ interface }

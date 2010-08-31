@@ -12,7 +12,7 @@
 \begin{document}
 
 \title{Twitter client for R}
-\author{Jeff Gentry}g
+\author{Jeff Gentry}
 \maketitle
 
 \section{IMPORTANT NOTICE}
@@ -122,7 +122,7 @@ who have their profiles public.
 @
 
 Furthermore, we can look at this user's friends, as well as those
-following them (same disclaimer regarding public profiles applies here:
+following them (same disclaimer regarding public profiles applies here):
 
 <<friendsFollowers>>=
    friends <- userFriends('crantastic')

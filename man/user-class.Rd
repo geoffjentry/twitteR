@@ -47,7 +47,7 @@
     friendsCount = [numeric],
     url = [character],
     name = [character],
-    created = [character],
+    created = [POSIXct],
     protected = [logical],
     verified = [logical],
     screenName = [character],

@@ -1,5 +1,9 @@
 exportClasses('status', 'user')
-exportMethods(show, favorited, replyToSN)
+exportMethods(screenName, show, favorited, replyToSN,
+              statusesCount, tweetCount, followersCount,
+              favoritesCount, friendsCount, userURL, created,
+              protected, verified, location, lastStatus, show,
+              description, name, id)
 
 export('Rtweets')
 export('searchTwitter')

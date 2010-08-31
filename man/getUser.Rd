@@ -42,12 +42,9 @@ userFollowers(user, n=100, session = getCurlHandle(), ...)
 \author{Jeff Gentry}
 \seealso{ \code{\link{initSession}}, \code{\link{mentions}}}
 \examples{
-   \dontrun{
-      sess <- initSession('myuser', 'mypass')
-      tuser <- getUser('twitter', sess)
-      tfriends <- userFriends(tuser, sess)
-      tfollowers <- userFollowers(tuser, sess)
-      ttimeline <- userTimeline(tuser, sess)
-   }
+      tuser <- getUser('geoffjentry')
+      tfriends <- userFriends(tuser)
+      tfollowers <- userFollowers(tuser)
+      ttimeline <- userTimeline(tuser)
 }
 \keyword{ interface }

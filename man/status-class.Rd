@@ -30,7 +30,7 @@
     text = [character],
     favorited = [logical],
     replyToSN = [character],
-    created = [character],
+    created = [POSIXct],
     truncated = [logical],
     replyToSID = [numeric],
     id = [numeric],

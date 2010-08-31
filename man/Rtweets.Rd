@@ -28,8 +28,6 @@ Rtweets(session = getCurlHandle(), n=25, ...)
 \author{Jeff Gentry}
 \seealso{ \code{\link{status}} }
 \examples{
-    \dontrun{
            Rtweets()
-    }
 }
 \keyword{ interface }

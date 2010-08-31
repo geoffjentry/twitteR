@@ -1,3 +1,33 @@
+buildDM <- function(json) {
+  sender <- buildUser(json[['sender']])
+  recip <- buildUser(json[['recipient']])
+  if (is.null(json$text))
+    json$text <- character()
+  if (is.null(json$"recipient_id"))
+    json[['recipient_id']] <- numeric()
+  if (is.null(json[['sender_id']]))
+    json[['sender_id']] <- numeric()
+  if (is.null(json[['sender_screen_name']]))
+    json[['sender_screen_name']] <- character()
+  if (is.null(json[['created_at']]))
+    json[['created_at']] <- character()
+  if (is.null(json[['recipient_screen_name']]))
+    json[['recipient_screen_name']] <- character()
+  if (is.null(json[['id']]))
+    json[['id']] <- numeric()
+  new("directMessage",
+      text=json[['text']],
+      recipientSN=json[['recipient_screen_name']],
+      created=json[['created_at']],
+      recipientID=json[['recipient_id']],
+      sender=sender,
+      recipient=recip,
+      senderID=json[['sender_id']],
+      id=json[['id']],
+      senderSN=json[['sender_screen_name']]
+      )
+}
+
 setClass("directMessage",
          representation(
                         text="character",
