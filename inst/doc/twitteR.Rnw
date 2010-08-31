@@ -24,14 +24,24 @@ will not be able to access any authenticated aspects of Twitter.  Many
 functions that you might be familiar with using will no longer work
 properly, if at all.  These have been set to be defunct.
 
+\section{Disclaimer}
+
+Because vignettes are built at various points of time (often
+automatically), and because a lot of the examples are pulling live
+data from Twitter at the time of being built, it is possible that some
+of the content in the examples of this document will be unsavory.
+I've tried to use users and feeds that are unlikely to be this way, but
+particularly when looking at the public timeline all bets are off.
+
 \section{Introduction}
 
 Twitter is a popular service that allows users to broadcast short
 messages ('\emph{tweets}') for others to read.  These can be used to
 communicate wtih friends, to display headlines, for restaurants to
-list daily specials, and more.  The \Rpackage{twitteR} package is intended to provide access to the
+list daily specials, and more.  The \Rpackage{twitteR} package is
+intended to provide access to the
 Twitter API within R.  Users can make access large amounts of Twitter
-data for data mining and other tasks.  As of this writing, posting tweets, 
+data for data mining and other tasks.  As of this writing, posting tweets,
 direct messaging and many other tasks are not supported due to lack of
 authentication options.
 
@@ -55,7 +65,7 @@ might be a user's timeline which would be all of their tweets, or it
 might even be a timeline to look at one's friend's tweets.  Just as there are various \emph{timelines} in Twitter, the
 \Rpackage{twitteR} package provides various interfaces to access
 them.  The first and most obvious would be the \emph{public timeline},
-which retrieves the 20 most recent public tweets on Twitter.  
+which retrieves the 20 most recent public tweets on Twitter.
 
 <<publicTimeline>>=
    publicTweets <- publicTimeline()
@@ -83,7 +93,7 @@ your requests).
 <<<userTimeline2>>=
    cranTweetsLarge <- userTimeline('cranatic', n=100)
    length(cranTweetsLarge)
-@ 
+@
 
 \subsection{Searching Twitter}
 
@@ -169,7 +179,8 @@ The \Rclass{status} class has the following methods defined:
 \item \em{text}: Retrieves the text of the tweet
 \item \em{screenName}: Screen name of the sender
 \item \em{id}: Retrieves the ID of the tweet
-\item \em{created}: Retrieves the date the tweet was created
+\item \em{created}: Retrieves the date the tweet was created, in POSIX
+  date format
 \item \em{replyToSN}: If this is a reply, the screen name for the reply
 \item \em{replyToSID}: If this is a reply, the message this is in
   reply to
@@ -177,6 +188,7 @@ The \Rclass{status} class has the following methods defined:
 \item \em{favorited}: If this reply is favorited
 \item \em{statusSource}: Source of the tweet
 \end{itemize}
+
 
 \section{Session Information}
 

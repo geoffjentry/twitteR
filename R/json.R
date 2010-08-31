@@ -5,6 +5,8 @@ twFromJSON <- function(json) {
     if (inherits(out, "try-error")) {
       stop("Error: Malformed response from server, was not JSON")
     }
+    if (grep("rate limited", out))
+        stop("Error: API rate limit hit, you'll have to take a break")
     if (length(out) == 2) {
       names <- names(out)
       if ((!is.null(names))&&(all(names(out) == c("request", "error"))))
@@ -15,10 +17,12 @@ twFromJSON <- function(json) {
 
 twitterDateToPOSIX <- function(dateStr) {
   ## Weird - Date format can vary depending on the situation
-  created <- as.POSIXct(dateStr, tz='UTC', format="%a %b %d %H:%M:%S +0000 %Y")
+  created <- as.POSIXct(dateStr, tz='UTC',
+                        format="%a %b %d %H:%M:%S +0000 %Y")
   ## try again if necessary
   if (is.na(created))
-    created <- as.POSIXct(dateStr,tz='UTC', format="%a, %d %b %Y %H:%M:%S +0000")
+    created <- as.POSIXct(dateStr,tz='UTC',
+                          format="%a, %d %b %Y %H:%M:%S +0000")
   ## might still be NA, but we tried
   created
 }
@@ -54,7 +58,7 @@ buildUser <- function(json) {
         json$location <- character()
     if (is.null(json$id))
         json$id <- numeric()
-    
+
     new("user",
         description=json$description,
         statusesCount=json$statuses_count,
@@ -79,21 +83,22 @@ buildStatus <- function(json) {
     if ('user' %in% names(json)) {
         user <- buildUser(json[['user']])
         screenName <- screenName(user)
-    }
-    else if ('from_user' %in% names(json)) {
+    } else if ('from_user' %in% names(json)) {
         screenName <- json$from_user
-    }
-    else {
+    } else {
         screenName <- "Unknown"
     }
 
-    if ((is.null(json$in_reply_to_screen_name))||(is.na(json$in_reply_to_screen_name)))
+    if ((is.null(json$in_reply_to_screen_name))||
+        (is.na(json$in_reply_to_screen_name)))
         json$in_reply_to_screen_name <- character()
-    if ((is.null(json$in_reply_to_status_id))||(is.na(json$in_reply_to_status_id)))
+    if ((is.null(json$in_reply_to_status_id))||
+        (is.na(json$in_reply_to_status_id)))
         json$in_reply_to_status_id <- numeric()
-    if ((is.null(json$in_reply_to_user_id))||(is.na(json$in_reply_to_user_id)))
+    if ((is.null(json$in_reply_to_user_id))||
+        (is.na(json$in_reply_to_user_id)))
         json$in_reply_to_user_id <- numeric()
-    
+
     if (is.null(json$text))
         json$text <- character()
     if (is.null(json$favorited))
@@ -104,8 +109,7 @@ buildStatus <- function(json) {
         json$source <- character()
     if (is.null(json$created_at)) {
       json$created_at <- Sys.time()
-    }
-    else {
+    } else {
       json$created_at <- twitterDateToPOSIX(json$created_at)
     }
     if (is.null(json$id))

@@ -17,7 +17,8 @@ userTimeline <- function(user, n=20, session=getCurlHandle(), ...) {
         n <- 200
     jsonList <- list()
     while (total > 0) {
-        url <- paste("http://api.twitter.com/1/statuses/user_timeline.json?screen_name=",
+        url <- paste("http://api.twitter.com/1/statuses/",
+                     "user_timeline.json?screen_name=",
                      URLencode(user), '&count=', n,
                      '&page=', page, sep="")
 

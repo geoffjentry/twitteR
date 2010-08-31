@@ -17,6 +17,10 @@ setMethod("show", signature="status", function(object) {
     print(paste(screenName(object), object@text, sep=": "))
 })
 
+setMethod("statusText", signature="status", function(object) {
+    object@text
+})
+
 setMethod("favorited", signature="status", function(object, ...) {
     object@favorited
 })

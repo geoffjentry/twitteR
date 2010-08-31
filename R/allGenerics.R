@@ -81,3 +81,6 @@ setGeneric("senderID", function(object, ...)
 
 setGeneric("senderSN", function(object, ...)
            standardGeneric("senderSN"))
+
+setGeneric("statusText", function(object, ...)
+           standardGeneric("statusText"))
