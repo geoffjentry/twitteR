@@ -5,8 +5,8 @@ twFromJSON <- function(json) {
     if (inherits(out, "try-error")) {
       stop("Error: Malformed response from server, was not JSON")
     }
-    if (grep("rate limited", out))
-        stop("Error: API rate limit hit, you'll have to take a break")
+    if ('error' %in% names(out))
+        stop("Error: ", out$error)
     if (length(out) == 2) {
       names <- names(out)
       if ((!is.null(names))&&(all(names(out) == c("request", "error"))))

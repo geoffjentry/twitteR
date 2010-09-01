@@ -6,7 +6,7 @@
   search string.
 }
 \usage{
-searchTwitter(searchString, session = getCurlHandle(), n=25, ...)
+searchTwitter(searchString, n=25, session = getCurlHandle(), ...)
 }
 \arguments{
   \item{searchString}{Search query to issue to twitter}

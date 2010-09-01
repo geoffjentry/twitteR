@@ -6,7 +6,7 @@
   updates that are related to R
 }
 \usage{
-Rtweets(session = getCurlHandle(), n=25, ...)
+Rtweets(n=25, session = getCurlHandle(), ...)
 }
 \arguments{
   \item{session}{ A session object from \code{\link{initSession}}}

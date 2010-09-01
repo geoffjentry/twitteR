@@ -1,9 +1,9 @@
-Rtweets <- function(session=getCurlHandle(), n=25, ...) {
-    searchTwitter("#rstats", session, n, ...)
+Rtweets <- function(n=25, session=getCurlHandle(), ...) {
+    searchTwitter("#rstats", n, session, ...)
 }
 
-searchTwitter <- function(searchString, session=getCurlHandle(),
-                          n=25, ...) {
+searchTwitter <- function(searchString, n=25,
+                          session=getCurlHandle(), ...) {
     ## A basic search function.  Only implements a search on a string
     ## and will return n results
     if (n <= 0)
@@ -23,7 +23,8 @@ searchTwitter <- function(searchString, session=getCurlHandle(),
             reqLength <- curDiff
         url <- paste("http://search.twitter.com/search.json?q=",
                      qrySearch, "&rpp=", curDiff,
-                     "&page=", page, sep="")
+                     "&page=", page, '&result_type=recent',
+                     sep="")
         out <- getURL(url, ...)
         newList <- twFromJSON(out)[[1]]
         if (length(newList) == 0) {
