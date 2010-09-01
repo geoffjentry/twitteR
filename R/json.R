@@ -5,8 +5,16 @@ twFromJSON <- function(json) {
     if (inherits(out, "try-error")) {
       stop("Error: Malformed response from server, was not JSON")
     }
-    if ('error' %in% names(out))
-        stop("Error: ", out$error)
+    if ('error' %in% names(out)) {
+        ## A few errors we want to stop on, and others we want to just
+        ## give a warning
+        if (length(grep("page parameter out of range",
+                        out$error)) > 0) {
+            warning("Error: ", out$error)
+        } else {
+            stop("Error: ", out$error)
+        }
+    }
     if (length(out) == 2) {
       names <- names(out)
       if ((!is.null(names))&&(all(names(out) == c("request", "error"))))
