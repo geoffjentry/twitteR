@@ -30,7 +30,7 @@ userFollowers(user, n=100, session = getCurlHandle(), ...)
   By twiddling the \code{n} parameter you can retrieve more than 100
   objects, as available (setting it to 500 will still only retrieve 300
   if 300 is all that matches the query).  Note that there are pagination
-  limits.  
+  limits.
 }
 \value{
   The \code{getUser} function returns an object of class

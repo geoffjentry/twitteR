@@ -1,5 +1,6 @@
 \name{searchTwitter}
 \alias{searchTwitter}
+\aliase{Rtweets}
 \title{ Search twitter }
 \description{
   This function will issue a search of Twitter based on a supplied
@@ -7,18 +8,26 @@
 }
 \usage{
 searchTwitter(searchString, n=25, session = getCurlHandle(), ...)
+Rtweets(n=25, session = getCurlHandle(), ...)
 }
 \arguments{
   \item{searchString}{Search query to issue to twitter}
-  \item{session}{ A session object from \code{\link{initSession}}}
   \item{n}{The number of tweets to return}
+  \item{session}{ A session object from \code{\link{initSession}}}
   \item{...}{Optional arguments to be passed to \code{\link{getURL}}}
 }
 \details{
-  A premade session is typically not going to be necessary, this command
-  can be called without any parameters.  However, if a user has access
-  to a protected user's timeline, they will not see any \code{#rstat} activity
-  without using a \code{session} object.
+  These commands will return any non-protected tweets which match the
+  search criteria.  Note that there are pagination restrictions as well
+  as other limits on what can be searched, so it is always possible to
+  not retrieve as many tweets as was requested with the \code{n}
+  argument.
+
+  The \code{Rtweets} function is a wrapper around \code{searchTwitter}
+  which hardcodes in a search for \code{#rstats}.
+  
+  A premade session will almost never be necessary.
+  
 }
 \value{
   A list of \code{\link{status}} objects
@@ -26,6 +35,7 @@ searchTwitter(searchString, n=25, session = getCurlHandle(), ...)
 \author{Jeff Gentry}
 \seealso{ \code{\link{status}} }
 \examples{
-	searchTwitter("#rstats", n=100)
+	searchTwitter("#beer", n=100)
+        Rtweets(n=37)
 }
 \keyword{ interface }

@@ -54,6 +54,8 @@ ffBase <- function(user, type, n=100,
                          session=getCurlHandle(), ...) {
     if (inherits(user, 'user'))
         user <- screenName(user)
+    if (n <= 0)
+        stop("n must be positive")
     n <- as.integer(n)
     baseUrl <- paste('http://api.twitter.com/1/statuses/',
                      type, '/', URLencode(user), '.json?cursor=', sep='')
@@ -70,6 +72,10 @@ ffBase <- function(user, type, n=100,
         jsonList <- c(jsonList, json$users)
         cursor <- json[['next_cursor']]
     }
+    ## Batches come in blocks of 100, so trim to what they requested
+    ## if they requested a non-multiple of 100
+    if (length(jsonList) > n)
+        jsonList <- jsonList[1:n]
     sapply(jsonList, buildUser)
 }
 
