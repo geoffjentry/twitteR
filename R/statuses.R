@@ -10,7 +10,10 @@ userTimeline <- function(user, n=20, session=getCurlHandle(), ...) {
     if (inherits(user, "user"))
         user <- user@screenName
     n <- as.integer(n)
-
+    if (n > 3200) {
+        warning("userTimeline has a cap of 3200 statuses, clipping")
+        n <- 3200
+    }
     page <- 1
     total <- n
     if (n > 200)
