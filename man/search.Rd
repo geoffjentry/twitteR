@@ -1,6 +1,6 @@
 \name{searchTwitter}
 \alias{searchTwitter}
-\aliase{Rtweets}
+\alias{Rtweets}
 \title{ Search twitter }
 \description{
   This function will issue a search of Twitter based on a supplied

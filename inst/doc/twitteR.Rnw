@@ -15,7 +15,7 @@
 \author{Jeff Gentry}
 \maketitle
 
-\section{IMPORTANT NOTICE}
+\section{IMPORTANT NOTICE REGARDING OAUTH}
 
 The old Twitter authentication mechanism is being removed in August
 2010 in favor of OAuth.  As of this writing there is not an OAuth
@@ -23,6 +23,11 @@ solution for R, so unless someone (or myself) writes such a beast you
 will not be able to access any authenticated aspects of Twitter.  Many
 functions that you might be familiar with using will no longer work
 properly, if at all.  These have been set to be defunct.
+
+Also not that it is not simply a matter of having an OAuth interface,
+but also that Twitter's usage of OAuth is very tied to having stable
+applications as opposed to scripts being written.  There are currently
+various potential workarounds for this that I'm looking into.
 
 \section{Disclaimer}
 
