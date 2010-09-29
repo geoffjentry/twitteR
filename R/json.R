@@ -1,3 +1,21 @@
+doAPICall <- function(url, ...) {
+  ## will perform an API call and process the JSON.  In case of failure on 
+  ## the latter step, will check to see if HTML was returned (as happens
+  ## in some error cases) and if so will attempt up to 3 more times before
+  ## returning with an error.  Most twitter HTML errors are very transient in
+  ## nature, so this should solve most ills
+   
+   count <- 1
+   while (count < 4) {
+     out <- getURL(url, ...)
+     if (length(grep('html', out)) == 0) {
+       break
+     }
+     count <- count + 1
+   }     
+   twFromJSON(out)
+}
+
 twFromJSON <- function(json) {
     ## Will provide some basic error checking, as well as suppress
     ## warnings that always seem to come out of fromJSON, even in good cases.

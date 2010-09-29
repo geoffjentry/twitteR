@@ -6,8 +6,7 @@ getUser <- function(user, session=getCurlHandle(), ...) {
     ## build URL by hand
     url <- paste("http://api.twitter.com/1/users/show/",
                  URLencode(user), '.json', sep="")
-    out <- getURL(url, curl=session, ...)
     ## Need some error checking
-    buildUser(twFromJSON(out))
+    buildUser(doAPICall(url, curl=session, ...))
 }
 

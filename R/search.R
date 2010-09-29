@@ -23,8 +23,7 @@ searchTwitter <- function(searchString, n=25,
         url <- paste("http://search.twitter.com/search.json",
                      pageStr, "&result_type=recent",
                      sep="")
-        out <- getURL(url, ...)
-        fromJSON <- twFromJSON(out)
+        fromJSON <- doAPICall(url, ...)
         newList <- fromJSON$results
         jsonList <- c(jsonList, newList)
         curDiff <- n - length(jsonList)
