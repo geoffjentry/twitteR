@@ -1,9 +1,9 @@
-Rtweets <- function(n=25, session=getCurlHandle(), ...) {
-    searchTwitter("#rstats", n, session, ...)
+Rtweets <- function(n=25, session=getCurlHandle(), lang=NULL, since=NULL, ...) {
+    searchTwitter("#rstats", n=n, session=session, lang=lang, since=since, ...)
 }
 
-searchTwitter <- function(searchString, n=25,
-                          session=getCurlHandle(), ...) {
+searchTwitter <- function(searchString, n=25, 
+                          session=getCurlHandle(), lang=NULL, since=NULL, ...) {
     ## A basic search function.  Only implements a search on a string
     ## and will return n results
     if (n <= 0)
@@ -14,10 +14,18 @@ searchTwitter <- function(searchString, n=25,
         stop("searchString is limited to 140 characters")
     jsonList <- list()
 
+    
     batchSize <- ifelse(n < 100, n, 100)
     pageStr <- paste("?rpp=", batchSize,
                      "&page=1&q=",
                      qrySearch, sep='')
+    if (! is.null(lang)) {
+      pageStr <- paste(pageStr, '&lang=', lang, sep='')
+    }
+    if (! is.null(since)) {
+      pageStr <- paste(pageStr, '&since=', since, sep='')
+    }
+
     curDiff <- n
     while (curDiff > 0) {
         url <- paste("http://search.twitter.com/search.json",

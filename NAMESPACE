@@ -3,7 +3,7 @@ exportMethods(screenName, show, favorited, replyToSN,
               statusesCount, tweetCount, followersCount,
               favoritesCount, friendsCount, userURL, created,
               protected, verified, location, lastStatus, show,
-              description, name, id, statusText)
+              description, name, id, statusText, truncated, statusSource)
 
 export('Rtweets')
 export('searchTwitter')

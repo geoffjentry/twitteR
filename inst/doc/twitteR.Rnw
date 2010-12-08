@@ -24,7 +24,7 @@ will not be able to access any authenticated aspects of Twitter.  Many
 functions that you might be familiar with using will no longer work
 properly, if at all.  These have been set to be defunct.
 
-Also not that it is not simply a matter of having an OAuth interface,
+Also note that it is not simply a matter of having an OAuth interface,
 but also that Twitter's usage of OAuth is very tied to having stable
 applications as opposed to scripts being written.  There are currently
 various potential workarounds for this that I'm looking into.
