@@ -19,7 +19,9 @@ userTimeline(user, n=20, session=getCurlHandle(), ...)
 }
 \details{
   The \code{userTimeline} function will only work if the user requested
-  has a public timeline
+  has a public timeline, or you have previously registered a
+  \code{\link{OAuth}} object using \code{\link{registerOAuth}} and are
+  authorized to view that content.
 }
 \value{
   A list of \code{\link{status}} objects

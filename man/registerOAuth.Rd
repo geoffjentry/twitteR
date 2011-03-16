@@ -1,5 +1,6 @@
 \name{registerOAuth}
 \alias{registerOAuth}
+\alias{exampleOauth}
 \title{ Register OAuth credentials to twitter R session }
 \description{
   This function is used to provide your OAuth access tokens to

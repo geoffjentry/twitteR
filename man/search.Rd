@@ -19,11 +19,13 @@ Rtweets(n=25, session = getCurlHandle(), lang=NULL, since=NULL, ...)
   \item{...}{Optional arguments to be passed to \code{\link{getURL}}}
 }
 \details{
-  These commands will return any non-protected tweets which match the
+  These commands will return any authorized tweets which match the
   search criteria.  Note that there are pagination restrictions as well
   as other limits on what can be searched, so it is always possible to
   not retrieve as many tweets as was requested with the \code{n}
-  argument.
+  argument.  Authorized tweets are public tweets as well as those
+  protected tweets that are available to the user after authenticating
+  via \code{\link{registerOAuth}}.
 
   The \code{Rtweets} function is a wrapper around \code{searchTwitter}
   which hardcodes in a search for \code{#rstats}.
