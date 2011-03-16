@@ -31,8 +31,6 @@ userTimeline <- function(user, n=20, session=getCurlHandle(), ...) {
 }
 
 showStatus <- function(id, session=getCurlHandle(), ...) {
-  ## Doesn't require authentication via initSession unless the owner
-  ## of the status is protected
   if (!is.numeric(id))
     stop("id argument must be numeric")
   url <- paste("http://api.twitter.com/1/statuses/show/",

@@ -9,6 +9,16 @@ registerOAuth <- function(oauth) {
   TRUE
 }
 
+hasOAuth <- function() {
+  exists('oauth', envir=oauthCache)
+}
+
+getOAuth <- function() {
+  if (!hasOAuth)
+    stop("OAuth has not been registered for this session")
+  get("oauth", envir=oauthCache)
+}
+
 doAPICall <- function(url, ...) {
   ## will perform an API call and process the JSON.  In case of failure on 
   ## the latter step, will check to see if HTML was returned (as happens
@@ -24,7 +34,7 @@ doAPICall <- function(url, ...) {
      if (inherits(oauth, 'try-error'))
        out <- getURL(url, ...)
      else
-       out <- oauth$OAuthRequest(url)
+       out <- oauth$OAuthRequest(url, ...)
      if (length(grep('html', out)) == 0) {
        break
      }
