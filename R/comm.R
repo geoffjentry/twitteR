@@ -1,3 +1,14 @@
+oauthCache <- new.env(hash=TRUE)
+
+registerOAuth <- function(oauth) {
+  if (!inherits(oauth, "OAuth"))
+    stop("oauth argument must be of class OAuth")
+  if (! oauth$getHandshakeComplete())
+    stop("oauth has not completed its handshake")
+  assign('oauth', oauth, envir=oauthCache)
+  TRUE
+}
+
 doAPICall <- function(url, ...) {
   ## will perform an API call and process the JSON.  In case of failure on 
   ## the latter step, will check to see if HTML was returned (as happens
@@ -7,7 +18,13 @@ doAPICall <- function(url, ...) {
    
    count <- 1
    while (count < 4) {
-     out <- getURL(url, ...)
+     oauth <- try(get("oauth", envir=oauthCache), silent=TRUE)
+     ## FIXME:  The OAuthRequest doesn't handle and ... options,
+     ##   but not sure how to work that
+     if (inherits(oauth, 'try-error'))
+       out <- getURL(url, ...)
+     else
+       out <- oauth$OAuthRequest(url)
      if (length(grep('html', out)) == 0) {
        break
      }

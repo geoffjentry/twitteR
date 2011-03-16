@@ -4,7 +4,7 @@ exportMethods(screenName, show, favorited, replyToSN,
               favoritesCount, friendsCount, userURL, created,
               protected, verified, location, lastStatus, show,
               description, name, id, statusText, truncated, statusSource)
-
+export('registerOAuth')
 export('Rtweets')
 export('searchTwitter')
 export('publicTimeline')
