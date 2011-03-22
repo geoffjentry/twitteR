@@ -18,7 +18,7 @@ updateStatus <- function(text, lat=NULL, long=NULL, placeID=NULL,
     url <- paste("&display_coordinates=", displayCoords, sep='')
   if (!is.null(inReplyTo)) {
     if (inherits(inReplyTo, 'status'))
-      id <- id(status)
+      id <- id(inReplyTo)
     else
       id <- inReplyTo
     url <- paste(url, '&in_reply_to_status_id=', id, sep='')

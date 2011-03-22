@@ -11,17 +11,19 @@
   These functions can be used to set or delete a user's Twitter status
 }
 \usage{
-tweet(text, session = getCurlHandle(), ...)
-updateStatus(text, session = getCurlHandle(), ...)
-deleteStatus(status, session = getCurlHandle(), ...)
+tweet(text, ...)
+updateStatus(text, ...)
+deleteStatus(status, ...)
 }
 \arguments{
   \item{text}{The text to use for a new status }
   \item{status}{An object of class \code{\link{status}}}
-  \item{session}{An object from \code{\link{initSession}}}
   \item{...}{Optional arguments to be passed to \code{\link{getURL}}}
 }
 \details{
+  These messages will only operate properly if the user is authenticated
+  via \code{OAuth}
+  
   The \code{tweet} and \code{updateStatus} functions are the same.
    
   To delete a status message, pass in an object of class
@@ -38,11 +40,10 @@ deleteStatus(status, session = getCurlHandle(), ...)
    Jeff Gentry
 }
 \seealso{
-  \code{\link{initSession}}
+  \code{\link{registerTwitterOAuth}}
 }
 \examples{
    \dontrun{
-      sess <- initSession('myUser', 'myPass')
       ns <- updateStatus('this is my new status message', sess)
       ## ooops, we want to remove it!
       deleteStatus(ns)

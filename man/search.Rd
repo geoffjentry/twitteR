@@ -7,13 +7,12 @@
   search string.
 }
 \usage{
-searchTwitter(searchString, n=25, session = getCurlHandle(), lang=NULL, since=NULL, ...)
-Rtweets(n=25, session = getCurlHandle(), lang=NULL, since=NULL, ...)
+searchTwitter(searchString, n=25, lang=NULL, since=NULL, ...)
+Rtweets(n=25, lang=NULL, since=NULL, ...)
 }
 \arguments{
   \item{searchString}{Search query to issue to twitter}
   \item{n}{The number of tweets to return}
-  \item{session}{ A session object from \code{\link{initSession}}}
   \item{lang}{If not \code{NULL}, restricts tweets to the given language, given by an ISO 639-1 code}
   \item{since}{If not \code{NULL}, restricts tweets to those since the given date.  Date is to be formatted as YYYY-MM-DD}
   \item{...}{Optional arguments to be passed to \code{\link{getURL}}}

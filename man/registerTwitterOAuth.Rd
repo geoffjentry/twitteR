@@ -1,5 +1,5 @@
-\name{registerOAuth}
-\alias{registerOAuth}
+\name{registerTwitterOAuth}
+\alias{registerTwitterOAuth}
 \alias{exampleOauth}
 \title{ Register OAuth credentials to twitter R session }
 \description{
@@ -8,7 +8,7 @@
   well as allow other commands to provide more options
 }
 \usage{
-registerOAuth(oauth)
+registerTwitterOAuth(oauth)
 }
 \arguments{
   \item{oauth}{An object of class \code{\link{OAuth}}}
@@ -26,6 +26,6 @@ registerOAuth(oauth)
 \seealso{ \code{\link{OAuth}} }
 \examples{
     data(exampleOauth)
-    registerOAuth(exampleOauth)
+    registerTwitterOAuth(exampleOauth)
 }
 \keyword{ interface }

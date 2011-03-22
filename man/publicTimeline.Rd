@@ -8,13 +8,12 @@
 }
 \usage{
 publicTimeline(session=getCurlHandle(), ...)
-userTimeline(user, n=20, session=getCurlHandle(), ...)
+userTimeline(user, n=20, ...)
 }
 \arguments{
   \item{user}{ The Twitter user to detail, can be \code{character} or
     an \code{\link{user}} object.}
   \item{n}{Number of tweets to retrieve, up to a maximum of 3200}
-  \item{session}{ cURL session object }
   \item{...}{Optional arguments to be passed to \code{\link{getURL}}}
 }
 \details{

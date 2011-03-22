@@ -10,15 +10,14 @@
   followers, and an up to date timeline.
 }
 \usage{
-getUser(user, session = getCurlHandle(), ...)
-userFriends(user, n=100, session = getCurlHandle(), ...)
-userFollowers(user, n=100, session = getCurlHandle(), ...)
+getUser(user, ...)
+userFriends(user, n=100, ...)
+userFollowers(user, n=100, ...)
 }
 \arguments{
   \item{user}{ The Twitter user to detail, can be \code{character} or
     an \code{\link{user}} object.}
   \item{n}{ The maximum number of objects to retrieve }
-  \item{session}{ A session object from \code{\link{initSession}} }
   \item{...}{Optional arguments to be passed to \code{\link{getURL}}}
 }
 \details{
@@ -40,7 +39,7 @@ userFollowers(user, n=100, session = getCurlHandle(), ...)
   of class \code{\link{user}} objects.
 }
 \author{Jeff Gentry}
-\seealso{ \code{\link{initSession}}, \code{\link{mentions}}}
+\seealso{\code{\link{mentions}}}
 \examples{
       tuser <- getUser('geoffjentry')
       tfriends <- userFriends(tuser)

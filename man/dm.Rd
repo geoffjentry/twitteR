@@ -9,21 +9,25 @@
   messages (DMs) in Twitter.
 }
 \usage{
-dmGet(session = getCurlHandle(), num=20, ...)
-dmSent(session = getCurlHandle(), ...)
-dmDestroy(dm, session = getCurlHandle(), ...)
-dmSend(text, user, session = getCurlHandle(), ...)
+dmGet(n=25, sinceID=NULL, maxID=NULL)
+dmSent(n=25, sinceID=NULL, maxID=NULL)
+dmDestroy(dm)
+dmSend(text, user)
 }
 \arguments{
   \item{text}{The text of a message to send}
   \item{user}{The user to send a message to, either \code{character} or
     an \code{\link{user}} object.}
   \item{dm}{The message to delete, an object of class \code{\link{directMessage}}}
-  \item{session}{ A session object from \code{\link{initSession}}}
-  \item{num}{ The number of direct messages to return }
-  \item{...}{Optional arguments to be passed to \code{\link{getURL}}}
+  \item{n}{ The number of direct messages to return }
+  \item{sinceID}{If not \code{NULL}, an ID representing the earliest
+    boundary}
+  \item{maxID}{If not \code{NULL}, an ID representing the newest ID you
+    wish to retrieve}
 }
 \value{
+  These functions will not work without \code{OAuth} authentication
+
   The \code{dmGet} and \code{dmSent} functions will return a list of
   \code{\link{directMessage}} objects.  The former will retrieve DMs
   sent to the user while the latter retrieves messages sent from the user.
@@ -35,16 +39,15 @@ dmSend(text, user, session = getCurlHandle(), ...)
   The \code{dmSend} function will send a message to another Twitter user.
 }
 \author{Jeff Gentry}
-\seealso{\code{\link{directMessage}}}
+\seealso{\code{\link{directMessage}}, \code{\link{registerTwitterOAuth}}}
 \examples{
   \dontrun{
-           sess <- initSession('myuser', 'mypass')
-           dms <- dmGet(sess)
+           dms <- dmGet()
            dms
            ## delete the first one
            dmDestroy(dms[[1]])
            ## send a DM
-           dmSend('Testing out twitteR!', 'twitter', sess)
+           dmSend('Testing out twitteR!', 'twitter')
    }
 }
 \keyword{ interface }

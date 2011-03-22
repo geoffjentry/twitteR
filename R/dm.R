@@ -47,7 +47,7 @@ dmDestroy <- function(dm) {
   TRUE
 }
 
-dmSend <- function(text, user, ...) {
+dmSend <- function(text, user) {
   if (!hasOAuth())
     stop("dmSend requires OAuth authentication")
   if (inherits(user, "user"))

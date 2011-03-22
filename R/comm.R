@@ -1,7 +1,6 @@
 oauthCache <- new.env(hash=TRUE)
 
-## FIXME:  This name needs to change and/or all handled by ROAuth
-registerOAuth <- function(oauth) {
+registerTwitterOAuth <- function(oauth) {
   if (!inherits(oauth, "OAuth"))
     stop("oauth argument must be of class OAuth")
   if (! oauth$getHandshakeComplete())
