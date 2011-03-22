@@ -23,7 +23,7 @@ updateStatus <- function(text, lat=NULL, long=NULL, placeID=NULL,
       id <- inReplyTo
     url <- paste(url, '&in_reply_to_status_id=', id, sep='')
   }
-  out <- buildStatus(doAPICall(URLencode(url), method="POST"))
+  out <- buildStatus(doAPICall(url, method="POST"))
 }
 
 tweet <- function(text, ...) {
@@ -43,13 +43,13 @@ deleteStatus <- function(status, ...) {
   TRUE
 }
 
-publicTimeline <- function(session=getCurlHandle(), ...) {
+publicTimeline <- function(...) {
   jsonList <- doAPICall('http://api.twitter.com/1/statuses/public_timeline.json',
-                        curl=session, ...)
+                        ...)
     sapply(jsonList, buildStatus)
 }
 
-userTimeline <- function(user, n=20, session=getCurlHandle(), ...) {
+userTimeline <- function(user, n=20, ...) {
     ## AUTH: Will not work if user is protected until OAuth
     if (inherits(user, "user"))
         user <- user@screenName
@@ -66,9 +66,9 @@ userTimeline <- function(user, n=20, session=getCurlHandle(), ...) {
     while (total > 0) {
         url <- paste("http://api.twitter.com/1/statuses/",
                      "user_timeline.json?screen_name=",
-                     URLencode(user), '&count=', n,
+                     user, '&count=', n,
                      '&page=', page, sep="")
-        jsonList <- c(jsonList, doAPICall(url, curl=session, ...))
+        jsonList <- c(jsonList, doAPICall(url, ...))
         total <- total - n
         page <- page + 1
     }
@@ -121,31 +121,30 @@ authStatusBase <- function(n, type) {
 
 
 
-showStatus <- function(id, session=getCurlHandle(), ...) {
+showStatus <- function(id, ...) {
   if (!is.numeric(id))
     stop("id argument must be numeric")
   url <- paste("http://api.twitter.com/1/statuses/show/",
-               URLencode(as.character(id)), ".json", sep="")
+               id, ".json", sep="")
   buildStatus(doAPICall(url, ...))
 }
 
-userFriends <- function(user, n=100, session=getCurlHandle(), ...) {
-    ffBase(user, 'friends', n, session, ...)
+userFriends <- function(user, n=100, ...) {
+    ffBase(user, 'friends', n, ...)
 }
 
-userFollowers <- function(user, n=100, session=getCurlHandle(), ...) {
-    ffBase(user, 'followers', n, session, ...)
+userFollowers <- function(user, n=100, ...) {
+    ffBase(user, 'followers', n, ...)
 }
 
-ffBase <- function(user, type, n=100,
-                         session=getCurlHandle(), ...) {
+ffBase <- function(user, type, n=100, ...) {
     if (inherits(user, 'user'))
         user <- screenName(user)
     if (n <= 0)
         stop("n must be positive")
     n <- as.integer(n)
     baseUrl <- paste('http://api.twitter.com/1/statuses/',
-                     type, '/', URLencode(user), '.json?cursor=', sep='')
+                     type, '/', user, '.json?cursor=', sep='')
     pages <- ceiling(n/100)
     jsonList <- list()
     cursor = -1
@@ -154,7 +153,7 @@ ffBase <- function(user, type, n=100,
         ## although this does need to be done sequentially as each
         ## call gets the cursor for the next call
         url <- paste(baseUrl, cursor, sep='')
-        json <- doAPICall(url, curl=session, ...)
+        json <- doAPICall(url, ...)
         jsonList <- c(jsonList, json$users)
         cursor <- json[['next_cursor']]
     }

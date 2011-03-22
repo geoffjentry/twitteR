@@ -1,19 +1,17 @@
-Rtweets <- function(n=25, session=getCurlHandle(), lang=NULL, since=NULL, ...) {
-    searchTwitter("#rstats", n=n, session=session, lang=lang, since=since, ...)
+Rtweets <- function(n=25, lang=NULL, since=NULL, ...) {
+    searchTwitter("#rstats", n=n, lang=lang, since=since, ...)
 }
 
-searchTwitter <- function(searchString, n=25, 
-                          session=getCurlHandle(), lang=NULL, since=NULL, ...) {
+searchTwitter <- function(searchString, n=25, lang=NULL, since=NULL, ...) {
     ## A basic search function.  Only implements a search on a string
     ## and will return n results
     if (n <= 0)
         stop("n must be positive")
     n <- as.integer(n)
-    qrySearch <- URLencode(searchString)
+    qrySearch <- searchString
     if (nchar(qrySearch) > 140)
         stop("searchString is limited to 140 characters")
     jsonList <- list()
-
     
     batchSize <- ifelse(n < 100, n, 100)
     pageStr <- paste("?rpp=", batchSize,

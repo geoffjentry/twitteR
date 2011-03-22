@@ -1,12 +1,8 @@
-getUser <- function(user, session=getCurlHandle(), ...) {
+getUser <- function(user, ...) {
     if (inherits(user, "user"))
         user <- screenName(user)
-
-    ## For god knows what reason, my normal methods don't work here,
-    ## build URL by hand
     url <- paste("http://api.twitter.com/1/users/show/",
-                 URLencode(user), '.json', sep="")
-    ## Need some error checking
-    buildUser(doAPICall(url, curl=session, ...))
+                 user, '.json', sep="")
+    buildUser(doAPICall(url, ...))
 }
 
