@@ -1,34 +1,47 @@
-updateStatus <- function(text, ...) {
+updateStatus <- function(text, lat=NULL, long=NULL, placeID=NULL,
+                         displayCoords=NULL, inReplyTo=NULL) {
   if (!hasOAuth())
     stop("updateStatus requires OAuth authentication")
-  url <- paste("http://twitter.com/statuses/update.json?status=",
+
+  if (nchar(text) > 140)
+    stop("Status can not be more than 140 characters")
+
+  url <- paste("http://api.twitter.com/1/statuses/update.json?status=",
                text, sep='')
-  out <- doAPICall(url, method="POST")
-  ## out is in byte code, need to pass that through a raw conversion
-  ## to get the string.  Not sure why sometimes it's byte arrays and
-  ## sometimes it is strings
-  buildStatus(doAPICall(rawToChar(out)))
+  if (!is.null(lat))
+    url <- paste("&lat=", lat, sep='')
+  if (!is.null(long))
+    url <- paste("&long=", long, sep='')
+  if (!is.null(placeID))
+    url <- paste("&place_id=", placeID, sep='')
+  if (!is.null(displayCoords))
+    url <- paste("&display_coordinates=", displayCoords, sep='')
+  if (!is.null(inReplyTo)) {
+    if (inherits(inReplyTo, 'status'))
+      id <- id(status)
+    else
+      id <- inReplyTo
+    url <- paste(url, '&in_reply_to_status_id=', id, sep='')
+  }
+  out <- buildStatus(doAPICall(URLencode(url), method="POST"))
 }
 
 tweet <- function(text, ...) {
-    ## Just a wrapper around updateStatus
-    updateStatus(text, session, ...)
+    updateStatus(text, ...)
 }
 
 deleteStatus <- function(status, ...) {
+  ## FIXME: is 'id' working properly?
   if (!hasOAuth())
     stop("deleteStatus requires OAuth authentication")
-  url <- paste("http://twitter.com/statuses/destroy/",
-                 status@id, ".json", sep="")
-    ## I don't know how to simply POST or send a DELETE via RCurl w/o
-    ## postForm, but this isn't a form so it throws a warning.
-    ## Suppress these warnings
-    out <- suppressWarnings(postForm(url, curl=session), ...)
-    TRUE
+  if (!inherits(status, 'status'))
+    stop("status argument must be of class status")
+
+  url <- paste("http://api.twitter.com/1/statuses/destroy/",
+               id(status), ".json", sep='')
+  doAPICall(url, method="POST")
+  TRUE
 }
-
-
-
 
 publicTimeline <- function(session=getCurlHandle(), ...) {
   jsonList <- doAPICall('http://api.twitter.com/1/statuses/public_timeline.json',
