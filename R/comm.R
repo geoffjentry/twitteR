@@ -19,7 +19,7 @@ getOAuth <- function() {
   get("oauth", envir=oauthCache)
 }
 
-doAPICall <- function(url, ...) {
+doAPICall <- function(url, curl=getCurlHandle(), method="GET", ...) {
   ## will perform an API call and process the JSON.  In case of failure on 
   ## the latter step, will check to see if HTML was returned (as happens
   ## in some error cases) and if so will attempt up to 3 more times before
@@ -34,7 +34,7 @@ doAPICall <- function(url, ...) {
      if (inherits(oauth, 'try-error'))
        out <- getURL(url, ...)
      else
-       out <- oauth$OAuthRequest(url, ...)
+       out <- oauth$OAuthRequest(url, method, ...)
      if (length(grep('html', out)) == 0) {
        break
      }

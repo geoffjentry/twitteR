@@ -1,3 +1,35 @@
+updateStatus <- function(text, ...) {
+  if (!hasOAuth())
+    stop("updateStatus requires OAuth authentication")
+  url <- paste("http://twitter.com/statuses/update.json?status=",
+               text, sep='')
+  out <- doAPICall(url, method="POST")
+  ## out is in byte code, need to pass that through a raw conversion
+  ## to get the string.  Not sure why sometimes it's byte arrays and
+  ## sometimes it is strings
+  buildStatus(doAPICall(rawToChar(out)))
+}
+
+tweet <- function(text, ...) {
+    ## Just a wrapper around updateStatus
+    updateStatus(text, session, ...)
+}
+
+deleteStatus <- function(status, ...) {
+  if (!hasOAuth())
+    stop("deleteStatus requires OAuth authentication")
+  url <- paste("http://twitter.com/statuses/destroy/",
+                 status@id, ".json", sep="")
+    ## I don't know how to simply POST or send a DELETE via RCurl w/o
+    ## postForm, but this isn't a form so it throws a warning.
+    ## Suppress these warnings
+    out <- suppressWarnings(postForm(url, curl=session), ...)
+    TRUE
+}
+
+
+
+
 publicTimeline <- function(session=getCurlHandle(), ...) {
   jsonList <- doAPICall('http://api.twitter.com/1/statuses/public_timeline.json',
                         curl=session, ...)
@@ -29,6 +61,52 @@ userTimeline <- function(user, n=20, session=getCurlHandle(), ...) {
     }
     sapply(jsonList, buildStatus)
 }
+
+homeTimeline <- function(n=25)
+  authStatusBase(n, 'home_timeline')
+
+friendsTimeline <- function(n=25)
+  authStatusBase(n, 'friends_timeline')
+
+mentions <- function(n=25)
+  authStatusBase(n, 'mentions')
+
+retweetedByMe <- function(n=25)
+  authStatusBase(n, 'retweeted_by_me')
+
+retweetedToMe <- function(n=25) 
+  authStatusBase(n, 'retweeted_to_me')
+
+retweetsOfMe <- function(n=25)
+  authStatusBase(n, 'retweets_of_me')
+
+authStatusBase <- function(n, type) {
+  if (!hasOAuth())
+    stop("OAuth is required for this functionality")
+
+  n <- as.integer(n)
+  if (n > 800) {
+    warning("Maximum of 800 statuses can be returned, clipping")
+    n <- 800
+  }
+  page <- 1
+  total <- n
+  count <- ifelse(n < 200, n, 200)
+  jsonList <- list()
+  while (total > 0) {
+    url <- paste("http://api.twitter.com/1/statuses/",
+                 type, ".json?count=", count,
+                 '&page=', page, sep='')
+    jsonList <- c(jsonList, doAPICall(url))
+    total <- total - count
+    page <- page + 1
+  }
+  if ((length(jsonList) > 0) && (length(jsonList) > n))
+    jsonList <- jsonList[1:n]
+  sapply(jsonList, buildStatus)
+}
+
+
 
 showStatus <- function(id, session=getCurlHandle(), ...) {
   if (!is.numeric(id))
