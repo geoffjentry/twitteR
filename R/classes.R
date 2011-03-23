@@ -161,7 +161,9 @@ setRefClass("user",
                     id <<- json[['id']]
                 }
                 callSuper(...)
-              }
+              },
+              destroy = function() {
+                dmDestroy(.self)
               )
             )
 

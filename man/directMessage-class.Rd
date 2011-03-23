@@ -21,16 +21,7 @@
 }
 \section{Methods}{
   \describe{
-    \item{show}{Displays the DM}
-    \item{text}{Retrieves the text of the DM}
-    \item{recipientSN}{Retrieves the screen name of the recipient}
-    \item{created}{Retrieves the creation date}
-    \item{recipientID}{Retrieves the ID of the recipient}
-    \item{sender}{Retrieves the sender (of class \code{\link{user}}) of the DM}
-    \item{recipient}{Retrieves the recipient (of class \code{\link{user}}) of the DM}
-    \item{senderID}{Retrives the ID of the DM sender}
-    \item{id}{Retrieves the ID of the DM}
-    \item{senderSN}{Retrieves the screen name of the sender}
+     \item{\code{destroy}:}{Deletes this DM from Twitter.  A wrapper around \code{\link{dmDestroy}}}
   }
 }
 \details{
