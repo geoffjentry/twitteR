@@ -52,7 +52,7 @@ publicTimeline <- function(...) {
 userTimeline <- function(user, n=20, ...) {
     ## AUTH: Will not work if user is protected until OAuth
     if (inherits(user, "user"))
-        user <- user@screenName
+        user <- user$getScreenName()
     n <- as.integer(n)
     if (n > 3200) {
         warning("userTimeline has a cap of 3200 statuses, clipping")

@@ -11,7 +11,8 @@
 }
 \usage{
 tweet(text, ...)
-updateStatus(text, lat=NULL, long=NULL, placeID=NULL, displayCoords=NULL, inReplyTo=NULL)
+updateStatus(text, lat=NULL, long=NULL, placeID=NULL,
+             displayCoords=NULL, inReplyTo=NULL) 
 deleteStatus(status, ...)
 }
 \arguments{
@@ -52,7 +53,7 @@ deleteStatus(status, ...)
 }
 \examples{
    \dontrun{
-      ns <- updateStatus('this is my new status message', sess)
+      ns <- updateStatus('this is my new status message')
       ## ooops, we want to remove it!
       deleteStatus(ns)
    }

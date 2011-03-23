@@ -25,6 +25,8 @@ registerTwitterOAuth(oauth)
 \author{Jeff Gentry}
 \seealso{ \code{\link{OAuth}} }
 \examples{
+    ## Note that exampleOauth isn't a valid Twitter credential, but
+    ## is a valid OAuth credential
     data(exampleOauth)
     registerTwitterOAuth(exampleOauth)
 }

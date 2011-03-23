@@ -2,6 +2,7 @@
 \Rdversion{1.1}
 \docType{class}
 \alias{status-class}
+\alias{statusFactory}
 \alias{status}
 \alias{buildStatus}
 \alias{show,status-method}
@@ -27,53 +28,55 @@
 \title{Class to contain a Twitter status}
 \description{Container for Twitter status messages, including the text
   as well as basic information}
-\section{Objects from the Class}{
-  \code{new('status',
-    text = [character],
-    favorited = [logical],
-    replyToSN = [character],
-    created = [POSIXct],
-    truncated = [logical],
-    replyToSID = [numeric],
-    id = [numeric],
-    replyToUID = [numeric],
-    statusSource = [character],
-    ...)}
-
-  These objects are typically constructed as a side effect from various
-  functions, such as \code{\link{updateStatus}}.
-}
-\section{Slots}{
-	 \describe{
-    \item{\code{text}:}{Text of the status }
-    \item{\code{favorited}:}{Whether the status is favorited }
-    \item{\code{replyToSN}:}{Screen name that this is in reply to }
-    \item{\code{created}:}{When this status was created }
-    \item{\code{truncated}:}{Whether this status was truncated }
-    \item{\code{replyToSID}:}{Reply to which status ID }
-    \item{\code{id}:}{ID of the object }
-    \item{\code{replyToUID}:}{Reply to which user ID }
-    \item{\code{screenName}:}{The screen name corresponding to this status}
-    \item{\code{statusSource}:}{Source of the status message }
-  }
-}
-\section{Methods}{
+\section{Fields}{
   \describe{
-    \item{show}{Displays information about the status}
-    \item{statusText}{Returns the text of the status}
-    \item{favorited}{Returns the favorited information for the status}
-    \item{replyToSN}{Returns the replyToSN slot for this status}
-    \item{created}{Retrieves the creation time of this status}
-    \item{truncated}{Returns the truncated information for this status}
-    \item{replyToSID}{Returns the replyToSID slot for this status}
-    \item{id}{Returns the id of this status}
-    \item{replyToUID}{Returns the replyToUID slot for this status}
-    \item{statusSource}{Returns the status source for this status}
-    \item{screenName}{Returns the screen name of the creator of the status}
+    \item{\code{text}:}{The text of the status}
+    \item{\code{screenName}:}{Screen name of the user who posted this status}
+    \item{\code{id}:}{ID of this status}
+    \item{\code{replyToSN}:}{Screen name of the user this is in reply
+      to} 
+    \item{\code{replyToUID}:}{ID of the user this was in reply to}
+    \item{\code{statusSource}:}{Source user agent for this tweet}
+    \item{\code{created}:}{When this status was created}
+    \item{\code{truncated}:}{Whether this status was truncated}
+    \item{\code{favorited}:}{Whether this status has been favorited}
   }
+}
+\details{
+  The \code{status} class is implemented as a reference class.  This class
+  was previously implemented as an S4 class, and for backward
+  compatibility purposes the old S4 accessor methods have been left in,
+  although new code should not be written with these.  An instance of a
+  generator for this class is provided as a convenience to the user as
+  it is configured to handle most standard cases.  To access this
+  generator, use the object \code{statusFactory}.  Accessor set & get
+  methods are provided for every field using reference class
+  \code{$accessors()} methodology (see \code{\link{setRefClass}} for
+  more details).  As an example, the \code{screenName} field could be
+  accessed using \code{object$getScreenName} and
+  \code{object$setScreenName}.
+
+  The constructor of this object assumes that the user is passing in a
+  JSON encoded Twitter status.  It is also possible to directly pass in
+  the arguments.
+
 }
 \author{Jeff Gentry}
 \seealso{
-  \code{\link{publicTimeline}},\code{\link{userTimeline}}
+  \code{\link{publicTimeline}}, \code{\link{userTimeline}},
+  \code{\link{setRefClass}}
+}
+\examples{
+   ## This example is run, but likely not how you want to do things
+   st <- statusFactory$new(screenName="test", text="test message")
+   st$getScreenName()
+   st$getText()
+
+   \dontrun{
+     ## Assume 'json' is the return from a Twitter call
+     st <- statusFactory$new(json)
+     st$getScreenName()
+   }
+   
 }
 \keyword{classes}

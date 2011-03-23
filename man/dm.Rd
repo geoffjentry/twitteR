@@ -45,7 +45,8 @@ dmSend(text, user)
            dms <- dmGet()
            dms
            ## delete the first one
-           dmDestroy(dms[[1]])
+           dms[[1]]$destroy()
+           dmDestroy(dms[[2]])
            ## send a DM
            dmSend('Testing out twitteR!', 'twitter')
    }

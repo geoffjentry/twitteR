@@ -2,7 +2,9 @@ Rtweets <- function(n=25, lang=NULL, since=NULL, ...) {
     searchTwitter("#rstats", n=n, lang=lang, since=since, ...)
 }
 
-searchTwitter <- function(searchString, n=25, lang=NULL, since=NULL, ...) {
+searchTwitter <- function(searchString, n=25, lang=NULL,
+                          since=NULL, until=NULL, locale=NULL,
+                          geocode=NULL, ...) {
     ## A basic search function.  Only implements a search on a string
     ## and will return n results
     if (n <= 0)

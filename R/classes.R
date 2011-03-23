@@ -15,8 +15,8 @@ setRefClass("status",
               initialize = function(json, ...) {
                 if (!missing(json)) {
                   if ('user' %in% names(json)) {
-                    user <<- userFactory$new(json[['user']])
-                    screenName <<- user$getScreenName()
+                    userObj <<- userFactory$new(json[['user']])
+                    screenName <<- userObj$getScreenName()
                   } else if ('from_user' %in% names(json)) {
                     screenName <<- json[['from_user']]
                   } else {
@@ -161,9 +161,7 @@ setRefClass("user",
                     id <<- json[['id']]
                 }
                 callSuper(...)
-              },
-              destroy = function() {
-                dmDestroy(.self)
+              }
               )
             )
 
@@ -271,6 +269,9 @@ setRefClass("directMessage",
                     id <<- json[['id']]
                 }
                 callSuper(...)
+              },
+              destroy = function() {
+                dmDestroy(.self)
               }
               )
             )

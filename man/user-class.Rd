@@ -1,6 +1,7 @@
 \name{user-class}
 \Rdversion{1.1}
 \docType{class}
+\alias{userFactory}
 \alias{user-class}
 \alias{user}
 \alias{buildUser}
@@ -37,61 +38,55 @@
 \title{A container object to model Twitter users }
 \description{This class is designed to represent a user on Twitter,
   modeling information available}
-\section{Objects from the Class}{
-  \code{new('user',
-    description = [character],
-    statusesCount = [numeric],
-    followersCount = [numeric],
-    favoritesCount = [numeric],
-    favoritesCount = [numeric],
-    friendsCount = [numeric],
-    url = [character],
-    name = [character],
-    created = [POSIXct],
-    protected = [logical],
-    verified = [logical],
-    screenName = [character],
-    location = [character],
-    id = [numeric],
-    lastStatus = [status], ...)}
-}
-\section{Slots}{
-	 \describe{
-    \item{\code{description}:}{Description of the user }
-    \item{\code{statusesCount}:}{Number of status messages the user has }
-    \item{\code{followersCount}:}{Number of followers the user has }
-    \item{\code{favoritesCount}:}{Number of favorites the user has }
-    \item{\code{friendsCount}:}{The number of friends the user has }
-    \item{\code{url}:}{URL associated with the user }
-    \item{\code{name}:}{The user's name }
-    \item{\code{created}:}{When the user was created }
-    \item{\code{protected}:}{Is the user protected? }
-    \item{\code{verified}:}{Is the user verified? }
-    \item{\code{screenName}:}{Screen name of the user }
-    \item{\code{location}:}{Location of the user }
-    \item{\code{id}:}{ID of the user }
-    \item{\code{lastStatus}:}{A \code{"status"} object displaying the
-      last status the user has posted }
-  }
-}
-\section{Methods}{
+\section{Fields}{
   \describe{
-    \item{screenName}{Returns the screen name of the user }
-    \item{show}{Displays basic information about the user }
-    \item{description}{Returns the user's description}
-    \item{statusesCount}{Returns the number of tweets for the user}
-    \item{followersCount}{Returns the number of followers the user has }
-    \item{friendsCount}{Returns the number of friends for the user}
-    \item{userURL}{Retrieves the URL associated with the user}
-    \item{name}{Retrieves the user's name}
-    \item{created}{Returns the creation time of the user}
-    \item{protected}{Returns the protection status of the user's
-      timeline}
-    \item{verified}{Returns the verified status of the user}
-    \item{location}{Returns the location of the user}
-    \item{id}{Returns the user's ID}
-    \item{lastStatus}{Returns the last tweet the user posted}
+    \item{\code{name}:}{Name of the user}
+    \item{\code{screenName}:}{Screen name of the user}
+    \item{\code{id}:}{ID value for this user}
+    \item{\code{lastStatus}:}{Last status update for the user}
+    \item{\code{description}:}{User's description}
+    \item{\code{statusesCount}:}{Number of status updates this user has
+      had}
+    \item{\code{followersCount}:}{Number of followers for this user}
+    \item{\code{favoritesCount}:}{Number of favorites for this user}
+    \item{\code{friendsCount}:}{Number of followees for this user}
+    \item{\code{url}:}{A URL associated with this user}
+    \item{\code{created}:}{When this user was created}
+    \item{\code{protected}:}{Whether or not this user is protected}
+    \item{\code{verified}:}{Whether or not this user is verified}
+    \item{\code{location}:}{Location of the user}
   }
+}
+\details{
+  The \code{user} class is implemented as a reference class.  This class
+  was previously implemented as an S4 class, and for backward
+  compatibility purposes the old S4 accessor methods have been left in,
+  although new code should not be written with these.  An instance of a
+  generator for this class is provided as a convenience to the user as
+  it is configured to handle most standard cases.  To access this
+  generator, user the object \code{userFactory}.  Accessor set & get
+  methods are provided for every field using reference class
+  \code{$accessors()} methodology (see \code{\link{setRefClass}} for
+  more details).  As an example, the \code{screenName} field could be
+  accessed using \code{object$getScreenName} and
+  \code{object$setScreenName}.
+
+  The constructor of this object assumes that the user is passing in a
+  JSON encoded Twitter user.  It is also possible to directly pass in
+  the arguments.
 }
 \author{Jeff Gentry}
+\seealso{\code{\link{status}}, \code{\link{setRefClass}}}
+\examples{
+   ## This example is run, but likely not how you want to do things
+   us <- userFactory$new(screenName="test", name="Joe Smith")
+   us$getScreenName()
+   us$getName()
+
+   \dontrun{
+     ## Assume 'json' is the return from a Twitter call
+     us <- userFactory$new(json)
+     us$getScreenName()
+   }
+}
 \keyword{classes}
