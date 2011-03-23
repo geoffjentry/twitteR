@@ -17,11 +17,11 @@ searchTwitter <- function(searchString, n=25, lang=NULL, since=NULL, ...) {
     pageStr <- paste("?rpp=", batchSize,
                      "&page=1&q=",
                      qrySearch, sep='')
-    if (! is.null(lang)) {
-      pageStr <- paste(pageStr, '&lang=', lang, sep='')
-    }
-    if (! is.null(since)) {
-      pageStr <- paste(pageStr, '&since=', since, sep='')
+
+    for (arg in c('lang', 'locale', 'since', 'until', 'geocode')) {
+      val <- get(arg)
+      if (!is.null(val))
+        pageStr <- paste(pageStr, '&', arg, '=', val, sep='')
     }
 
     curDiff <- n

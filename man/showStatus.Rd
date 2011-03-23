@@ -7,7 +7,7 @@ A function to return one specific tweet
 This function will take a numeric ID of a tweet and return it to the user
 }
 \usage{
-showStatus(id, session = getCurlHandle(), ...)
+showStatus(id, ...)
 }
 \arguments{
   \item{id}{

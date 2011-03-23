@@ -3,55 +3,20 @@
 \docType{class}
 \alias{directMessage-class}
 \alias{directMessage}
+\alias{dmFactory}
 \alias{show,directMessage-method}
-\alias{created,directMessage-method}
-\alias{text,directMessage-method}
-\alias{recipientSN,directMessage-method}
-\alias{recipientSN}
-\alias{sender,directMessage-method}
-\alias{sender}
-\alias{recipient,directMessage-method}
-\alias{recipient}
-\alias{recipientID,directMessage-method}
-\alias{recipientID}
-\alias{senderID,directMessage-method}
-\alias{senderID}
-\alias{id,directMessage-method}
-\alias{senderSN,directMessage-method}
-\alias{senderSN}
-\alias{buildDM}
-\title{Class "directMessage" }
+\title{Class "directMessage":  A class to represent Twitter Direct Messages }
 \description{ Provides a model representing direct messages (DMs) from Twitter}
-\section{Objects from the Class}{
-  \code{new('directMessage',
-    text = [character],
-    recipientSN = [character],
-    created = [character],
-    recipientID = [numeric],
-    sender = [user],
-    recipient = [user],
-    senderID = [numeric],
-    id = [numeric],
-    senderSN = [character],
-    ...)
-  }
-
-  \code{directMessage} instances are usually created through calls to
-  the \code{\link{dmGet}} function.
-}
-\section{Slots}{
-	 \describe{
-    \item{\code{text}:}{The text of the direct message}
-    \item{\code{recipientSN}:}{Screen name of the recipient }
-    \item{\code{created}:}{When this message was created }
-    \item{\code{recipientID}:}{ID of the recipient }
-    \item{\code{sender}:}{An object of class \code{user} representing
-      the sender }
-    \item{\code{recipient}:}{And object of class \code{user}
-      representing the recipient }
-    \item{\code{senderID}:}{The ID of the sender }
-    \item{\code{id}:}{Internal ID of this message }
-    \item{\code{senderSN}:}{Screen name of teh sender }
+\section{Fields}{
+  \describe{
+     \item{\code{text}:}{Text of the DM}
+     \item{\code{recipient}:}{A \code{user} object representing the recipient of the message}
+     \item{\code{recipientSN}:}{Screen name of the recipient}
+     \item{\code{recipientID}:}{ID number of the recipient}
+     \item{\code{sender}:}{A \code{user} object representing the sender of the message}
+     \item{\code{senderSN}:}{Screen name of the sender}
+     \item{\code{senderID}:}{ID number of the sender}
+     \item{\code{created}:}{When the messages was created}
   }
 }
 \section{Methods}{
@@ -61,15 +26,37 @@
     \item{recipientSN}{Retrieves the screen name of the recipient}
     \item{created}{Retrieves the creation date}
     \item{recipientID}{Retrieves the ID of the recipient}
-    \item{sender}{Retrieves the sender (of class \code{\link{user}})
-      of the DM}
-    \item{recipient}{Retrieves the recipient (of class
-      \code{\link{user}}) of the DM}
+    \item{sender}{Retrieves the sender (of class \code{\link{user}}) of the DM}
+    \item{recipient}{Retrieves the recipient (of class \code{\link{user}}) of the DM}
     \item{senderID}{Retrives the ID of the DM sender}
     \item{id}{Retrieves the ID of the DM}
     \item{senderSN}{Retrieves the screen name of the sender}
   }
 }
+\details{
+  The \code{directMessage} class is implemented as a reference class.  As there should
+  be no backwards compatibility issues, there are no S4 methods provided as with the \code{user}
+  and \code{status} classes.  An instance of a generator for this class is provided as a
+  convenience to the user as it is configured to handle most standard cases.  To access
+  this generator, use the object \code{dmFactory}.  Accessor set & get methods are provided
+  for every field using reference class \code{$accessors()} methodology (see \code{\link{setRefClass}}
+  for more details).  As an example, the \code{sender} field could be accessed using
+  \code{object$getSender()} and \code{object$setSender()}.
+
+  The constructor of this object assumes that the user is passing in a JSON encoded Twitter
+  Direct Message.  It is also possible to directly pass in the arguments.
+}
 \author{ Jeff Gentry }
-\seealso{\code{\link{dmGet}}}
+\seealso{\code{\link{dmGet}}, \code{\link{dmSend}}, \code{\link{dmDestroy}}, \code{\link{setRefClass}}}
+\examples{
+  ## This example is run, but likely not how you want to do things
+  dm <- dmFactory$new(text='foo', recipientSN='blah')
+  dm$getText()
+  
+  \dontrun{
+    ## assume 'json' is the return from a Twitter call
+    dm <- dmFactory$new(json)
+    dm$getSenderID()
+  }
+}
 \keyword{classes}

@@ -7,7 +7,7 @@
   the Twitter universe
 }
 \usage{
-publicTimeline(session=getCurlHandle(), ...)
+publicTimeline(...)
 userTimeline(user, n=20, ...)
 }
 \arguments{
@@ -19,14 +19,14 @@ userTimeline(user, n=20, ...)
 \details{
   The \code{userTimeline} function will only work if the user requested
   has a public timeline, or you have previously registered a
-  \code{\link{OAuth}} object using \code{\link{registerOAuth}} and are
+  \code{\link{OAuth}} object using \code{\link{registerTwitterOAuth}} and are
   authorized to view that content.
 }
 \value{
   A list of \code{\link{status}} objects
 }
 \author{ Jeff Gentry }
-\seealso{ \code{\link{getUser}}, \code{\link{status}}}
+\seealso{ \code{\link{getUser}}, \code{\link{status}}, \code{\link{registerTwitterOAuth}}}
 \examples{
         pt <- publicTimeline()
         pt
