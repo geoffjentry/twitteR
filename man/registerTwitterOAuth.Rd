@@ -11,7 +11,7 @@
 registerTwitterOAuth(oauth)
 }
 \arguments{
-  \item{oauth}{An object of class \code{\link{OAuth}}}
+  \item{oauth}{An object of class \code{OAuth}}
 }
 \details{
   This function will store the \code{OAuth} argument in an environment
@@ -26,7 +26,7 @@ registerTwitterOAuth(oauth)
   \code{TRUE} on success, otherwise an error will be thrown
 }
 \author{Jeff Gentry}
-\seealso{ \code{\link{OAuth}} }
+\seealso{ \code{OAuth} }
 \examples{
     ## Note that exampleOauth isn't a valid Twitter credential, but
     ## is a valid OAuth credential

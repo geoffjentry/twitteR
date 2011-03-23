@@ -4,6 +4,7 @@ Description: Provides an interface to the Twitter web API
 Version: 0.99.0
 Author: Jeff Gentry <geoffjentry@gmail.com>
 Maintainer: Jeff Gentry <geoffjentry@gmail.com>
-Depends: RCurl, RJSONIO, ROAuth, methods
+Depends: RCurl, RJSONIO, methods
+Suggests: ROAuth
 License: Artistic-2.0
 LazyData: yes

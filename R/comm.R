@@ -1,6 +1,8 @@
 oauthCache <- new.env(hash=TRUE)
 
 registerTwitterOAuth <- function(oauth) {
+  require("ROAuth") || stop("ROAuth must be installed for ",
+                            "OAuth functionality")
   if (!inherits(oauth, "OAuth"))
     stop("oauth argument must be of class OAuth")
   if (! oauth$getHandshakeComplete())
