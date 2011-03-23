@@ -2,6 +2,7 @@
 %\VignetteIndexEntry{Twitter client for R}
 %\VignettePackage{twitteR}
 %\VignetteKeywords{Documentation}
+\usepackage{url}
 \newcommand{\Rfunction}[1]{{\texttt{#1}}}
 \newcommand{\Robject}[1]{{\texttt{#1}}}
 \newcommand{\Rpackage}[1]{{\textit{#1}}}
@@ -14,20 +15,6 @@
 \title{Twitter client for R}
 \author{Jeff Gentry}
 \maketitle
-
-\section{IMPORTANT NOTICE REGARDING OAUTH}
-
-The old Twitter authentication mechanism is being removed in August
-2010 in favor of OAuth.  As of this writing there is not an OAuth
-solution for R, so unless someone (or myself) writes such a beast you
-will not be able to access any authenticated aspects of Twitter.  Many
-functions that you might be familiar with using will no longer work
-properly, if at all.  These have been set to be defunct.
-
-Also note that it is not simply a matter of having an OAuth interface,
-but also that Twitter's usage of OAuth is very tied to having stable
-applications as opposed to scripts being written.  There are currently
-various potential workarounds for this that I'm looking into.
 
 \section{Disclaimer}
 
@@ -44,33 +31,61 @@ Twitter is a popular service that allows users to broadcast short
 messages ('\emph{tweets}') for others to read.  These can be used to
 communicate wtih friends, to display headlines, for restaurants to
 list daily specials, and more.  The \Rpackage{twitteR} package is
-intended to provide access to the
-Twitter API within R.  Users can make access large amounts of Twitter
-data for data mining and other tasks.  As of this writing, posting tweets,
-direct messaging and many other tasks are not supported due to lack of
-authentication options.
+intended to provide access to the Twitter API within R.  Users can make 
+access large amounts of Twitter  data for data mining and other tasks.  
+As of this writing, posting tweets, direct messaging and many other tasks 
+are not supported due to lack of authentication options.
+
+\section{Initial Notes}
+
+\subsection{Notes for this version}
+
+Major portions of this package have been rewritten from the previous
+version.  In the process I've tried to maintain backwards compatibility
+where it makes sense, although some function signatures have changed.
+As the dust settles and I get a better sense for how things play together,
+I will make another pass at moving things in the direction that I would
+like the to be, if this leads to functions going away there will be a 
+deprecation cycle.  Please contact me with any feedback that you might have.
+
+\subsection{Notes on API coverage}
+
+The ultimate goal is to provide full coverage of the Twitter API, although
+this is not currently the case.  Aspects of the API will be added over
+time, although if there are particular places that you find missing,
+please contact me.
+
+\subsection{Notes on the classes}
+
+There are three classes in this package: \Robject{user}, \Robject{status},
+and \Robject{directMessage}.  As of this version they have all been
+implemented as reference classes (see \Rfunction{setRefClass}).  The
+first two were previously implemented as S4 classes.  To help maintain
+backwards compatibility, the S4 methods (all accessors) have been left
+in for those two classes although new code should be using the new style
+accessors.
 
 \section{Getting Started}
 
-As of this writing, the following functionality is supported:
-Searching Twitter, scanning the public timeline, looking at the
-timeline of a specific user and looking at the followers and followees
-of a specific user.  Due to the lack of authentication, protected
-accounts and tweets will not be visible to the \Rpackage{twitteR} package.
+We'll focus first on those sections of the package that do not require
+\Robject{ROAuth} authentication.  The rest of this document won't be
+an encyclopedic report on the functionality of the package but will just
+show some basic techniques.
 
 <<initialize>>=
 library(twitteR)
 @
 
-\section{Time to talk about timelines}
+\section{Exploring Twitter}
 
 A Twitter \emph{timeline} is simply a stream of tweets - this might be
 the \emph{public timeline} which is comprised of all public tweets, it
 might be a user's timeline which would be all of their tweets, or it
-might even be a timeline to look at one's friend's tweets.  Just as there are various \emph{timelines} in Twitter, the
-\Rpackage{twitteR} package provides various interfaces to access
-them.  The first and most obvious would be the \emph{public timeline},
-which retrieves the 20 most recent public tweets on Twitter.
+might even be a timeline to look at one's friend's tweets.  Just as there 
+are various \emph{timelines} in Twitter, the \Rpackage{twitteR} package 
+provides various interfaces to access them.  The first and most obvious 
+would be the \emph{public timeline}, which retrieves the 20 most 
+recent public tweets on Twitter.
 
 <<publicTimeline>>=
    publicTweets <- publicTimeline()
@@ -79,7 +94,8 @@ which retrieves the 20 most recent public tweets on Twitter.
 @
 
 Similarly, we can look at a particular user's timeline.   This will
-only work properly if that user has a public account, and can take
+only work properly if that user has a public account or you are 
+authenticated and have access to that account, and can take
 either a user's name or an object of class \Rclass{user} (more on this
 later).  For this example, let's use the user \emph{cranatic}.
 
@@ -88,12 +104,12 @@ later).  For this example, let's use the user \emph{cranatic}.
    cranTweets[1:5]
 @
 
-By default this command returns the 20 most recent tweets, as is
-common with all of these functions.  As with most (but not all) of the
-functions, it also provides a mechanism to retrieve an arbitrarily
-large number of tweets (warning:  At least as of now there is no
-protection from overloading the API rate limit so be reasonable with
-your requests).
+By default this command returns the 20 most recent tweet.  
+As with most (but not all) of the functions, it also provides a mechanism 
+to retrieve an arbitrarily large number of tweets up to limits set by
+the Twitter API, which vary based on the specific type of request.
+(warning:  At least as of now there is no protection from overloading the 
+API rate limit so be reasonable with your requests).
 
 <<<userTimeline2>>=
    cranTweetsLarge <- userTimeline('cranatic', n=100)
@@ -109,27 +125,17 @@ basic boolean logic such as AND and OR.  The \Rfunarg{n} argument
 can be used to specify the number of tweets to return, defaulting to 25.
 
 <<search>>=
-   sea <- searchTwitter('#twitter', num=50)
+   sea <- searchTwitter('#twitter', n=50)
    sea[1:5]
 @
 
-\subsection{Seeing what other R folks are up to}
 
-The \Rfunction{Rtweets} function will retrieve the 25 most recent
-tweets that carry the \emph{rstats} hash tag, which is commonly used
-by members of the \emph{R} community.  As with other functions, the
-number of returned tweets can be modified.
-
-<<Rtweets>>=
-   rt <- Rtweets(n=50)
-   rt[1:5]
-@
-
-\section{Looking at users}
+\subsection{Looking at users}
 
 To take a closer look at a Twitter user (including yourself!), run the
 command \Rfunction{getUser}.  This will only work correctly with users
-who have their profiles public.
+who have their profiles public, or if you're authenticated and granted
+access.
 
 <<getUser>>=
    crantastic <- getUser('crantastic')
@@ -137,7 +143,8 @@ who have their profiles public.
 @
 
 Furthermore, we can look at this user's friends, as well as those
-following them (same disclaimer regarding public profiles applies here):
+following them (same disclaimer regarding public profiles and 
+authentication applies here):
 
 <<friendsFollowers>>=
    friends <- userFriends('crantastic')
@@ -147,53 +154,68 @@ following them (same disclaimer regarding public profiles applies here):
    followers[1:5]
 @
 
-\subsection{The user class}
+\subsection{A simple example}
 
-In both of the above cases, the argument can be a string noting the
-user's screen name, or a \Rclass{user} object.  Let's look more
-closely at the \Rclass{user} class to see what is available within it.
+Just a quick example of how one can interact with actual data.  Here we 
+will pull the most recent results from the public timeline and see the
+clients that were used to post those statuses.  We can look at a pie chart
+to get a sense for the most common clients.
 
-The following is a look at the collection of available get methods for
-the \Rclass{user} class:
+Note that sources which are not the standard web interface will be
+presented as an anchored URL string (<A>...</A>).  There are more 
+efficient means to rip out the anchor string than how it is done 
+below, but this is a bit more robust for the purposes of this vignette
+due to issues with character encoding, locales, etc.
 
-<<userClass>>=
-  curUser <- friends[[1]]
-  ## Get basic information about the user
-  screenName(curUser)
-  description(curUser)
-  ## See the various counts
-  tweetCount(curUser)
-  followersCount(curUser)
-  favoritesCount(curUser)
-  friendsCount(curUser)
-  ## Various other options
-  name(curUser)
-  protected(curUser)
-  verified(curUser)
-  location(curUser)
-  id(curUser)
-  lastStatus(curUser)
-@
+<<seeSources,fig=TRUE>>=
+   sources <- sapply(publicTweets, function(x) x$getStatusSource())
+   sources <- gsub("</a>", "", sources)
+   sources <- strsplit(sources, ">")
+   sources <- sapply(sources, function(x) ifelse(length(x) > 1, x[2], x[1]))
+   pie(table(sources))
+@ 
 
+\section{Authentication with OAuth}
 
-\section{Dissecting a tweet}
+OAuth is an authentication mechanism gaining popularity which allows
+applications to provide client functionality to a web service without
+granting an end user's credentials to the client itself.  This causes
+a few wrinkles for cases like ours, where we're accessing Twitter 
+programatically.  The \Rpackage{ROAuth} package can be used to get around
+this issue.
 
-The \Rclass{status} class has the following methods defined:
+The first step is to create a Twitter application for yourself.  Go to
+\url{https://twitter.com/apps/new}.  Set the ``Application Type'' as
+``Client'', and ``Default Access Type'' as ``Read \& Write''.  This will
+provide you with two strings, a consumer key and a consumer secret.  Record 
+these for your future use.
 
+Three other pieces of information you will need:
 \begin{itemize}
-\item \em{text}: Retrieves the text of the tweet
-\item \em{screenName}: Screen name of the sender
-\item \em{id}: Retrieves the ID of the tweet
-\item \em{created}: Retrieves the date the tweet was created, in POSIX
-  date format
-\item \em{replyToSN}: If this is a reply, the screen name for the reply
-\item \em{replyToSID}: If this is a reply, the message this is in
-  reply to
-\item \em{replyToUID}: If this is a reply, the user this is in reply to
-\item \em{favorited}: If this reply is favorited
-\item \em{statusSource}: Source of the tweet
+\item \em{requestURL}: \url{https://api.twitter.com/oauth/request_token}
+\item \em{accessURL}: \url{http://api.twitter.com/oauth/access_token}
+\item \em{authURL}: \url{http://api.twitter.com/oauth/authorize}
 \end{itemize}
 
+In your R session, you'll want to do the following:
+
+<<ROAuth,eval=FALSE>>=
+   cred <- OAuthFactory$new(consumerKey=YOURKEY,
+                            consumerSecret=YOURSECRET,
+                            requestURL=requestURL,
+                            accessURL=accessURL,
+                            authURL=authURL)
+   cred$handshake()
+@ 
+
+At this point, you'll be prompted with another URL, go to that URL with 
+your browser and you'll be asked to approve the connection for this 
+application.  Once you do this, you'll be presented with a PIN, enter 
+that into your R session.  Your object is now verified.  
+
+The \Robject{OAuth} object, once the handshake is complete, can be saved
+to a file and reused.  You should not ever have to redo the handshake
+unless you remove authorization within the Twitter website.
 
 \section{Session Information}
 

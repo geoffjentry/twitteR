@@ -32,7 +32,7 @@ doAPICall <- function(url, method="GET", ...) {
      ## FIXME:  The OAuthRequest doesn't handle and ... options,
      ##   but not sure how to work that
      if (inherits(oauth, 'try-error'))
-       out <- getURL(url, ...)
+       out <- getURL(URLencode(url), ...)
      else
        out <- oauth$OAuthRequest(url, method, ...)
      if (length(grep('html', out)) == 0) {
