@@ -16,7 +16,7 @@ hasOAuth <- function() {
 }
 
 getOAuth <- function() {
-  if (!hasOAuth)
+  if (!hasOAuth())
     stop("OAuth has not been registered for this session")
   get("oauth", envir=oauthCache)
 }
