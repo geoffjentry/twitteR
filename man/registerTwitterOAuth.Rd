@@ -1,6 +1,5 @@
 \name{registerTwitterOAuth}
 \alias{registerTwitterOAuth}
-\alias{exampleOauth}
 \title{ Register OAuth credentials to twitter R session }
 \description{
   This function is used to provide your OAuth access tokens to
@@ -28,17 +27,14 @@ registerTwitterOAuth(oauth)
 \author{Jeff Gentry}
 \seealso{ \code{OAuth} }
 \examples{
-    ## Note that exampleOauth isn't a valid Twitter credential, but
-    ## is a valid OAuth credential
-    data(exampleOauth)
-    registerTwitterOAuth(exampleOauth)
-
     \dontrun{
-       ## A real example, using a fictitious consumerkey and consumer
-       ## secret
+       ## A real example, but using a fictitious consumerkey and consumer
+       ## secret - you'll need to supply your own
        requestURL <- "https://api.twitter.com/oauth/request_token"
        accessURL = "http://api.twitter.com/oauth/access_token"
        authURL = "http://api.twitter.com/oauth/authorize"
+       consumerKey = "FAKEDATA"
+       consumerSecret = "FAKEDATA"
        twitCred <- OAuthFactory$new(consumerKey=consumerKey,
                                     consumerSecret=consumerSecret,
                                     requestURL=reqURL,
