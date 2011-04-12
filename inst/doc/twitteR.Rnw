@@ -33,8 +33,11 @@ communicate wtih friends, to display headlines, for restaurants to
 list daily specials, and more.  The \Rpackage{twitteR} package is
 intended to provide access to the Twitter API within R.  Users can make 
 access large amounts of Twitter  data for data mining and other tasks.  
-As of this writing, posting tweets, direct messaging and many other tasks 
-are not supported due to lack of authentication options.
+
+When joined with the \Rpackage{ROauth} package (not currently available 
+to Windows users), this package can be used to push the API further and
+directly interact by posting tweets, dealing with direct messages and
+enjoying enhanced API rate limitations.
 
 \section{Initial Notes}
 
