@@ -15,7 +15,7 @@ setRefClass("status",
               initialize = function(json, ...) {
                 if (!missing(json)) {
                   if ('user' %in% names(json)) {
-                    userObj <<- userFactory$new(json[['user']])
+                    userObj <- userFactory$new(json[['user']])
                     screenName <<- userObj$getScreenName()
                   } else if ('from_user' %in% names(json)) {
                     screenName <<- json[['from_user']]

@@ -4,7 +4,7 @@ Rtweets <- function(n=25, lang=NULL, since=NULL, ...) {
 
 searchTwitter <- function(searchString, n=25, lang=NULL,
                           since=NULL, until=NULL, locale=NULL,
-                          geocode=NULL, ...) {
+                          geocode=NULL, sinceID=NULL, ...) {
     ## A basic search function.  Only implements a search on a string
     ## and will return n results
     if (n <= 0)
@@ -25,7 +25,10 @@ searchTwitter <- function(searchString, n=25, lang=NULL,
       if (!is.null(val))
         pageStr <- paste(pageStr, '&', arg, '=', val, sep='')
     }
-
+    ## do sinceID separately as formatting is different
+    if (!is.null(sinceID))
+      pageStr <- paste(pageStr, '&since_id=', sinceID, sep='')
+    
     curDiff <- n
     while (curDiff > 0) {
         url <- paste("http://search.twitter.com/search.json",

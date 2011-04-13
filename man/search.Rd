@@ -8,7 +8,7 @@
 }
 \usage{
 searchTwitter(searchString, n=25, lang=NULL, since=NULL, until=NULL,
-              locale=NULL, geocode=NULL, ...)
+              locale=NULL, geocode=NULL, sinceID=NULL, ...)
 Rtweets(n=25, lang=NULL, since=NULL, ...)
 }
 \arguments{
@@ -24,7 +24,9 @@ Rtweets(n=25, lang=NULL, since=NULL, ...)
     As of 03/06/11 only \code{ja} is effective, as per the Twitter API}
   \item{geocode}{If not \code{NULL}, returns tweets by users located
     within a given radius of the given latitude/longitude. See
-    \code{Details} below for more information} 
+    \code{Details} below for more information}
+  \item{sinceID}{If not \code{NULL}, returns tweets with IDs greater
+    (ie newer) than the specified ID}  
   \item{...}{Optional arguments to be passed to \code{\link{getURL}}}
 }
 \details{
@@ -41,6 +43,10 @@ Rtweets(n=25, lang=NULL, since=NULL, ...)
   \code{mi} (miles) or \code{km} (kilometers) as a unit.  For example
   \code{geocode='37.781157,-122.39720,1mi'}. 
 
+  For the \code{sinceID} argument, if the requested ID value is older
+  than the oldest available tweets, the API will return tweets starting
+  from the oldest ID available.
+  
   The \code{Rtweets} function is a wrapper around \code{searchTwitter}
   which hardcodes in a search for \code{#rstats}.
 }
