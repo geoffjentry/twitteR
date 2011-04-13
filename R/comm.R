@@ -1,5 +1,3 @@
-oauthCache <- new.env(hash=TRUE)
-
 registerTwitterOAuth <- function(oauth) {
   require("ROAuth") || stop("ROAuth must be installed for ",
                             "OAuth functionality")
@@ -22,27 +20,37 @@ getOAuth <- function() {
 }
 
 doAPICall <- function(url, method="GET", ...) {
-  ## will perform an API call and process the JSON.  In case of failure on 
-  ## the latter step, will check to see if HTML was returned (as happens
-  ## in some error cases) and if so will attempt up to 3 more times before
-  ## returning with an error.  Most twitter HTML errors are very transient in
-  ## nature, so this should solve most ills
-   
-   count <- 1
-   while (count < 4) {
-     oauth <- try(get("oauth", envir=oauthCache), silent=TRUE)
-     ## FIXME:  The OAuthRequest doesn't handle and ... options,
-     ##   but not sure how to work that
-     if (inherits(oauth, 'try-error'))
-       out <- getURL(URLencode(url), ...)
-     else
-       out <- oauth$OAuthRequest(url, method, ...)
-     if (length(grep('html', out)) == 0) {
-       break
-     }
-     count <- count + 1
-   }     
-   twFromJSON(out)
+  ## will perform an API call and process the JSON.  For GET calls,
+  ## try to detect errors and if so attempt up to 3 more times before
+  ## returning with an error.  Many twitter HTML errors are very
+  ## transient in nature and if it's a real error there's little harm
+  ## in repeating the call.  Don't do this on POST calls in case we
+  ## incorrectly detect an error, to avoid pushing the request multiple
+  ## times.
+  if (hasOAuth()) {
+    APIFunc <- function(url, method, ...) {
+      oauth <- getOAuth()
+      oauth$OAuthRequest(url, method, ...)
+    }
+  } else {
+    APIFunc <- function(url, method, ...) {
+      getURL(URLencode(url), ...)
+    }
+  }
+  
+  if (method == "POST") {
+    out <- APIFunc(url, method, ...)
+  } else {
+    count <- 1
+    while (count < 4) {
+      out <- APIFunc(url, method, ...)
+      if (length(grep('html', out)) == 0) {
+        break
+      }
+      count <- count + 1
+    }
+  }
+  twFromJSON(out)
 }
 
 twFromJSON <- function(json) {
