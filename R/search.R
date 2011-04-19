@@ -44,9 +44,9 @@ searchTwitter <- function(searchString, n=25, lang=NULL,
                 if (curDiff < 100) {
                     ## We don't want to get a full 100 results, replace
                     ## what twitter tells us with our curDiff
-                    pageStr <- sub("rpp=[[:alnum:]]+",
-                                   paste("rpp", curDiff, sep="="),
-                                   pageStr)
+                    pageStr <- URLdecode(sub("rpp=[[:alnum:]]+",
+                                             paste("rpp", curDiff, sep="="),
+                                             pageStr))
                 }
 
             } else {
