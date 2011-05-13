@@ -40,13 +40,13 @@ searchTwitter <- function(searchString, n=25, lang=NULL,
         curDiff <- n - length(jsonList)
         if (curDiff > 0) {
             if ("next_page" %in% names(fromJSON)) {
-                pageStr <- fromJSON$"next_page"
+                pageStr <- URLdecode(fromJSON$"next_page")
                 if (curDiff < 100) {
                     ## We don't want to get a full 100 results, replace
                     ## what twitter tells us with our curDiff
-                    pageStr <- URLdecode(sub("rpp=[[:alnum:]]+",
+                    pageStr <- sub("rpp=[[:alnum:]]+",
                                              paste("rpp", curDiff, sep="="),
-                                             pageStr))
+                                   pageStr)
                 }
 
             } else {
