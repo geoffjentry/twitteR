@@ -19,39 +19,72 @@ getOAuth <- function() {
   get("oauth", envir=oauthCache)
 }
 
-doAPICall <- function(url, method="GET", ...) {
-  ## will perform an API call and process the JSON.  For GET calls,
-  ## try to detect errors and if so attempt up to 3 more times before
-  ## returning with an error.  Many twitter HTML errors are very
-  ## transient in nature and if it's a real error there's little harm
-  ## in repeating the call.  Don't do this on POST calls in case we
-  ## incorrectly detect an error, to avoid pushing the request multiple
-  ## times.
-  if (hasOAuth()) {
-    APIFunc <- function(url, method, ...) {
-      oauth <- getOAuth()
-      oauth$OAuthRequest(url, method, ...)
-    }
-  } else {
-    APIFunc <- function(url, method, ...) {
-      getURL(URLencode(url), ...)
-    }
-  }
-  
-  if (method == "POST") {
-    out <- APIFunc(url, method, ...)
-  } else {
-    count <- 1
-    while (count < 4) {
-      out <- APIFunc(url, method, ...)
-      if (length(grep('html', out)) == 0) {
-        break
-      }
-      count <- count + 1
-    }
-  }
-  twFromJSON(out)
-}
+
+
+setRefClass('twInterface',
+            methods = list(
+              doAPICall = function(cmd, params=NULL, method="GET", ...) {
+                ## will perform an API call and process the JSON.  For GET calls,
+                ## try to detect errors and if so attempt up to 3 more times before
+                ## returning with an error.  Many twitter HTML errors are very
+                ## transient in nature and if it's a real error there's little harm
+                ## in repeating the call.  Don't do this on POST calls in case we
+                ## incorrectly detect an error, to avoid pushing the request multiple
+                ## times.
+                if (hasOAuth()) {
+                  APIFunc <- function(url, method, ...) {
+                    oauth <- getOAuth()
+                    oauth$OAuthRequest(url, params, method, ...)
+                  }
+                } else {
+                  APIFunc <- function(url, params, method, ...) {
+                    if (!is.null(params)) {
+                      paramStr <- paste(paste(names(params), params, sep='='),
+                                        collapse='&')
+                      url <- paste(url, paramStr, sep='?')
+                    }
+                    getURL(URLencode(url), ...)
+                  }
+                }
+                url <- getAPIStr(cmd)
+
+                if (method == "POST") {
+                  out <- APIFunc(url, method, ...)
+                } else {
+                  count <- 1
+                  while (count < 4) {
+                    out <- APIFunc(url, method, ...)
+                    if (length(grep('html', out)) == 0) {
+                      break
+                    }
+                    count <- count + 1
+                  }
+                }
+                twFromJSON(out)
+              },
+              doPagedAPICall = function(cmd, num, params=NULL, method='GET', ...) {
+                page <- 1
+                total <- num
+                count <- ifelse(num < 200, num, 200)
+                jsonList <- list()
+                params[['count']] <- count
+                while (total > 0) {
+                  params[['page']] <- page
+                  jsonList <- c(jsonList, .self$doAPICall(cmd, params, method, ...))
+                  total <- total - count
+                  page <- page + 1
+                }
+                jLen <- length(jsonList)
+                if ((jLen > 0) && (jLen > n))
+                  jsonList <- jsonList[1:num]
+                jsonList
+              }
+              )
+            )
+
+twInterfaceObj <- getRefClass('twInterface')$new()
+
+
 
 twFromJSON <- function(json) {
     ## Will provide some basic error checking, as well as suppress
@@ -84,7 +117,7 @@ twitterDateToPOSIX <- function(dateStr) {
                         format="%a %b %d %H:%M:%S +0000 %Y")
   ## try again if necessary
   if (is.na(created))
-    created <- as.POSIXct(dateStr,tz='UTC',
+    created <- as.POSIXct(dateStr, tz='UTC',
                           format="%a, %d %b %Y %H:%M:%S +0000")
   ## might still be NA, but we tried
   created
