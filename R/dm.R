@@ -1,12 +1,12 @@
-dmGet <- function(n=25, sinceID=NULL, maxID=NULL) {
-  dmGETBase(n, sinceID, maxID, "direct_messages")
+dmGet <- function(n=25, sinceID=NULL, maxID=NULL, ...) {
+  dmGETBase(n, sinceID, maxID)
 }
 
-dmSent <- function(n=25, sinceID=NULL, maxID=NULL) {
-  dmGETBase(n, sinceID, maxID, "direct_messages/sent")
+dmSent <- function(n=25, sinceID=NULL, maxID=NULL, ...) {
+  dmGETBase(n, sinceID, maxID, "sent")
 }
 
-dmGETBase <- function(n, sinceID, maxID, type) {
+dmGETBase <- function(n, sinceID, maxID, type='', ...) {
   if (!hasOAuth())
     stop("dmGet requires OAuth authentication")
 
@@ -14,40 +14,26 @@ dmGETBase <- function(n, sinceID, maxID, type) {
     stop("n must be positive")
   else
     n <- as.integer(n)
-
-  if (! is.null(sinceID))
-    baseURL <- paste(baseURL, "&since_id=", sinceID, sep="")
-  if (! is.null(maxID))
-    baseURL <- paste(baseURL, "&max_id=", maxID, sep="")
-  page <- 1
-  total <- n
-  count <- ifelse(n < 200, n, 200)
-  jsonList <- list()
-  while (total > 0) {
-    url <- paste("http://api.twitter.com/1/", type,
-                 ".json?count=",
-                 count, '&page=', page, sep='')
-    jsonList <- c(jsonList, doAPICall(url))
-    total <- total - count
-    page <- page + 1
-  }
-  if ((length(jsonList) > 0) && (length(jsonList) > n))
-    jsonList <- jsonList[1:n]
+  params <- buildCommonArgs(since_id=sinceID, max_id=maxID)
+  jsonList <- twInterfaceObj$doPagedAPICall(paste('direct_messages/',
+                                                  type, sep=''),
+                                            num=n, params=params,
+                                       ...)
   sapply(jsonList, function(x) dmFactory$new(x))
 }
 
-dmDestroy <- function(dm) {
+dmDestroy <- function(dm, ...) {
   if (!hasOAuth())
     stop("dmDestroy requires OAuth authentication")
   if (!inherits(dm, "directMessage"))
     stop("dm must be of class directMessage")
-  url <- paste("http://api.twitter.com/1/direct_messages/destroy/",
-                 dm$getId(), ".json", sep="")
-  doAPICall(url, method="POST")
+  twInterfaceObj$doAPICall(paste('direct_messages/destroy',
+                                 dm$getId(), sep='/'),
+                           method='POST', ...)
   TRUE
 }
 
-dmSend <- function(text, user) {
+dmSend <- function(text, user, ...) {
   if (!hasOAuth())
     stop("dmSend requires OAuth authentication")
   if (inherits(user, "user"))
@@ -55,7 +41,12 @@ dmSend <- function(text, user) {
   if (nchar(text) > 140)
     stop("Maximum of 140 chars may be sent via a direct message")
 
-  url <- paste("http://api.twitter.com/1/direct_messages/new.json",
-                         "?text=", text, "&user=", user, sep='')
-  dmFactory$new(doAPICall(url, method="POST"))
+  params <- list(text=text)
+  if (is.numeric(user))
+    params[['user_id']] <- user
+  else
+    params[['screen_name']] <- user
+  res <- twInterfaceObj$doAPICall('direct_messages/new',
+                                  params=params, method='POST', ...)
+  dmFactory$new(res)
 }

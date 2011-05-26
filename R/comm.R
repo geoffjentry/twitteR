@@ -19,18 +19,16 @@ getOAuth <- function() {
   get("oauth", envir=oauthCache)
 }
 
-
-
 setRefClass('twInterface',
             methods = list(
               doAPICall = function(cmd, params=NULL, method="GET", ...) {
-                ## will perform an API call and process the JSON.  For GET calls,
-                ## try to detect errors and if so attempt up to 3 more times before
-                ## returning with an error.  Many twitter HTML errors are very
-                ## transient in nature and if it's a real error there's little harm
-                ## in repeating the call.  Don't do this on POST calls in case we
-                ## incorrectly detect an error, to avoid pushing the request multiple
-                ## times.
+                ## will perform an API call and process the JSON.  For GET
+                ## calls, try to detect errors and if so attempt up to 3
+                ## more times before returning with an error.  Many twitter
+                ## HTML errors are very transient in nature and if it's a
+                ## real error there's little harm in repeating the call.
+                ## Don't do this on POST calls in case we incorrectly detect
+                ## an error, to avoid pushing the request multiple times.
                 if (hasOAuth()) {
                   APIFunc <- function(url, method, ...) {
                     oauth <- getOAuth()
@@ -62,15 +60,23 @@ setRefClass('twInterface',
                 }
                 twFromJSON(out)
               },
-              doPagedAPICall = function(cmd, num, params=NULL, method='GET', ...) {
+              
+              doPagedAPICall = function(cmd, num, params=NULL,
+                method='GET', ...) {
+                if (num <= 0)
+                  stop('num must be positive')
+                else
+                  num <- as.integer(num)
+                
                 page <- 1
                 total <- num
-                count <- ifelse(num < 200, num, 200)
+                count <- ifelse(num < 100, num, 100)
                 jsonList <- list()
                 params[['count']] <- count
                 while (total > 0) {
                   params[['page']] <- page
-                  jsonList <- c(jsonList, .self$doAPICall(cmd, params, method, ...))
+                  jsonList <- c(jsonList,
+                                .self$doAPICall(cmd, params, method, ...))
                   total <- total - count
                   page <- page + 1
                 }
@@ -83,8 +89,6 @@ setRefClass('twInterface',
             )
 
 twInterfaceObj <- getRefClass('twInterface')$new()
-
-
 
 twFromJSON <- function(json) {
     ## Will provide some basic error checking, as well as suppress

@@ -13,7 +13,7 @@ Rtweets(n=25, lang=NULL, since=NULL, ...)
 }
 \arguments{
   \item{searchString}{Search query to issue to twitter}
-  \item{n}{The number of tweets to return}
+  \item{n}{The maximum number of tweets to return}
   \item{lang}{If not \code{NULL}, restricts tweets to the given
     language, given by an ISO 639-1 code} 
   \item{since}{If not \code{NULL}, restricts tweets to those since the

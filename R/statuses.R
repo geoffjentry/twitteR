@@ -10,7 +10,8 @@ updateStatus <- function(text, lat=NULL, long=NULL, placeID=NULL,
                             display_coordinates=displayCoords,
                             in_reply_to_status_id=inReplyTo)
   params[['status']] <- text
-  buildStatus(twInterfaceObj$doAPICall('statuses/update', params=params, method='POST', ...))
+  buildStatus(twInterfaceObj$doAPICall('statuses/update',
+                                       params=params, method='POST', ...))
 }
             
 tweet <- function(text, ...) {
@@ -70,7 +71,6 @@ authStatusBase <- function(n, type, maxID=NULL, sinceID=NULL, ...) {
   cmd <- paste('statuses', type, sep='/')
   statusBase(cmd, params, n, 800, ...)
 }
-
 
 statusBase <- function(cmd, params, n, maxN, ...) {
   n <- as.integer(n)
