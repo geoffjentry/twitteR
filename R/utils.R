@@ -6,7 +6,7 @@ buildCommonArgs <- function(lang=NULL, since=NULL, until=NULL, locale=NULL, geoc
                             since_id=NULL, max_id=NULL, lat=NULL, long=NULL,
                             place_id=NULL, display_coordinates=NULL, in_reply_to_status_id=NULL) {
   out <- list()
-  for (arg in names(formals)) {
+  for (arg in names(formals())) {
     val <- get(arg)
     if (length(val) > 0)
       out[[arg]] <- val
