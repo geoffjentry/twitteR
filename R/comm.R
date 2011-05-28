@@ -168,10 +168,10 @@ setRefClass('twSearchInterface',
                       if (curDiff < .self$maxResults)
                         ## If we no longer want max entities, only get curDiff
                         params[['rpp']] <- curDiff
-                    }
-                  } else {
+                    } else {
                     break
                   }
+                }
                 }
                 jsonList
               }

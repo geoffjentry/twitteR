@@ -9,21 +9,22 @@
   messages (DMs) in Twitter.
 }
 \usage{
-dmGet(n=25, sinceID=NULL, maxID=NULL)
-dmSent(n=25, sinceID=NULL, maxID=NULL)
-dmDestroy(dm)
-dmSend(text, user)
+dmGet(n=25, sinceID=NULL, maxID=NULL, ...)
+dmSent(n=25, sinceID=NULL, maxID=NULL, ...)
+dmDestroy(dm, ...)
+dmSend(text, user, ...)
 }
 \arguments{
   \item{text}{The text of a message to send}
   \item{user}{The user to send a message to, either \code{character} or
     an \code{\link{user}} object.}
   \item{dm}{The message to delete, an object of class \code{\link{directMessage}}}
-  \item{n}{ The number of direct messages to return }
+  \item{n}{ The maximum number of direct messages to return }
   \item{sinceID}{If not \code{NULL}, an ID representing the earliest
     boundary}
   \item{maxID}{If not \code{NULL}, an ID representing the newest ID you
     wish to retrieve}
+  \item{...}{Further arguments to pass along the communication chain}
 }
 \value{
   These functions will not work without \code{OAuth} authentication

@@ -145,18 +145,6 @@ access.
    crantastic
 @
 
-Furthermore, we can look at this user's friends, as well as those
-following them (same disclaimer regarding public profiles and 
-authentication applies here):
-
-<<friendsFollowers>>=
-   friends <- userFriends('crantastic')
-   friends[[1]]
-
-   followers <- userFollowers('crantastic')
-   followers[1:5]
-@
-
 \subsection{A simple example}
 
 Just a quick example of how one can interact with actual data.  Here we 

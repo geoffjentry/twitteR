@@ -15,16 +15,16 @@ lookupUsers <- function(users, ...) {
   users <- sapply(users, function(x) {
     if (inherits(x, 'user'))
       screenName(x)
+    else
+      x
   })
 
-  batches <- split(z, ceiling(seq_along(z) / 100))
-  results <- sapply(batches, function(batch, users) {
-    curUsers <- users[batch]
-    uids <- which(is.numeric(users))
-    params[['user_id']] <- paste(curUsers[uids], collapse=',')
-    params[['screen_name']] <- paste(curUsers[setdiff(curUsers,
-                                                      params[['user_id']])],
-                                     collapse=',')
+  batches <- split(users, ceiling(seq_along(users) / 100))
+  results <- lapply(batches, function(batch, users) {
+    uids <- which(!is.na(suppressWarnings(as.numeric(batch))))
+    userIDs <- batch[uids]
+    params <- list(user_id=paste(userIDs, collapse=','),
+                   screen_name=paste(batch[setdiff(batch, uids)], collapse=','))
     twInterfaceObj$doAPICall(paste('users', 'lookup', sep='/'),
                              params=params, ...)
   }, users)

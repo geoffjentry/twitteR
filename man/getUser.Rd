@@ -1,8 +1,6 @@
 \name{getUser}
 \alias{getUser}
-\alias{userFriends}
-\alias{userFollowers}
-\alias{statusesBase}
+\alias{lookupUsers}
 \title{ Functions to manage Twitter users }
 \description{
   These functions allow you interact with information about a Twitter
@@ -11,13 +9,12 @@
 }
 \usage{
 getUser(user, ...)
-userFriends(user, n=100, ...)
-userFollowers(user, n=100, ...)
+lookupUsers(users, ...)
 }
 \arguments{
   \item{user}{ The Twitter user to detail, can be \code{character} or
     an \code{\link{user}} object.}
-  \item{n}{ The maximum number of objects to retrieve }
+  \item{users}{A vector of either user IDs or screen names or a mix of both}
   \item{...}{Optional arguments to be passed to \code{\link{getURL}}}
 }
 \details{
@@ -26,24 +23,23 @@ userFollowers(user, n=100, ...)
   person has a private account and has not allowed you to see them, you
   will not be able to extract that information.
 
-  By twiddling the \code{n} parameter you can retrieve more than 100
-  objects, as available (setting it to 500 will still only retrieve 300
-  if 300 is all that matches the query).  Note that there are pagination
-  limits.
+  The \code{lookupUsers} function should be used in cases where there are
+  multiple lookups going to take place, to reduce the API call load.  This function
+  requires OAuth authentication.
 }
 \value{
   The \code{getUser} function returns an object of class
   \code{\link{user}}.
 
-  The functions \code{userFriends} and \code{userFollowers} return lists
-  of class \code{\link{user}} objects.
+  The \code{lookupUsers} function will return a list of \code{\link{user}} objects
 }
 \author{Jeff Gentry}
 \seealso{\code{\link{mentions}}}
 \examples{
       tuser <- getUser('geoffjentry')
-      tfriends <- userFriends(tuser)
-      tfollowers <- userFollowers(tuser)
-      ttimeline <- userTimeline(tuser)
+      \dontrun{
+        ## This requires OAuth authentication
+        users <- lookupUsers(c('geoffjentry', 'whitehouse'))
+      }
 }
 \keyword{ interface }

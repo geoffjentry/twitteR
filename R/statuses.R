@@ -44,6 +44,11 @@ userTimeline <- function(user, n=20, maxID=NULL, sinceID=NULL, ...) {
         user <- user$getScreenName()
     cmd <- 'statuses/user_timeline'
     params <- buildCommonArgs(max_id=maxID, since_id=sinceID)
+    numUser <- suppressWarnings(as.numeric(user))
+    if (is.na(numUser))
+      params[['screen_name']] <- user
+    else
+      params[['user_id']] <- numUser
     statusBase(cmd, params, n, 3200, ...)
 }
 

@@ -12,7 +12,7 @@
 \usage{
 tweet(text, ...)
 updateStatus(text, lat=NULL, long=NULL, placeID=NULL,
-             displayCoords=NULL, inReplyTo=NULL) 
+             displayCoords=NULL, inReplyTo=NULL, ...) 
 deleteStatus(status, ...)
 }
 \arguments{
