@@ -3,7 +3,7 @@ dmGet <- function(n=25, sinceID=NULL, maxID=NULL, ...) {
 }
 
 dmSent <- function(n=25, sinceID=NULL, maxID=NULL, ...) {
-  dmGETBase(n, sinceID, maxID, "sent")
+  dmGETBase(n, sinceID, maxID, "/sent")
 }
 
 dmGETBase <- function(n, sinceID, maxID, type='', ...) {
@@ -15,7 +15,7 @@ dmGETBase <- function(n, sinceID, maxID, type='', ...) {
   else
     n <- as.integer(n)
   params <- buildCommonArgs(since_id=sinceID, max_id=maxID)
-  jsonList <- twInterfaceObj$doPagedAPICall(paste('direct_messages/',
+  jsonList <- twInterfaceObj$doPagedAPICall(paste('direct_messages',
                                                   type, sep=''),
                                             num=n, params=params,
                                        ...)

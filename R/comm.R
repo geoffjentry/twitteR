@@ -26,7 +26,7 @@ setRefClass('twInterface',
               ),
             methods = list(
               initialize=function(...) {
-                .self$maxResults <- 100
+                maxResults <<- 100
                 callSuper(...)
                 .self
               },
@@ -125,7 +125,7 @@ setRefClass('twAPIInterface',
                   page <- page + 1
                 }
                 jLen <- length(jsonList)
-                if ((jLen > 0) && (jLen > n))
+                if ((jLen > 0) && (jLen > num))
                   jsonList <- jsonList[1:num]
                 jsonList
               }
