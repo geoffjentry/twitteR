@@ -107,14 +107,15 @@ setRefClass("user",
                   else {
                     created <<- twitterDateToPOSIX(json[['created_at']])
                   }
-                  if (is.null(json[['protected']]))
-                    protected <<- TRUE
-                  else
+                  if ((is.null(json[['protected']])) || (json[['protected']] == FALSE))
                     protected <<- FALSE
-                  if (is.null(json[['verified']]))
-                    verified <<- TRUE
                   else
+                    protected <<- TRUE
+
+                  if ((is.null(json[['verified']])) || (json[['verified']] == FALSE))
                     verified <<- FALSE
+                  else
+                    verified <<- TRUE
                   if (is.character(json[['screen_name']]))
                     screenName <<- json[['screen_name']]
                   if (!is.null(json[['id']]))
