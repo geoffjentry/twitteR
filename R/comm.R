@@ -134,6 +134,39 @@ setRefClass('twAPIInterface',
 
 twInterfaceObj <- getRefClass('twAPIInterface')$new()
 
+setRefClass('twCursorInterface',
+            contains='twInterface',
+            methods = list(
+              initialize = function(...) {
+                callSuper(...)
+                .self
+              },
+              doAPICall = function(cmd, type, num=NULL, params=NULL, method='GET', ...) {
+                url <- getAPIStr(cmd)
+                cursor <- -1
+                if (!is.null(num)) {
+                  if (num <= 0)
+                    stop("num must be positive")
+                  else
+                    num <- as.integer(num)
+                }
+                vals <- character()
+                while(cursor != 0) {
+                  params[['cursor']] <- cursor
+                  curResults <- callSuper(url, params, method, ...)
+                  vals <- c(vals, curResults[[type]])
+                  if ((!is.null(num)) && (length(vals) >= num))
+                    break
+                  cursor <- curResults[['next_cursor_str']]
+                }
+                if ((!is.null(num)) && (length(vals) > num))
+                  vals <- vals[1:num]
+                vals
+              }
+              )
+            )
+twCursorInterfaceObj <- getRefClass('twCursorInterface')$new()
+
 
 setRefClass('twSearchInterface',
             contains='twInterface',

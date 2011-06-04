@@ -2,7 +2,7 @@ getUser <- function(user, ...) {
     if (inherits(user, "user"))
         user <- screenName(user)
 
-    if (is.numeric(user))
+    if (!is.na(suppressWarnings(as.numeric(user))))
       params <- list(user_id=user)
     else
       params <- list(screen_name=user)
@@ -24,7 +24,7 @@ lookupUsers <- function(users, ...) {
     uids <- which(!is.na(suppressWarnings(as.numeric(batch))))
     userIDs <- batch[uids]
     params <- list(user_id=paste(userIDs, collapse=','),
-                   screen_name=paste(batch[setdiff(batch, uids)], collapse=','))
+                   screen_name=paste(batch[setdiff(batch, userIDs)], collapse=','))
     twInterfaceObj$doAPICall(paste('users', 'lookup', sep='/'),
                              params=params, ...)
   }, users)
