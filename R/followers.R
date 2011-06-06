@@ -8,12 +8,6 @@ friends <- function(user, n=NULL, ...) {
   
 
 ffBase <- function(type, user, n=NULL, ...) {
-  if (inherits(user, "user"))
-    user <- screenName(user)
-  
-  if (is.numeric(user))
-    params <- list(user_id=user)
-  else
-    params <- list(screen_name=user)
-  twCursorInterfaceObj$doAPICall(paste(type, 'ids', sep='/'), 'ids', num=n, params=params, method='GET', ...)
+  params <- parseUsers(user)
+  doCursorAPICall(paste(type, 'ids', sep='/'), 'ids', num=n, params=params, method='GET', ...)
 }

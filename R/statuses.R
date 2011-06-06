@@ -40,16 +40,12 @@ showStatus <- function(id, ...) {
 
 userTimeline <- function(user, n=20, maxID=NULL, sinceID=NULL, ...) {
     ## AUTH: Will not work if user is protected until OAuth
-    if (inherits(user, "user"))
-        user <- user$getScreenName()
-    cmd <- 'statuses/user_timeline'
-    params <- buildCommonArgs(max_id=maxID, since_id=sinceID)
-    numUser <- suppressWarnings(as.numeric(user))
-    if (is.na(numUser))
-      params[['screen_name']] <- user
-    else
-      params[['user_id']] <- numUser
-    statusBase(cmd, params, n, 3200, ...)
+  uParams <- parseUsers(user)
+  cmd <- 'statuses/user_timeline'
+  params <- buildCommonArgs(max_id=maxID, since_id=sinceID)
+  params[['user_id']] <- uParams[['user_id']]
+  params[['screen_name']] <- uParams[['screen_name']]
+  statusBase(cmd, params, n, 3200, ...)
 }
 
 homeTimeline <- function(n=25, maxID=NULL, sinceID=NULL, ...) 
@@ -83,5 +79,5 @@ statusBase <- function(cmd, params, n, maxN, ...) {
     warning(cmd, " has a cap of ", maxN, " statuses, clipping")
     n <- maxN
   }
-  sapply(twInterfaceObj$doPagedAPICall(cmd, n, params, ...), buildStatus)
+  sapply(doPagedAPICall(cmd, n, params, ...), buildStatus)
 }

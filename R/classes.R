@@ -122,6 +122,20 @@ setRefClass("user",
                     id <<- json[['id']]
                 }
                 callSuper(...)
+              },
+              getFollowerIDs = function(n=NULL, ...) {
+                followers(.self$id, n, ...)
+              },
+              getFollowers = function(n=NULL, ...) {
+                fol <- .self$followerIDs(n, ...)
+                lookupUsers(fol, ...)
+              },
+              getFriendsIDs = function(n=NULL, ...) {
+                friends(.self$id, n, ...)
+              },
+              getFriends = function(n=NULL, ...) {
+                fri <- .self$friendIDs(n, ...)
+                lookupUsers(fri, ...)
               }
               )
             )

@@ -15,10 +15,8 @@ dmGETBase <- function(n, sinceID, maxID, type='', ...) {
   else
     n <- as.integer(n)
   params <- buildCommonArgs(since_id=sinceID, max_id=maxID)
-  jsonList <- twInterfaceObj$doPagedAPICall(paste('direct_messages',
-                                                  type, sep=''),
-                                            num=n, params=params,
-                                       ...)
+  jsonList <- doPagedAPICall(paste('direct_messages', type, sep=''),
+                             num=n, params=params, ...)
   sapply(jsonList, function(x) dmFactory$new(x))
 }
 
@@ -40,12 +38,7 @@ dmSend <- function(text, user, ...) {
         user <- screenName(user)
   if (nchar(text) > 140)
     stop("Maximum of 140 chars may be sent via a direct message")
-
-  params <- list(text=text)
-  if (is.numeric(user))
-    params[['user_id']] <- user
-  else
-    params[['screen_name']] <- user
+  params[['text']] <- text
   res <- twInterfaceObj$doAPICall('direct_messages/new',
                                   params=params, method='POST', ...)
   dmFactory$new(res)

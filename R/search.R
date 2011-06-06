@@ -14,7 +14,7 @@ searchTwitter <- function(searchString, n=25, lang=NULL,
     params <- buildCommonArgs(lang=lang, locale=locale, since=since, until=until,
                               geocode=geocode, since_id=sinceID)
     params[['q']] <- searchString
-    jsonList <- twSearchInterfaceObj$doAPICall(n, params=params, ...)
+    jsonList <- doRppAPICall(n, params=params, ...)
     sapply(jsonList, buildStatus)
   }
 

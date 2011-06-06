@@ -19,8 +19,7 @@ getOAuth <- function() {
   get("oauth", envir=oauthCache)
 }
 
-setRefClass('twInterface',
-            contains = 'VIRTUAL',
+setRefClass('twAPIInterface',
             fields = list(
               maxResults = 'integer'
               ),
@@ -94,124 +93,93 @@ setRefClass('twInterface',
               )
             )
 
-setRefClass('twAPIInterface',
-            contains='twInterface',
-            methods = list(
-              initialize = function(...) {
-                callSuper(...)
-                .self
-              },
-              doAPICall = function(cmd, params=NULL, method='GET', ...) {
-                url <- getAPIStr(cmd)
-                callSuper(url, params, method, ...)
-              }, 
-              doPagedAPICall = function(cmd, num, params=NULL,
-                method='GET', ...) {
-                if (num <= 0)
-                  stop('num must be positive')
-                else
-                  num <- as.integer(num)
-                
-                page <- 1
-                total <- num
-                count <- ifelse(num < .self$maxResults, num, .self$maxResults)
-                jsonList <- list()
-                params[['count']] <- count
-                while (total > 0) {
-                  params[['page']] <- page
-                  jsonList <- c(jsonList,
-                                .self$doAPICall(cmd, params, method, ...))
-                  total <- total - count
-                  page <- page + 1
-                }
-                jLen <- length(jsonList)
-                if ((jLen > 0) && (jLen > num))
-                  jsonList <- jsonList[1:num]
-                jsonList
-              }
-              )
-            )
 
-twInterfaceObj <- getRefClass('twAPIInterface')$new()
+tint <- getRefClass('twAPIInterface')
+tint$accessors(names(tint$fields()))
+twInterfaceObj <- tint$new()
 
-setRefClass('twCursorInterface',
-            contains='twInterface',
-            methods = list(
-              initialize = function(...) {
-                callSuper(...)
-                .self
-              },
-              doAPICall = function(cmd, type, num=NULL, params=NULL, method='GET', ...) {
-                url <- getAPIStr(cmd)
-                cursor <- -1
-                if (!is.null(num)) {
-                  if (num <= 0)
-                    stop("num must be positive")
-                  else
-                    num <- as.integer(num)
-                }
-                vals <- character()
-                while(cursor != 0) {
-                  params[['cursor']] <- cursor
-                  curResults <- callSuper(url, params, method, ...)
-                  vals <- c(vals, curResults[[type]])
-                  if ((!is.null(num)) && (length(vals) >= num))
-                    break
-                  cursor <- curResults[['next_cursor_str']]
-                }
-                if ((!is.null(num)) && (length(vals) > num))
-                  vals <- vals[1:num]
-                vals
-              }
-              )
-            )
-twCursorInterfaceObj <- getRefClass('twCursorInterface')$new()
+doPagedAPICall = function(cmd, num, params=NULL, method='GET', ...) {
+  if (num <= 0)
+    stop('num must be positive')
+  else
+    num <- as.integer(num)
 
+  maxResults <- twInterfaceObj$getMaxResults()
+  page <- 1
+  total <- num
+  count <- ifelse(num < maxResults, num, maxResults)
+  jsonList <- list()
+  params[['count']] <- count
+  while (total > 0) {
+    params[['page']] <- page
+    jsonList <- c(jsonList,
+                  twInterfaceObj$doAPICall(getAPIStr(cmd), params, method, ...))
+    total <- total - count
+    page <- page + 1
+  }
+  jLen <- length(jsonList)
+  if ((jLen > 0) && (jLen > num))
+    jsonList <- jsonList[1:num]
+  jsonList
+}
 
-setRefClass('twSearchInterface',
-            contains='twInterface',
-            methods = list(
-              initialize = function(...) {
-                callSuper(...)
-                .self
-              },
-              doAPICall = function(num, params, ...) {
-                if (! 'q' %in% names(params))
-                  stop("parameter 'q' must be supplied")
-                params[['result_type']] <- 'recent'
-                params[['rpp']] <- ifelse(num < .self$maxResults, num, .self$maxResults)
-                params[['page']] <- 1
-                
-                url <- 'http://search.twitter.com/search.json'
+doCursorAPICall = function(cmd, type, num=NULL, params=NULL, method='GET', ...) {
+  url <- getAPIStr(cmd)
+  cursor <- -1
+  if (!is.null(num)) {
+    if (num <= 0)
+      stop("num must be positive")
+    else
+      num <- as.integer(num)
+  }
+  vals <- character()
+  while(cursor != 0) {
+    params[['cursor']] <- cursor
+    curResults <- twInterfaceObj$doAPICall(url, params, method, ...)
+    vals <- c(vals, curResults[[type]])
+    if ((!is.null(num)) && (length(vals) >= num))
+      break
+    cursor <- curResults[['next_cursor_str']]
+  }
+  if ((!is.null(num)) && (length(vals) > num))
+    vals <- vals[1:num]
+  vals
+}
 
-                curDiff <- num
-                jsonList <- list()
-                while (curDiff > 0) {
-                  fromJSON <- callSuper(url, params, 'GET', ...)
-                  newList <- fromJSON$results
-                  jsonList <- c(jsonList, newList)
-                  curDiff <- num - length(jsonList)
-                  if (curDiff > 0) {
-                    if ('next_page' %in% names(fromJSON)) {
-                      ## The search API gives back the params part as an actual URL string, split this
-                      ## back into list structure
-                      splitParams <- strsplit(strsplit(gsub('\\?', '', URLdecode(newParams)), '&')[[1]], '=')
-                      params <- lapply(splitParams, function(x) x[2])
-                      names(params) <- sapply(splitParams, function(x) x[1])
-                      if (curDiff < .self$maxResults)
-                        ## If we no longer want max entities, only get curDiff
-                        params[['rpp']] <- curDiff
-                    } else {
-                    break
-                  }
-                }
-                }
-                jsonList
-              }
-              )
-            )
-
-twSearchInterfaceObj <- getRefClass('twSearchInterface')$new()
+doRppAPICall = function(num, params, ...) {
+  if (! 'q' %in% names(params))
+    stop("parameter 'q' must be supplied")
+  maxResults <- twInterfaceObj$getMaxResults()
+  params[['result_type']] <- 'recent'
+  params[['rpp']] <- ifelse(num < maxResults, num, maxResults)
+  params[['page']] <- 1
+  
+  url <- 'http://search.twitter.com/search.json'
+  
+  curDiff <- num
+  jsonList <- list()
+  while (curDiff > 0) {
+    fromJSON <- twInerfaceObj$doAPICall(url, params, 'GET', ...)
+    newList <- fromJSON$results
+    jsonList <- c(jsonList, newList)
+    curDiff <- num - length(jsonList)
+    if (curDiff > 0) {
+      if ('next_page' %in% names(fromJSON)) {
+        ## The search API gives back the params part as an actual URL string, split this
+        ## back into list structure
+        splitParams <- strsplit(strsplit(gsub('\\?', '', URLdecode(newParams)), '&')[[1]], '=')
+        params <- lapply(splitParams, function(x) x[2])
+        names(params) <- sapply(splitParams, function(x) x[1])
+        if (curDiff < maxResults)
+          ## If we no longer want max entities, only get curDiff
+          params[['rpp']] <- curDiff
+      } else {
+        break
+      }
+    }
+  }
+  jsonList
+}
 
 twitterDateToPOSIX <- function(dateStr) {
   ## Weird - Date format can vary depending on the situation
