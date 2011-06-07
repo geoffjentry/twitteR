@@ -19,6 +19,11 @@ getOAuth <- function() {
   get("oauth", envir=oauthCache)
 }
 
+## twitter API has multiple methods of handling paging issues, not to mention the search API
+## has a completely different interface.  Trying to manage all of these below using one unified
+## approach to actually sending the data back & receiving response and then providing multiple
+## mechanisms to page
+
 setRefClass('twAPIInterface',
             fields = list(
               maxResults = 'integer'
@@ -53,7 +58,7 @@ setRefClass('twAPIInterface',
                 }
                 out
               },
-              doAPICall = function(url, params=NULL, method="GET", ...) {
+              doAPICall = function(cmd, params=NULL, method="GET", url=NULL, ...) {
                 ## will perform an API call and process the JSON.  For GET
                 ## calls, try to detect errors and if so attempt up to 3
                 ## more times before returning with an error.  Many twitter
@@ -61,6 +66,8 @@ setRefClass('twAPIInterface',
                 ## real error there's little harm in repeating the call.
                 ## Don't do this on POST calls in case we incorrectly detect
                 ## an error, to avoid pushing the request multiple times.
+                if (is.null(url))
+                  url <- getAPIStr(cmd)
                 if (hasOAuth()) {
                   APIFunc <- function(url, params, method, ...) {
                     oauth <- getOAuth()
@@ -113,7 +120,7 @@ doPagedAPICall = function(cmd, num, params=NULL, method='GET', ...) {
   while (total > 0) {
     params[['page']] <- page
     jsonList <- c(jsonList,
-                  twInterfaceObj$doAPICall(getAPIStr(cmd), params, method, ...))
+                  twInterfaceObj$doAPICall(cmd, params, method, ...))
     total <- total - count
     page <- page + 1
   }
@@ -124,7 +131,6 @@ doPagedAPICall = function(cmd, num, params=NULL, method='GET', ...) {
 }
 
 doCursorAPICall = function(cmd, type, num=NULL, params=NULL, method='GET', ...) {
-  url <- getAPIStr(cmd)
   cursor <- -1
   if (!is.null(num)) {
     if (num <= 0)
@@ -135,7 +141,7 @@ doCursorAPICall = function(cmd, type, num=NULL, params=NULL, method='GET', ...) 
   vals <- character()
   while(cursor != 0) {
     params[['cursor']] <- cursor
-    curResults <- twInterfaceObj$doAPICall(url, params, method, ...)
+    curResults <- twInterfaceObj$doAPICall(cmd, params, method, ...)
     vals <- c(vals, curResults[[type]])
     if ((!is.null(num)) && (length(vals) >= num))
       break
@@ -159,7 +165,7 @@ doRppAPICall = function(num, params, ...) {
   curDiff <- num
   jsonList <- list()
   while (curDiff > 0) {
-    fromJSON <- twInerfaceObj$doAPICall(url, params, 'GET', ...)
+    fromJSON <- twInterfaceObj$doAPICall(NULL, params, 'GET', url=url, ...)
     newList <- fromJSON$results
     jsonList <- c(jsonList, newList)
     curDiff <- num - length(jsonList)
@@ -167,9 +173,10 @@ doRppAPICall = function(num, params, ...) {
       if ('next_page' %in% names(fromJSON)) {
         ## The search API gives back the params part as an actual URL string, split this
         ## back into list structure
-        splitParams <- strsplit(strsplit(gsub('\\?', '', URLdecode(newParams)), '&')[[1]], '=')
-        params <- lapply(splitParams, function(x) x[2])
-        names(params) <- sapply(splitParams, function(x) x[1])
+        splitParams <- strsplit(strsplit(gsub('\\?', '', URLdecode(fromJSON$next_page)), '&')[[1]], '=')
+        newParams <- lapply(splitParams, function(x) x[2])
+        names(newParams) <- sapply(splitParams, function(x) x[1])
+        params[names(newParams)] <- newParams
         if (curDiff < maxResults)
           ## If we no longer want max entities, only get curDiff
           params[['rpp']] <- curDiff

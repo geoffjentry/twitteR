@@ -1,5 +1,5 @@
 getUser <- function(user, ...) {
-  params <- parseUser(user)
+  params <- parseUsers(user)
   buildUser(twInterfaceObj$doAPICall(paste('users', 'show', sep='/'),
                                      params=params, ...))
 }

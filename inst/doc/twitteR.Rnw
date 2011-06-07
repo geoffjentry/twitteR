@@ -88,12 +88,16 @@ might even be a timeline to look at one's friend's tweets.  Just as there
 are various \emph{timelines} in Twitter, the \Rpackage{twitteR} package 
 provides various interfaces to access them.  The first and most obvious 
 would be the \emph{public timeline}, which retrieves the 20 most 
-recent public tweets on Twitter.
+recent public tweets on Twitter, returned to the user as a list of
+\Rclass{status} objects.
 
 <<publicTimeline>>=
    publicTweets <- publicTimeline()
    length(publicTweets)
    publicTweets[1:5]
+   publicTweets[[1]]$getScreenName()
+   publicTweets[[1]]$getCreated()
+   publicTweets[[1]]$getText()
 @
 
 Similarly, we can look at a particular user's timeline.   This will
