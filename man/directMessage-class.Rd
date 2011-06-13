@@ -24,7 +24,11 @@
 \section{Methods}{
   \describe{
      \item{\code{destroy}:}{Deletes this DM from Twitter.  A wrapper
-       around \code{\link{dmDestroy}}} 
+       around \code{\link{dmDestroy}}}
+     \item{\code{toDataFrame}:}{Converts this into a one row
+       \code{\link{data.frame}}, with each field representing a column.
+       This can also be accomplished by the S4 style
+       \code{as.data.frame(objectName)}.}
   }
 }
 \details{

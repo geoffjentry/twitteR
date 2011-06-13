@@ -1,5 +1,5 @@
 exportClasses('status', 'user', 'directMessage')
-exportMethods(screenName, show, favorited, replyToSN,
+exportMethods(as.data.frame, screenName, show, favorited, replyToSN,
               statusesCount, tweetCount, followersCount,
               favoritesCount, friendsCount, userURL, created,
               protected, verified, location, lastStatus, show,

@@ -36,7 +36,8 @@ setRefClass('twAPIInterface',
               },
               twFromJSON = function(json) {
                 ## Will provide some basic error checking, as well as suppress
-                ## warnings that always seem to come out of fromJSON, even in good cases.
+                ## warnings that always seem to come out of fromJSON, even
+                ## in good cases. 
                 out <- try(suppressWarnings(fromJSON(json)), silent=TRUE)
                 if (inherits(out, "try-error")) {
                   stop("Error: Malformed response from server, was not JSON")

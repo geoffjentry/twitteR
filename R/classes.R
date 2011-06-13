@@ -1,4 +1,24 @@
+setRefClass('twitterObj',
+            contains='VIRTUAL',
+            methods = list(
+              toDataFrame = function(row.names=NULL, optional=FALSE) {
+                fields <- names(.self$getRefClass()$fields())
+                fieldList <- lapply(fields, function(x) {
+                  val <- .self$field(x)
+                  if (length(val) == 0)
+                    NA
+                  else
+                    val
+                })
+                names(fieldList) <- fields
+                as.data.frame(fieldList, row.names=row.names,
+                              optional=optional)
+              }
+              )
+            )
+
 setRefClass("status",
+            contains='twitterObj',
             fields = list(
               text="character",
               favorited="logical",
@@ -64,10 +84,13 @@ buildStatus <- function(json)
 setMethod("show", signature="status", function(object) {
     print(paste(screenName(object), object$text, sep=": "))
 })
-
+setMethod('as.data.frame', signature='status',
+          function(x, row.names=NULL, optional=FALSE, ...)
+          x$toDataFrame(row.names, optional))
 
 
 setRefClass("user",
+            contains='twitterObj',
             fields = list(
               description="character",
               statusesCount="numeric",
@@ -107,12 +130,14 @@ setRefClass("user",
                   else {
                     created <<- twitterDateToPOSIX(json[['created_at']])
                   }
-                  if ((is.null(json[['protected']])) || (json[['protected']] == FALSE))
+                  if ((is.null(json[['protected']])) ||
+                      (json[['protected']] == FALSE))
                     protected <<- FALSE
                   else
                     protected <<- TRUE
 
-                  if ((is.null(json[['verified']])) || (json[['verified']] == FALSE))
+                  if ((is.null(json[['verified']])) ||
+                      (json[['verified']] == FALSE))
                     verified <<- FALSE
                   else
                     verified <<- TRUE
@@ -120,6 +145,8 @@ setRefClass("user",
                     screenName <<- json[['screen_name']]
                   if (!is.null(json[['id']]))
                     id <<- json[['id']]
+                  if (!is.null(json[['location']]))
+                    location <<- json[['location']]
                 }
                 callSuper(...)
               },
@@ -136,6 +163,24 @@ setRefClass("user",
               getFriends = function(n=NULL, ...) {
                 fri <- .self$friendIDs(n, ...)
                 lookupUsers(fri, ...)
+              },
+              toDataFrame = function(row.names=NULL, optional=FALSE) {
+                ## FIXME:
+                ## There is such little difference between this version
+                ## and the standard that there has to be a way to take
+                ## advantage of inheritance here
+                fields <- setdiff(names(.self$getRefClass()$fields()),
+                                  'lastStatus')
+                fieldList <- lapply(fields, function(x) {
+                  val <- .self$field(x)
+                  if (length(val) == 0)
+                    NA
+                  else
+                    val
+                })
+                names(fieldList) <- fields
+                as.data.frame(fieldList, row.names=row.names,
+                              optional=optional)
               }
               )
             )
@@ -150,9 +195,12 @@ buildUser <- function(json)
 setMethod("show", signature="user", function(object) {
     print(screenName(object))
 })
-
+setMethod('as.data.frame', signature='user',
+          function(x, row.names=NULL, optional=FALSE, ...)
+          x$toDataFrame(row.names, optional))
 
 setRefClass("directMessage",
+            contains='twitterObj',
             fields = list(
               text = "character",
               recipientSN = "character",
@@ -198,6 +246,9 @@ setMethod("show", signature="directMessage", function(object) {
                 screenName(object$recipient),  ": ",
                 object$text, sep=""))
 })
+setMethod('as.data.frame', signature='directMessage',
+          function(x, row.names=NULL, optional=FALSE, ...)
+          x$toDataFrame(row.names, optional))
 
 dmFactory <- getRefClass("directMessage")
 dmFactory$accessors(names(dmFactory$fields()))

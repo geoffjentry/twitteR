@@ -8,6 +8,7 @@
 \alias{screenName}
 \alias{screenName,user-method}
 \alias{show,user-method}
+\alias{as.data.frame,user-method}
 \alias{description,user-method}
 \alias{statusesCount,user-method}
 \alias{statusesCount}
@@ -55,6 +56,33 @@
     \item{\code{protected}:}{Whether or not this user is protected}
     \item{\code{verified}:}{Whether or not this user is verified}
     \item{\code{location}:}{Location of the user}
+  }
+}
+\section{Methods}{
+  \describe{
+    \item{\code{getFollowerIDs(n=NULL, ...)}:}{Will return a vector of
+      twitter user IDs representing followers of this user, up to a
+      maximum of \code{n} values.  If \code{n} is NULL, all followers
+      will be returned}
+    \item{\code{getFollowers(n=NULL, ...)}:}{Will return a list of
+     \code{user} objects  representing followers of this user, up to a
+      maximum of \code{n} values.  If \code{n} is NULL, all followers
+      will be returned}
+    \item{\code{getFriendIDs(n=NULL, ...)}:}{Will return a vector of
+      twitter user IDs representing users this user follows, up to a
+      maximum of \code{n} values.  If \code{n} is NULL, all friends
+      will be returned}
+    \item{\code{getFriends(n=NULL, ...)}:}{Will return a list of
+      \code{user} objects representing users this user follows, up to a
+      maximum of \code{n} values.  If \code{n} is NULL, all friendss
+      will be returned}
+    \item{\code{toDataFrame(row.names=NULL, optional=FALSE)}:}{Converts
+      this into a one row
+       \code{\link{data.frame}}, with each field except for
+       \code{lastStatus} representing a column.
+       This can also be accomplished by the S4 style
+       \code{as.data.frame(objectName)}.}
+
   }
 }
 \details{
