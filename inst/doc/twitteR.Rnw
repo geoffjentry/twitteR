@@ -34,22 +34,17 @@ list daily specials, and more.  The \Rpackage{twitteR} package is
 intended to provide access to the Twitter API within R.  Users can make 
 access large amounts of Twitter  data for data mining and other tasks.  
 
-When joined with the \Rpackage{ROauth} package (not currently available 
-to Windows users), this package can be used to push the API further and
-directly interact by posting tweets, dealing with direct messages and
-enjoying enhanced API rate limitations.
+When joined with the \Rpackage{ROauth} package, this package can be used 
+to push the API further and directly interact by posting tweets, dealing 
+with direct messages and enjoying enhanced API rate limitations.
 
 \section{Initial Notes}
 
 \subsection{Notes for this version}
 
-Major portions of this package have been rewritten from the previous
-version.  In the process I've tried to maintain backwards compatibility
-where it makes sense, although some function signatures have changed.
-As the dust settles and I get a better sense for how things play together,
-I will make another pass at moving things in the direction that I would
-like the to be, if this leads to functions going away there will be a 
-deprecation cycle.  Please contact me with any feedback that you might have.
+The reworking is still underway.  This version brings some bug fixes,
+an easier mechanism to convert from the returned object lists to data.frames, 
+and support for the Twitter trends API.
 
 \subsection{Notes on API coverage}
 
@@ -60,9 +55,9 @@ please contact me.
 
 \subsection{Notes on the classes}
 
-There are three classes in this package: \Robject{user}, \Robject{status},
-and \Robject{directMessage}.  As of this version they have all been
-implemented as reference classes (see \Rfunction{setRefClass}).  The
+There are four classes in this package: \Robject{user}, \Robject{status},
+\Robject{trend}, and \Robject{directMessage}.  As of this version they have 
+all been implemented as reference classes (see \Rfunction{setRefClass}).  The
 first two were previously implemented as S4 classes.  To help maintain
 backwards compatibility, the S4 methods (all accessors) have been left
 in for those two classes although new code should be using the new style
@@ -149,6 +144,24 @@ access.
    crantastic
 @
 
+\subsection{Trends}
+
+Twitter keeps track of topics that are popular at any given point of time,
+and allows one to extract that data.  We're able to get the 10 currently
+trending topics, see the 20 trending topics per hour for a given day,
+or the 30 trending topics per day for a given week.
+
+<<trends>>=
+   curTrends <- getTrends('current')
+   curTrends[1:2]
+
+   yesterdayTrends <- getTrends('daily', date=as.character(Sys.Date()-1))
+   length(yesterdayTrends)
+   
+   lastWeekTrends <- getTrends('weekly', date=as.character(Sys.Date()-7))
+   length(lastWeekTrends)
+@ 
+
 \subsection{A simple example}
 
 Just a quick example of how one can interact with actual data.  Here we 
@@ -169,6 +182,28 @@ due to issues with character encoding, locales, etc.
    sources <- sapply(sources, function(x) ifelse(length(x) > 1, x[2], x[1]))
    pie(table(sources))
 @ 
+
+\subsection{Conversion to data.frames}
+
+While still not as convenient as it should be, there is a new mechanism to
+assist with the process of converting the object lists returned by many
+functions in the \Rpackage{twitteR} package into a \Robject{data.frame}
+structure.  To do this, every object of every class has a reference
+method \Rfunction{toDataFrame} as well as a corresponding S4 method 
+\Rfunction{as.data.frame} that works in the traditional sense.  Converting
+a single object will typically not be particularly useful by itself, but
+it does enable the currently kludgey mechanism for whole list conversion,
+such as using the \Robject{publicTweets} variable we had earlier:
+
+<<dataFrame>>=
+   df <- do.call('rbind', lapply(publicTweets, as.data.frame))
+   dim(df)
+@ 
+
+What we're doing here is calling \Rfunction{lapply} on all of the
+\Rclass{status} objects stored in the \Robject{publicTweets} list,
+and calling their \Rfunction{as.data.frame} method.  These are combined
+by row using \Rfunction{do.call}.
 
 \section{Authentication with OAuth}
 

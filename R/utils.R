@@ -6,7 +6,8 @@ buildCommonArgs <- function(lang=NULL, since=NULL, until=NULL, locale=NULL,
                             geocode=NULL, since_id=NULL, max_id=NULL,
                             lat=NULL, long=NULL, place_id=NULL,
                             display_coordinates=NULL,
-                            in_reply_to_status_id=NULL) {
+                            in_reply_to_status_id=NULL, exclude=NULL,
+                            date=NULL) {
   out <- list()
   for (arg in names(formals())) {
     val <- get(arg)

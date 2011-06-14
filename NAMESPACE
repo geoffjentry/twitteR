@@ -1,4 +1,4 @@
-exportClasses('status', 'user', 'directMessage')
+exportClasses('status', 'user', 'directMessage', 'trend')
 exportMethods(as.data.frame, screenName, show, favorited, replyToSN,
               statusesCount, tweetCount, followersCount,
               favoritesCount, friendsCount, userURL, created,
@@ -31,3 +31,6 @@ export("updateStatus")
 export('tweet')
 export('deleteStatus')
 export('taskStatus')
+export('trendFactory')
+export('buildTrend')
+export('getTrends')

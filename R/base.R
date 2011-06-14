@@ -33,7 +33,9 @@ setMethod('show', signature='twitterObjList', function(object) {
   print(object$objectList)
 })
 
-
+setMethod('[[', signature='twitterObjList', function(x, i) {
+  x$objectList[[i]]
+})
 
 listClassValidity <- function(object, objClass) {
   all(sapply(object$objectList, is, objClass))

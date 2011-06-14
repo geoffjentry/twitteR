@@ -192,15 +192,22 @@ doRppAPICall = function(num, params, ...) {
 }
 
 twitterDateToPOSIX <- function(dateStr) {
-  ## Weird - Date format can vary depending on the situation
-  created <- as.POSIXct(dateStr, tz='UTC',
-                        format="%a %b %d %H:%M:%S +0000 %Y")
-  ## try again if necessary
-  if (is.na(created))
-    created <- as.POSIXct(dateStr, tz='UTC',
-                          format="%a, %d %b %Y %H:%M:%S +0000")
+  ## In typical twitter fashion, there are multiple ways that they
+  ## spit dates back at us.  First, let's take a look at unix
+  ## epoch time, and then try a few data string formats
+  dateInt <- suppressWarnings(as.numeric(dateStr))
+  if (!is.na(dateInt)) {
+    posDate <- as.POSIXct(dateInt, origin='1970-01-01')
+  } else {
+    posDate <- as.POSIXct(dateStr, tz='UTC',
+                          format="%a %b %d %H:%M:%S +0000 %Y")
+    ## try again if necessary
+    if (is.na(posDate))
+      posDate <- as.POSIXct(dateStr, tz='UTC',
+                            format="%a, %d %b %Y %H:%M:%S +0000")
+  }
   ## might still be NA, but we tried
-  created
+  posDate
 }
 
 

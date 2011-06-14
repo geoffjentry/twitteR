@@ -53,9 +53,6 @@ setMethod("show", signature="directMessage", function(object) {
                 screenName(object$recipient),  ": ",
                 object$text, sep=""))
 })
-setMethod('as.data.frame', signature='directMessage',
-          function(x, row.names=NULL, optional=FALSE, ...)
-          x$toDataFrame(row.names, optional))
 
 dmFactory <- getRefClass("directMessage")
 dmFactory$accessors(names(dmFactory$fields()))
