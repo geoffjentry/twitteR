@@ -54,12 +54,14 @@ setRefClass('twAPIInterface',
                 }
                 if (length(out) == 2) {
                   names <- names(out)
-                  if ((!is.null(names))&&(all(names(out) == c("request", "error"))))
+                  if ((!is.null(names))&&(all(names(out) == c("request",
+                                                     "error"))))
                     stop("Error: ", out$error)
                 }
                 out
               },
-              doAPICall = function(cmd, params=NULL, method="GET", url=NULL, ...) {
+              doAPICall = function(cmd, params=NULL, method="GET",
+                url=NULL, ...) {
                 ## will perform an API call and process the JSON.  For GET
                 ## calls, try to detect errors and if so attempt up to 3
                 ## more times before returning with an error.  Many twitter

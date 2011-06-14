@@ -1,4 +1,7 @@
-## old S4 methods are kept around for backwards compat
+## Bit of a misnomer as there are other S4 methods floating around.
+## These are outdated S4 methods that were in use before the move
+## towards reference classes and are only kept for backwards
+## compatability
 setMethod("statusText", signature="status", function(object) {
   object$text
 })

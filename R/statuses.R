@@ -1,3 +1,80 @@
+setRefClass('statusList',
+            contains='twitterObjList'
+            )
+
+setValidity('statusList', function(object) {
+  listClassValidity(object, 'status')
+})
+
+setRefClass("status",
+            contains='twitterObj',
+            fields = list(
+              text="character",
+              favorited="logical",
+              replyToSN="character",
+              created="POSIXct",
+              truncated="logical",
+              replyToSID="character",
+              id="character",
+              replyToUID="character",
+              statusSource="character",
+              screenName="character"
+              ),
+            methods=list(
+              initialize = function(json, ...) {
+                if (!missing(json)) {
+                  if ('user' %in% names(json)) {
+                    userObj <- userFactory$new(json[['user']])
+                    screenName <<- userObj$getScreenName()
+                  } else if ('from_user' %in% names(json)) {
+                    screenName <<- json[['from_user']]
+                  } else {
+                    screenName <<- "Unknown"
+                  }
+                  if (!is.null(json[['text']]))
+                    text <<- json[['text']]
+                  if (is.null(json[['favorited']]))
+                    favorited <<- json[['favorited']]
+                  else
+                    favorited <<- TRUE
+                  if (is.null(json[['truncated']]))
+                    truncated <<- FALSE
+                  else
+                    truncated <<- TRUE
+                  if (!is.null(json[['source']]))
+                    statusSource <<- json[['source']]
+                  if (is.null(json[['created_at']]))
+                    created <<- Sys.time()
+                  else
+                    created <<- twitterDateToPOSIX(json[['created_at']])
+                  if ((!is.null(json[['in_reply_to_screen_name']])) &&
+                      (!is.na(json[['in_reply_to_screen_name']])))
+                    replyToSN <<- json[['in_reply_to_screen_name']]
+                  if ((!is.null(json[['in_reply_to_status_id']])) &&
+                      (!is.na(json[['in_reply_to_status_id']])))
+                    replyToSID <<- json[['in_reply_to_status_id']]
+                  if ((!is.null(json[['in_reply_to_user_id']])) &&
+                      (!is.na(json[['in_reply_to_user_id']])))
+                    replyToUID <<- json[['in_reply_to_user_id']]
+                  if (!is.null(json[['id']]))
+                    id <<- json[['id']]
+                }
+                callSuper(...)
+              }
+              )
+            )
+
+statusFactory <- getRefClass("status")
+statusFactory$accessors(names(statusFactory$fields()))
+
+buildStatus <- function(json)
+  statusFactory$new(json)
+
+setMethod("show", signature="status", function(object) {
+    print(paste(screenName(object), object$text, sep=": "))
+})
+
+
 updateStatus <- function(text, lat=NULL, long=NULL, placeID=NULL,
                          displayCoords=NULL, inReplyTo=NULL, ...) {
   if (!hasOAuth())
