@@ -34,3 +34,5 @@ export('taskStatus')
 export('trendFactory')
 export('buildTrend')
 export('getTrends')
+export('twListToDF')
+

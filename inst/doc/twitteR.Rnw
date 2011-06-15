@@ -192,18 +192,13 @@ structure.  To do this, every object of every class has a reference
 method \Rfunction{toDataFrame} as well as a corresponding S4 method 
 \Rfunction{as.data.frame} that works in the traditional sense.  Converting
 a single object will typically not be particularly useful by itself, but
-it does enable the currently kludgey mechanism for whole list conversion,
-such as using the \Robject{publicTweets} variable we had earlier:
+a convenience method has been supplied to transform a list of like
+\Rpackage{twitteR} classes into a \Robject{data.frame}:
 
 <<dataFrame>>=
-   df <- do.call('rbind', lapply(publicTweets, as.data.frame))
+   df <- twListToDF(publicTweets)
    dim(df)
 @ 
-
-What we're doing here is calling \Rfunction{lapply} on all of the
-\Rclass{status} objects stored in the \Robject{publicTweets} list,
-and calling their \Rfunction{as.data.frame} method.  These are combined
-by row using \Rfunction{do.call}.
 
 \section{Authentication with OAuth}
 
