@@ -34,15 +34,19 @@ setRefClass('twAPIInterface',
                 callSuper(...)
                 .self
               },
-              twFromJSON = function(json) {
+              twFromJSON = function(json, verbose=FALSE) {
                 ## Will provide some basic error checking, as well as suppress
                 ## warnings that always seem to come out of fromJSON, even
                 ## in good cases. 
                 out <- try(suppressWarnings(fromJSON(json)), silent=TRUE)
                 if (inherits(out, "try-error")) {
+                  if (verbose == TRUE)
+                    print(json)
                   stop("Error: Malformed response from server, was not JSON")
                 }
                 if ('error' %in% names(out)) {
+                  if (verbose == TRUE)
+                    print(json)
                   ## A few errors we want to stop on, and others we want to just
                   ## give a warning
                   if (length(grep("page parameter out of range",
@@ -61,7 +65,7 @@ setRefClass('twAPIInterface',
                 out
               },
               doAPICall = function(cmd, params=NULL, method="GET",
-                url=NULL, ...) {
+                url=NULL, verbose=FALSE, ...) {
                 ## will perform an API call and process the JSON.  For GET
                 ## calls, try to detect errors and if so attempt up to 3
                 ## more times before returning with an error.  Many twitter
@@ -72,26 +76,30 @@ setRefClass('twAPIInterface',
                 if (is.null(url))
                   url <- getAPIStr(cmd)
                 if (hasOAuth()) {
-                  APIFunc <- function(url, params, method, ...) {
+                  APIFunc <- function(url, params, method, verbose=FALSE, ...) {
                     oauth <- getOAuth()
-                    oauth$OAuthRequest(url, params, method, ...)
+                    oauth$OAuthRequest(url, params, method, verbose=verbose, ...)
                   }
                 } else {
-                  APIFunc <- function(url, params, method, ...) {
+                  APIFunc <- function(url, params, method, verbose=FALSE, ...) {
                     if (!is.null(params)) {
                       paramStr <- paste(paste(names(params), params, sep='='),
                                         collapse='&')
                       url <- paste(url, paramStr, sep='?')
                     }
+                    
+                    if (verbose == TRUE)
+                      print(paste("URL:", url))
+                    
                     getURL(URLencode(url), ...)
                   }
                 }
                 if (method == "POST") {
-                  out <- APIFunc(url, params, method, ...)
+                  out <- APIFunc(url, params, method, verbose=verbose, ...)
                 } else {
                   count <- 1
                   while (count < 4) {
-                    out <- APIFunc(url, params, method, ...)
+                    out <- APIFunc(url, params, method, verbose=verbose, ...)
                     if (length(grep('html', out)) == 0) {
                       break
                     }
@@ -108,7 +116,7 @@ tint <- getRefClass('twAPIInterface')
 tint$accessors(names(tint$fields()))
 twInterfaceObj <- tint$new()
 
-doPagedAPICall = function(cmd, num, params=NULL, method='GET', ...) {
+doPagedAPICall = function(cmd, num, params=NULL, method='GET', verbose=FALSE, ...) {
   if (num <= 0)
     stop('num must be positive')
   else
@@ -123,7 +131,7 @@ doPagedAPICall = function(cmd, num, params=NULL, method='GET', ...) {
   while (total > 0) {
     params[['page']] <- page
     jsonList <- c(jsonList,
-                  twInterfaceObj$doAPICall(cmd, params, method, ...))
+                  twInterfaceObj$doAPICall(cmd, params, method, verbose=verbose, ...))
     total <- total - count
     page <- page + 1
   }
@@ -133,7 +141,7 @@ doPagedAPICall = function(cmd, num, params=NULL, method='GET', ...) {
   jsonList
 }
 
-doCursorAPICall = function(cmd, type, num=NULL, params=NULL, method='GET', ...) {
+doCursorAPICall = function(cmd, type, num=NULL, params=NULL, method='GET', verbose=FALSE, ...) {
   cursor <- -1
   if (!is.null(num)) {
     if (num <= 0)
@@ -144,7 +152,7 @@ doCursorAPICall = function(cmd, type, num=NULL, params=NULL, method='GET', ...) 
   vals <- character()
   while(cursor != 0) {
     params[['cursor']] <- cursor
-    curResults <- twInterfaceObj$doAPICall(cmd, params, method, ...)
+    curResults <- twInterfaceObj$doAPICall(cmd, params, method, verbose=verbose, ...)
     vals <- c(vals, curResults[[type]])
     if ((!is.null(num)) && (length(vals) >= num))
       break
@@ -155,7 +163,7 @@ doCursorAPICall = function(cmd, type, num=NULL, params=NULL, method='GET', ...) 
   vals
 }
 
-doRppAPICall = function(num, params, ...) {
+doRppAPICall = function(num, params, verbose=FALSE, ...) {
   if (! 'q' %in% names(params))
     stop("parameter 'q' must be supplied")
   maxResults <- twInterfaceObj$getMaxResults()
@@ -168,7 +176,7 @@ doRppAPICall = function(num, params, ...) {
   curDiff <- num
   jsonList <- list()
   while (curDiff > 0) {
-    fromJSON <- twInterfaceObj$doAPICall(NULL, params, 'GET', url=url, ...)
+    fromJSON <- twInterfaceObj$doAPICall(NULL, params, 'GET', url=url, verbose=verbose, ...)
     newList <- fromJSON$results
     jsonList <- c(jsonList, newList)
     curDiff <- num - length(jsonList)
