@@ -37,7 +37,7 @@ registerTwitterOAuth(oauth)
        consumerSecret = "FAKEDATA"
        twitCred <- OAuthFactory$new(consumerKey=consumerKey,
                                     consumerSecret=consumerSecret,
-                                    requestURL=reqURL,
+                                    requestURL=requestURL,
                                     accessURL=accessURL,
                                     authURL=authURL)
        twitCred$handshake()
