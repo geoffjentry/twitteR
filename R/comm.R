@@ -65,7 +65,7 @@ setRefClass('twAPIInterface',
                 out
               },
               doAPICall = function(cmd, params=NULL, method="GET",
-                url=NULL, verbose=FALSE, ...) {
+                url=NULL, verbose=FALSE, check=TRUE, ...) {
                 ## will perform an API call and process the JSON.  For GET
                 ## calls, try to detect errors and if so attempt up to 3
                 ## more times before returning with an error.  Many twitter
@@ -73,8 +73,23 @@ setRefClass('twAPIInterface',
                 ## real error there's little harm in repeating the call.
                 ## Don't do this on POST calls in case we incorrectly detect
                 ## an error, to avoid pushing the request multiple times.
+
+                ## The "check" parameter should always be left as TRUE.  It is
+                ## made available purely as a mechanism to allow for the rate
+                ## limit to be checked and to avoid a recurisve loop
+                
+                ## First check to make sure the user is not rate limited
+                if (check == TRUE) {
+                  curRL <- getCurRateLimitInfo()
+                  if (curRL$getRemainingHits() <= 0)
+                    stop("Rate limiting was detected, reset time is ",
+                         curRL$getResetTime())
+                }
+                
                 if (is.null(url))
                   url <- getAPIStr(cmd)
+                ## The actual function being called will vary depending on if OAuth is being
+                ## used or not
                 if (hasOAuth()) {
                   APIFunc <- function(url, params, method, verbose=FALSE, ...) {
                     oauth <- getOAuth()
@@ -82,6 +97,7 @@ setRefClass('twAPIInterface',
                   }
                 } else {
                   APIFunc <- function(url, params, method, verbose=FALSE, ...) {
+                    print(url)
                     if (!is.null(params)) {
                       paramStr <- paste(paste(names(params), params, sep='='),
                                         collapse='&')
@@ -94,12 +110,19 @@ setRefClass('twAPIInterface',
                     getURL(URLencode(url), ...)
                   }
                 }
+
                 if (method == "POST") {
-                  out <- APIFunc(url, params, method, verbose=verbose, ...)
+                  out <- try(APIFunc(url, params, method, verbose=verbose, ...))
+                  if (inherits(out, "try-error"))
+                    stop("Unable to connect to server - often indicates a 'fail whale' ",
+                         "or similar behavior on the part of Twitter's servers")
                 } else {
                   count <- 1
                   while (count < 4) {
-                    out <- APIFunc(url, params, method, verbose=verbose, ...)
+                    out <- try(APIFunc(url, params, method, verbose=verbose, ...))
+                    if (inherits(out, "try-error"))
+                      stop("Unable to connect to server - often indicates a 'fail whale' ",
+                           "or similar behavior on the part of Twitter's servers")
                     if (length(grep('html', out)) == 0) {
                       break
                     }

@@ -60,8 +60,23 @@ setRefClass("status",
                     id <<- json[['id']]
                 }
                 callSuper(...)
-              }
-              )
+              },
+              retweetedBy = function(count=100, ...) {
+                if ((count < 0) || (count > 100))
+                  stop("Count must be between 0 and 100")
+                jsonList <- doPagedAPICall(paste("statuses", .self$id,
+                                                 "retweeted_by", sep="/"), count, ...)
+                sapply(jsonList, buildUser)
+              },
+              retweetedByIDs = function(count=100, ...) {
+                if (!hasOAuth())
+                  stop("retweetedByIDs requires OAuth")
+                if ((count < 0) || (count > 100))
+                  stop("Count must be between 0 and 100")
+                jsonList <- doPagedAPICall(paste("statuses", .self$id,
+                                                 "retweeted_by", "ids", sep="/"), count, ...)
+                FIXME
+              },
             )
 
 statusFactory <- getRefClass("status")
@@ -158,3 +173,4 @@ statusBase <- function(cmd, params, n, maxN, ...) {
   }
   sapply(doPagedAPICall(cmd, n, params, ...), buildStatus)
 }
+

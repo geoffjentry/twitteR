@@ -1,10 +1,12 @@
-exportClasses('status', 'user', 'directMessage', 'trend')
+exportClasses('status', 'user', 'directMessage', 'trend', "rateLimitInfo")
 exportMethods(as.data.frame, screenName, show, favorited, replyToSN,
               statusesCount, tweetCount, followersCount,
               favoritesCount, friendsCount, userURL, created,
               protected, verified, location, lastStatus, show,
               description, name, id, statusText, truncated, statusSource)
 
+export("rateLimitInfoFactory")
+export("getCurRateLimitInfo")
 export('statusFactory')
 export('buildStatus')
 export('userFactory')
