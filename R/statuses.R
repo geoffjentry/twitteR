@@ -75,9 +75,10 @@ setRefClass("status",
                   stop("Count must be between 0 and 100")
                 jsonList <- doPagedAPICall(paste("statuses", .self$id,
                                                  "retweeted_by", "ids", sep="/"), count, ...)
-                FIXME
-              },
+                ## FIXME
+              }
             )
+          )
 
 statusFactory <- getRefClass("status")
 statusFactory$accessors(names(statusFactory$fields()))

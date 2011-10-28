@@ -30,7 +30,7 @@ setRefClass('twAPIInterface',
               ),
             methods = list(
               initialize=function(...) {
-                maxResults <<- 100
+                maxResults <<- 100L
                 callSuper(...)
                 .self
               },
@@ -38,7 +38,7 @@ setRefClass('twAPIInterface',
                 ## Will provide some basic error checking, as well as suppress
                 ## warnings that always seem to come out of fromJSON, even
                 ## in good cases. 
-                out <- try(suppressWarnings(fromJSON(json)), silent=TRUE)
+                out <- try(suppressWarnings(fromJSON(json, simplify=FALSE)), silent=TRUE)
                 if (inherits(out, "try-error")) {
                   if (verbose == TRUE)
                     print(json)
