@@ -34,19 +34,15 @@ setRefClass('twAPIInterface',
                 callSuper(...)
                 .self
               },
-              twFromJSON = function(json, verbose=FALSE) {
+              twFromJSON = function(json) {
                 ## Will provide some basic error checking, as well as suppress
                 ## warnings that always seem to come out of fromJSON, even
                 ## in good cases. 
                 out <- try(suppressWarnings(fromJSON(json, simplify=FALSE)), silent=TRUE)
                 if (inherits(out, "try-error")) {
-                  if (verbose == TRUE)
-                    print(json)
                   stop("Error: Malformed response from server, was not JSON")
                 }
                 if ('error' %in% names(out)) {
-                  if (verbose == TRUE)
-                    print(json)
                   ## A few errors we want to stop on, and others we want to just
                   ## give a warning
                   if (length(grep("page parameter out of range",
@@ -65,7 +61,7 @@ setRefClass('twAPIInterface',
                 out
               },
               doAPICall = function(cmd, params=NULL, method="GET",
-                url=NULL, verbose=FALSE, check=TRUE, ...) {
+                url=NULL, ...) {
                 ## will perform an API call and process the JSON.  For GET
                 ## calls, try to detect errors and if so attempt up to 3
                 ## more times before returning with an error.  Many twitter
@@ -73,56 +69,29 @@ setRefClass('twAPIInterface',
                 ## real error there's little harm in repeating the call.
                 ## Don't do this on POST calls in case we incorrectly detect
                 ## an error, to avoid pushing the request multiple times.
-
-                ## The "check" parameter should always be left as TRUE.  It is
-                ## made available purely as a mechanism to allow for the rate
-                ## limit to be checked and to avoid a recurisve loop
-                
-                ## First check to make sure the user is not rate limited
-                if (check == TRUE) {
-                  curRL <- getCurRateLimitInfo()
-                  if (curRL$getRemainingHits() <= 0)
-                    stop("Rate limiting was detected, reset time is ",
-                         curRL$getResetTime())
-                }
-                
                 if (is.null(url))
                   url <- getAPIStr(cmd)
-                ## The actual function being called will vary depending on if OAuth is being
-                ## used or not
                 if (hasOAuth()) {
-                  APIFunc <- function(url, params, method, verbose=FALSE, ...) {
+                  APIFunc <- function(url, params, method, ...) {
                     oauth <- getOAuth()
-                    oauth$OAuthRequest(url, params, method, verbose=verbose, ...)
+                    oauth$OAuthRequest(url, params, method, ...)
                   }
                 } else {
-                  APIFunc <- function(url, params, method, verbose=FALSE, ...) {
-                    print(url)
+                  APIFunc <- function(url, params, method, ...) {
                     if (!is.null(params)) {
                       paramStr <- paste(paste(names(params), params, sep='='),
                                         collapse='&')
                       url <- paste(url, paramStr, sep='?')
                     }
-                    
-                    if (verbose == TRUE)
-                      print(paste("URL:", url))
-                    
                     getURL(URLencode(url), ...)
                   }
                 }
-
                 if (method == "POST") {
-                  out <- try(APIFunc(url, params, method, verbose=verbose, ...))
-                  if (inherits(out, "try-error"))
-                    stop("Unable to connect to server - often indicates a 'fail whale' ",
-                         "or similar behavior on the part of Twitter's servers")
+                  out <- APIFunc(url, params, method, ...)
                 } else {
                   count <- 1
                   while (count < 4) {
-                    out <- try(APIFunc(url, params, method, verbose=verbose, ...))
-                    if (inherits(out, "try-error"))
-                      stop("Unable to connect to server - often indicates a 'fail whale' ",
-                           "or similar behavior on the part of Twitter's servers")
+                    out <- APIFunc(url, params, method, ...)
                     if (length(grep('html', out)) == 0) {
                       break
                     }
@@ -139,7 +108,7 @@ tint <- getRefClass('twAPIInterface')
 tint$accessors(names(tint$fields()))
 twInterfaceObj <- tint$new()
 
-doPagedAPICall = function(cmd, num, params=NULL, method='GET', verbose=FALSE, ...) {
+doPagedAPICall = function(cmd, num, params=NULL, method='GET', ...) {
   if (num <= 0)
     stop('num must be positive')
   else
@@ -154,7 +123,7 @@ doPagedAPICall = function(cmd, num, params=NULL, method='GET', verbose=FALSE, ..
   while (total > 0) {
     params[['page']] <- page
     jsonList <- c(jsonList,
-                  twInterfaceObj$doAPICall(cmd, params, method, verbose=verbose, ...))
+                  twInterfaceObj$doAPICall(cmd, params, method, ...))
     total <- total - count
     page <- page + 1
   }
@@ -164,7 +133,7 @@ doPagedAPICall = function(cmd, num, params=NULL, method='GET', verbose=FALSE, ..
   jsonList
 }
 
-doCursorAPICall = function(cmd, type, num=NULL, params=NULL, method='GET', verbose=FALSE, ...) {
+doCursorAPICall = function(cmd, type, num=NULL, params=NULL, method='GET', ...) {
   cursor <- -1
   if (!is.null(num)) {
     if (num <= 0)
@@ -175,7 +144,7 @@ doCursorAPICall = function(cmd, type, num=NULL, params=NULL, method='GET', verbo
   vals <- character()
   while(cursor != 0) {
     params[['cursor']] <- cursor
-    curResults <- twInterfaceObj$doAPICall(cmd, params, method, verbose=verbose, ...)
+    curResults <- twInterfaceObj$doAPICall(cmd, params, method, ...)
     vals <- c(vals, curResults[[type]])
     if ((!is.null(num)) && (length(vals) >= num))
       break
@@ -186,7 +155,7 @@ doCursorAPICall = function(cmd, type, num=NULL, params=NULL, method='GET', verbo
   vals
 }
 
-doRppAPICall = function(num, params, verbose=FALSE, ...) {
+doRppAPICall = function(num, params, ...) {
   if (! 'q' %in% names(params))
     stop("parameter 'q' must be supplied")
   maxResults <- twInterfaceObj$getMaxResults()
@@ -199,7 +168,7 @@ doRppAPICall = function(num, params, verbose=FALSE, ...) {
   curDiff <- num
   jsonList <- list()
   while (curDiff > 0) {
-    fromJSON <- twInterfaceObj$doAPICall(NULL, params, 'GET', url=url, verbose=verbose, ...)
+    fromJSON <- twInterfaceObj$doAPICall(NULL, params, 'GET', url=url, ...)
     newList <- fromJSON$results
     jsonList <- c(jsonList, newList)
     curDiff <- num - length(jsonList)

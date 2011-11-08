@@ -61,7 +61,7 @@ setRefClass("user",
                   if (is.character(json[['screen_name']]))
                     screenName <<- json[['screen_name']]
                   if (!is.null(json[['id']]))
-                    id <<- json[['id']]
+                    id <<- as.character(json[['id']])
                   if (!is.null(json[['location']]))
                     location <<- json[['location']]
                 }

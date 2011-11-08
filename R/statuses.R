@@ -34,7 +34,7 @@ setRefClass("status",
                   if (!is.null(json[['text']]))
                     text <<- json[['text']]
                   if (is.null(json[['favorited']]))
-                    favorited <<- json[['favorited']]
+                    favorited <<- FALSE
                   else
                     favorited <<- TRUE
                   if (is.null(json[['truncated']]))
@@ -52,33 +52,17 @@ setRefClass("status",
                     replyToSN <<- json[['in_reply_to_screen_name']]
                   if ((!is.null(json[['in_reply_to_status_id']])) &&
                       (!is.na(json[['in_reply_to_status_id']])))
-                    replyToSID <<- json[['in_reply_to_status_id']]
+                    replyToSID <<- as.character(json[['in_reply_to_status_id']])
                   if ((!is.null(json[['in_reply_to_user_id']])) &&
                       (!is.na(json[['in_reply_to_user_id']])))
-                    replyToUID <<- json[['in_reply_to_user_id']]
+                    replyToUID <<- as.character(json[['in_reply_to_user_id']])
                   if (!is.null(json[['id']]))
-                    id <<- json[['id']]
+                    id <<- as.character(json[['id']])
                 }
                 callSuper(...)
-              },
-              retweetedBy = function(count=100, ...) {
-                if ((count < 0) || (count > 100))
-                  stop("Count must be between 0 and 100")
-                jsonList <- doPagedAPICall(paste("statuses", .self$id,
-                                                 "retweeted_by", sep="/"), count, ...)
-                sapply(jsonList, buildUser)
-              },
-              retweetedByIDs = function(count=100, ...) {
-                if (!hasOAuth())
-                  stop("retweetedByIDs requires OAuth")
-                if ((count < 0) || (count > 100))
-                  stop("Count must be between 0 and 100")
-                jsonList <- doPagedAPICall(paste("statuses", .self$id,
-                                                 "retweeted_by", "ids", sep="/"), count, ...)
-                ## FIXME
               }
+              )
             )
-          )
 
 statusFactory <- getRefClass("status")
 statusFactory$accessors(names(statusFactory$fields()))
@@ -174,4 +158,3 @@ statusBase <- function(cmd, params, n, maxN, ...) {
   }
   sapply(doPagedAPICall(cmd, n, params, ...), buildStatus)
 }
-

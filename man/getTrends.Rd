@@ -8,10 +8,10 @@ Functions to view Twitter trends
   the Twitter API
 }
 \usage{
-getTrends(period = c("current", "daily", "weekly"), exclude = NULL, date = NULL)
+getTrends(period = c("daily", "weekly"), exclude = NULL, date = NULL)
 }
 \arguments{
-  \item{period}{One of \code{current}, \code{daily}, or \code{weekly},
+  \item{period}{One of\code{daily}, or \code{weekly},
     to describe the time period to acquire data for}
   \item{exclude}{If set to \code{hashtags}, will exclude hashtags}
   \item{date}{For periods \code{daily} and \code{weekly}, the date to
@@ -19,9 +19,6 @@ getTrends(period = c("current", "daily", "weekly"), exclude = NULL, date = NULL)
     going back too far (roughly 10-14 days) will result in an empty result}
 }
 \details{
-  The \code{current} period will return the 10 current trending topics
-  on Twitter.
-
   The \code{daily} period will return the top 20 trending topics per
   hour for the given date
 

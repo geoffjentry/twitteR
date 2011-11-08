@@ -26,7 +26,7 @@ setRefClass('trend',
                   ## etc
                   if ('name' %in% names(json))
                     name <<- json[['name']]
-                  if ('events' %in% names(json))
+                  if (('events' %in% names(json)) && (!is.null(json[['events']])))
                     events <<- json[['events']]
                   if ('woeid' %in% names(json))
                     woeid <<- json[['woeid']]
@@ -59,7 +59,7 @@ setMethod('show', signature='trend', function(object) {
 })
 
 
-getTrends <- function(period=c('current', 'daily', 'weekly'),
+getTrends <- function(period=c('daily', 'weekly'),
                       exclude=NULL, date=NULL) {
   period <- match.arg(period)
   params <- buildCommonArgs(exclude=exclude, date=date)
