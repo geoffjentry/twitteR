@@ -33,3 +33,17 @@ parseUsers <- function(users) {
        screen_name=paste(sns, collapse=','))
 }
 
+twListToDF <- function(twList) {
+  ## iff all elements of twList are from a class defined in this
+  ## package, and all of the same class, will collapse these into
+  ## a data.frame and return
+  classes <- unique(sapply(twList, class))
+  if (length(classes) != 1) {
+    stop("Not all elements of twList are of the same class")
+  }
+  if (! classes %in% c('status', 'user', 'directMessage', 'trend', 'rateLimitInfo')) {
+    stop("Elements of twList are not of an appropriate class")
+  }
+  do.call('rbind', lapply(twList, as.data.frame))
+}
+

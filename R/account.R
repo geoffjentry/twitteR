@@ -9,11 +9,11 @@ rateLimitInfoFactory <- setRefClass("rateLimitInfo",
                                       initialize = function(json, ...) {
                                         if (!missing(json)) {
                                           if (!is.null(json[["remaining_hits"]]))
-                                            remainingHits <<- json[["remaining_hits"]]
+                                            remainingHits <<- as.numeric(json[["remaining_hits"]])
                                           if (!is.null(json[["reset_time_in_seconds"]]))
-                                            resetTimeInSeconds <<- json[["reset_time_in_seconds"]]
+                                            resetTimeInSeconds <<- as.numeric(json[["reset_time_in_seconds"]])
                                           if (!is.null(json[["hourly_limit"]]))
-                                            hourlyLimit <<- json[["hourly_limit"]]
+                                            hourlyLimit <<- as.numeric(json[["hourly_limit"]])
                                           if (!is.null(json[["reset_time"]]))
                                             resetTime <<- twitterDateToPOSIX(json[["reset_time"]])
                                         }
@@ -32,7 +32,7 @@ setMethod("show", signature="rateLimitInfo", function(object) {
 })
 
 getCurRateLimitInfo <- function(...) {
-  json <- twInterfaceObj$doAPICall("account/rate_limit_status", check=FALSE, ...)
+  json <- twInterfaceObj$doAPICall("account/rate_limit_status", ...)
   buildRateLimitInfo(json)
 }
 

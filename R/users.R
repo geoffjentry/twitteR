@@ -32,11 +32,11 @@ setRefClass("user",
                   if (is.character(json[['description']]))
                     description <<- json[['description']]
                   if (!is.null(json[['statuses_count']]))
-                    statusesCount <<- json[['statuses_count']]
+                    statusesCount <<- as.numeric(json[['statuses_count']])
                   if (!is.null(json[['followers_count']]))
-                    followersCount <<- json[['followers_count']]
+                    followersCount <<- as.numeric(json[['followers_count']])
                   if (!is.null(json[['friends_count']]))
-                    friendsCount <<- json[['friends_count']]
+                    friendsCount <<- as.numeric(json[['friends_count']])
                   if ((!is.null(json[['url']]))&&(!is.na(json[['url']])))
                     url <<- json[['url']]
                   if (is.character(json[['name']]))
@@ -71,14 +71,14 @@ setRefClass("user",
                 followers(.self$id, n, ...)
               },
               getFollowers = function(n=NULL, ...) {
-                fol <- .self$followerIDs(n, ...)
+                fol <- .self$getFollowerIDs(n, ...)
                 lookupUsers(fol, ...)
               },
-              getFriendsIDs = function(n=NULL, ...) {
+              getFriendIDs = function(n=NULL, ...) {
                 friends(.self$id, n, ...)
-              },
+              }, 
               getFriends = function(n=NULL, ...) {
-                fri <- .self$friendIDs(n, ...)
+                fri <- .self$getFriendIDs(n, ...)
                 lookupUsers(fri, ...)
               },
               toDataFrame = function(row.names=NULL, optional=FALSE) {
@@ -122,9 +122,11 @@ getUser <- function(user, ...) {
 lookupUsers <- function(users, ...) {
   batches <- split(users, ceiling(seq_along(users) / 100))
   results <- lapply(batches, function(batch) {
-    params <- parseUsers(users)
+    params <- parseUsers(batch)
     twInterfaceObj$doAPICall(paste('users', 'lookup', sep='/'),
                              params=params, ...)
   })
-  sapply(do.call(c, results), buildUser)
+  out <- sapply(do.call(c, results), buildUser)
+  names(out) <- NULL
+  out
 }
