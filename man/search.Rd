@@ -18,7 +18,7 @@ Rtweets(n=25, lang=NULL, since=NULL, ...)
     language, given by an ISO 639-1 code} 
   \item{since}{If not \code{NULL}, restricts tweets to those since the
     given date.  Date is to be formatted as YYYY-MM-DD} 
-  \item{until}{If not \code{NULL}, restricts tweets to those since the
+  \item{until}{If not \code{NULL}, restricts tweets to those up until the
     given date.  Date is to be formatted as YYYY-MM-DD} 
   \item{locale}{If not \code{NULL}, will set the locale for the search.
     As of 03/06/11 only \code{ja} is effective, as per the Twitter API}

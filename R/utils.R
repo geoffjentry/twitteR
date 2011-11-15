@@ -12,7 +12,7 @@ buildCommonArgs <- function(lang=NULL, since=NULL, until=NULL, locale=NULL,
   for (arg in names(formals())) {
     val <- get(arg)
     if (length(val) > 0)
-      out[[arg]] <- val
+      out[[arg]] <- as.character(val)
   }
   out
 }
