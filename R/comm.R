@@ -179,6 +179,10 @@ doRppAPICall = function(num, params, ...) {
         splitParams <- strsplit(strsplit(gsub('\\?', '', URLdecode(fromJSON$next_page)), '&')[[1]], '=')
         newParams <- lapply(splitParams, function(x) x[2])
         names(newParams) <- sapply(splitParams, function(x) x[1])
+        ## As of 11/16/11 (at least) they've started returning a modified "q" field which Id
+        ## don't want to preserve. Take that out if it exists
+        newParams <- newParams[setdiff(names(newParams), "q")]
+        
         params[names(newParams)] <- newParams
         if (curDiff < maxResults)
           ## If we no longer want max entities, only get curDiff
@@ -196,8 +200,16 @@ twitterDateToPOSIX <- function(dateStr) {
   ## spit dates back at us.  First, let's take a look at unix
   ## epoch time, and then try a few data string formats
   dateInt <- suppressWarnings(as.numeric(dateStr))
+
+  ## Locale must be set to something american-y in order to properly
+  ## parse the Twitter dates. Get the current LC_TIME, reset it on
+  ## exit and then change the locale
+  curLocale <- Sys.getlocale("LC_TIME")
+  on.exit(Sys.setlocale("LC_TIME", curLocale), add=TRUE)
+  Sys.setlocale("LC_TIME", "C")
+  
   if (!is.na(dateInt)) {
-    posDate <- as.POSIXct(dateInt, origin='1970-01-01')
+    posDate <- as.POSIXct(dateInt, tz='UTC', origin='1970-01-01')
   } else {
     posDate <- as.POSIXct(dateStr, tz='UTC',
                           format="%a %b %d %H:%M:%S +0000 %Y")
