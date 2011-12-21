@@ -51,11 +51,11 @@ trendFactory$accessors(names(trendFactory$fields()))
 buildTrend <- function(json, date) {
   ## we don't need to do the fancy twitter date mapping, this one is
   ## already ok
-  trendFactory$new(json, as.POSIXct(date))
+  return(trendFactory$new(json, as.POSIXct(date, tz="UTC")))
 }
 
 setMethod('show', signature='trend', function(object) {
-  print(object$getName())
+  return(print(object$getName()))
 })
 
 
