@@ -33,14 +33,18 @@ setRefClass("status",
                   }
                   if (!is.null(json[['text']]))
                     text <<- json[['text']]
-                  if (is.null(json[['favorited']]))
+                  if ((is.null(json[['favorited']])) ||
+                      (json[["favorited"]] == FALSE)) {
                     favorited <<- FALSE
-                  else
+                  } else {
                     favorited <<- TRUE
-                  if (is.null(json[['truncated']]))
+                  }
+                  if ((is.null(json[['truncated']])) ||
+                      (json[["truncated"]] == FALSE)) {
                     truncated <<- FALSE
-                  else
+                  } else {
                     truncated <<- TRUE
+                  }
                   if (!is.null(json[['source']]))
                     statusSource <<- json[['source']]
                   if (is.null(json[['created_at']]))
@@ -48,16 +52,20 @@ setRefClass("status",
                   else
                     created <<- twitterDateToPOSIX(json[['created_at']])
                   if ((!is.null(json[['in_reply_to_screen_name']])) &&
-                      (!is.na(json[['in_reply_to_screen_name']])))
+                      (!is.na(json[['in_reply_to_screen_name']]))) {
                     replyToSN <<- json[['in_reply_to_screen_name']]
-                  if ((!is.null(json[['in_reply_to_status_id']])) &&
-                      (!is.na(json[['in_reply_to_status_id']])))
-                    replyToSID <<- as.character(json[['in_reply_to_status_id']])
-                  if ((!is.null(json[['in_reply_to_user_id']])) &&
-                      (!is.na(json[['in_reply_to_user_id']])))
-                    replyToUID <<- as.character(json[['in_reply_to_user_id']])
-                  if (!is.null(json[['id']]))
-                    id <<- as.character(json[['id']])
+                  }
+                  if ((!is.null(json[['in_reply_to_status_id_str']])) &&
+                      (!is.na(json[['in_reply_to_status_id_str']]))) {
+                    replyToSID <<- as.character(json[['in_reply_to_status_id_str']])
+                  }
+                  if ((!is.null(json[['in_reply_to_user_id_str']])) &&
+                      (!is.na(json[['in_reply_to_user_id_str']]))) {
+                    replyToUID <<- as.character(json[['in_reply_to_user_id_str']])
+                  }
+                  if (!is.null(json[['id_str']])) {
+                    id <<- as.character(json[['id_str']])
+                  }
                 }
                 callSuper(...)
               }

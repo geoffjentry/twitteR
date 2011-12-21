@@ -1,7 +1,8 @@
 setRefClass('twitterObj',
             contains='VIRTUAL',
             methods = list(
-              toDataFrame = function(row.names=NULL, optional=FALSE) {
+              toDataFrame = function(row.names=NULL, optional=FALSE,
+                stringsAsFactors=FALSE) {
                 fields <- names(.self$getRefClass()$fields())
                 fieldList <- lapply(fields, function(x) {
                   val <- .self$field(x)
@@ -12,7 +13,7 @@ setRefClass('twitterObj',
                 })
                 names(fieldList) <- fields
                 as.data.frame(fieldList, row.names=row.names,
-                              optional=optional)
+                              optional=optional, stringsAsFactors=stringsAsFactors)
               }
               )
             )

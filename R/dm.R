@@ -37,8 +37,9 @@ setRefClass("directMessage",
                     senderID <<- json[['sender_id']]
                   if (!is.null(json[['sender_screen_name']]))
                     senderSN <<- json[['sender_screen_name']]
-                  if (!is.null(json[['id']]))
-                    id <<- json[['id']]
+                  if (!is.null(json[['id_str']])) {
+                    id <<- json[['id_str']]
+                  }
                 }
                 callSuper(...)
               },
@@ -92,13 +93,20 @@ dmDestroy <- function(dm, ...) {
 }
 
 dmSend <- function(text, user, ...) {
-  if (!hasOAuth())
+  if (!hasOAuth()) {
     stop("dmSend requires OAuth authentication")
-  if (inherits(user, "user"))
-        user <- screenName(user)
-  if (nchar(text) > 140)
+  }
+  if (inherits(user, "user")) {
+    u.params <- c(list(...)[["uParams"]], list(screen_name = screenName(user)))
+  } else {
+    uParams <- parseUsers(user)
+  }
+  if (nchar(text) > 140) {
     stop("Maximum of 140 chars may be sent via a direct message")
-  params[['text']] <- text
+  }
+  params <- c(list(...)[["params"]], list(text=text))
+  params[["user_id"]] <- uParams[["user_id"]]
+  params[["screen_name"]] <- uParams[["screen_name"]]
   res <- twInterfaceObj$doAPICall('direct_messages/new',
                                   params=params, method='POST', ...)
   dmFactory$new(res)

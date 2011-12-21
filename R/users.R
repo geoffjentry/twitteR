@@ -60,8 +60,9 @@ setRefClass("user",
                     verified <<- TRUE
                   if (is.character(json[['screen_name']]))
                     screenName <<- json[['screen_name']]
-                  if (!is.null(json[['id']]))
-                    id <<- as.character(json[['id']])
+                  if (!is.null(json[["id_str"]])) {
+                    id <<- as.character(json[["id_str"]])
+                  }
                   if (!is.null(json[['location']]))
                     location <<- json[['location']]
                 }
