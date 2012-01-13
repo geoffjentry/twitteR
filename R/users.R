@@ -120,7 +120,7 @@ getUser <- function(user, ...) {
                                      params=params, ...))
 }
 
-lookupUsers <- function(users, ...) {
+lookupUsers <- function(users, includeNA=FALSE, ...) {
   batches <- split(users, ceiling(seq_along(users) / 100))
   results <- lapply(batches, function(batch) {
     params <- parseUsers(batch)
@@ -128,6 +128,20 @@ lookupUsers <- function(users, ...) {
                              params=params, ...)
   })
   out <- sapply(do.call(c, results), buildUser)
-  names(out) <- NULL
+
+  ## Order these to match the users vector - if !includeNA,
+  ## drop out the elements of the return list which weren't
+  ## found
+  sns <- tolower(sapply(out, function(x) x$getScreenName()))
+  order <- match(users, sns)
+  naEles <- which(is.na(order))
+  if (length(naEles) > 0) {
+    if (!includeNA) {
+      order <- order[-naEles]
+      users <- users[-naEles]
+    }
+  }
+  out <- out[order]
+  names(out) <- users
   out
 }
