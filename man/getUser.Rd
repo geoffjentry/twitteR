@@ -35,7 +35,7 @@ lookupUsers(users, includeNA=FALSE, ...)
   The \code{lookupUsers} function will return a list of \code{\link{user}} objects,
   sorted in the order of the \code{users} argument, with names being the particular
   element of \code{users} that it matches to. If the \code{includeNA} argument is set
-  to \code{FALSE (default), any non-existing users will be dropped from the list.
+  to \code{FALSE} (default), any non-existing users will be dropped from the list.
 }
 \author{Jeff Gentry}
 \seealso{\code{\link{mentions}}}
