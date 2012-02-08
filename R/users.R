@@ -69,14 +69,14 @@ setRefClass("user",
                 callSuper(...)
               },
               getFollowerIDs = function(n=NULL, ...) {
-                followers(.self$id, n, ...)
+                return(unlist(followers(.self$id, n, ...)))
               },
               getFollowers = function(n=NULL, ...) {
                 fol <- .self$getFollowerIDs(n, ...)
                 lookupUsers(fol, ...)
               },
               getFriendIDs = function(n=NULL, ...) {
-                friends(.self$id, n, ...)
+                return(unlist(friends(.self$id, n, ...)))
               }, 
               getFriends = function(n=NULL, ...) {
                 fri <- .self$getFriendIDs(n, ...)
@@ -121,6 +121,22 @@ getUser <- function(user, ...) {
 }
 
 lookupUsers <- function(users, includeNA=FALSE, ...) {
+  MatchLookedUpUsers <- function(vals) {
+    order <- match(users, vals)
+    na.eles <- which(is.na(order))
+    
+    if (length(na.eles) > 0) {
+      if (!includeNA) {
+        order <- order[-na.eles]
+        users <- users[-na.eles]
+      }
+    }
+    out <- out[order]
+    names(out) <- users
+    
+    return(out)
+  }
+  
   batches <- split(users, ceiling(seq_along(users) / 100))
   results <- lapply(batches, function(batch) {
     params <- parseUsers(batch)
@@ -132,16 +148,29 @@ lookupUsers <- function(users, includeNA=FALSE, ...) {
   ## Order these to match the users vector - if !includeNA,
   ## drop out the elements of the return list which weren't
   ## found
-  sns <- tolower(sapply(out, function(x) x$getScreenName()))
-  order <- match(users, sns)
-  naEles <- which(is.na(order))
-  if (length(naEles) > 0) {
-    if (!includeNA) {
-      order <- order[-naEles]
-      users <- users[-naEles]
-    }
+  sn.lookups <- MatchLookedUpUsers(tolower(sapply(out,
+                                                  function(x) x$getScreenName())))
+  id.lookups <- MatchLookedUpUsers(sapply(out, function(x) x$getId()))
+
+  ## The problem with doing it in the two batch way above is that
+  ## anything that was SN will be NULL for ID and vice versa.
+  ## If includeNA is TRUE, we can't just remove all empty
+  ## entries. As a hack, only retain the NULL values that are shared
+  ## between both lists
+  if (includeNA) {
+    sn.nulls <- sapply(sn.lookups, is.null)
+    id.nulls <- sapply(id.lookups, is.null)
+    false.nulls <- xor(sn.nulls, id.nulls)
+    sn.lookups <- sn.lookups[!(sn.nulls & false.nulls)]
+    id.lookups <- id.lookups[!(id.nulls & false.nulls)]
+  } else {
+    ## Otherwise, just strip out the names that have been
+    ## taken out
+    users <- intersect(users, union(names(sn.lookups), names(id.lookups)))
   }
-  out <- out[order]
-  names(out) <- users
-  out
+  
+  out <- c(sn.lookups, id.lookups)
+  return(out[users])
 }
+
+ 

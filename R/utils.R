@@ -28,9 +28,9 @@ parseUsers <- function(users) {
   })
   numUsers <- suppressWarnings(as.numeric(users))
   uids <- numUsers[!is.na(numUsers)]
-  sns <- setdiff(users, uids)
-  list(user_id=paste(uids, collapse=','),
-       screen_name=paste(sns, collapse=','))
+  screen.names <- setdiff(users, uids)
+  return(list(user_id=paste(uids, collapse=','),
+              screen_name=paste(screen.names, collapse=',')))
 }
 
 twListToDF <- function(twList) {
