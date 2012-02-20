@@ -1,0 +1,7 @@
+2/20/2012 - version 0.99.19:
+   - Fixed a bug in lookupUsers where screen names that had upper
+     case characters in them weren't being properly populated
+   - Switched (temporarily) to rjson in order to properly handle unicode
+     text data from Twitter
+   - Changed DM sender_id and recipient_id to be using the corresponding
+     id_str

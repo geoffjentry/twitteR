@@ -1,5 +1,10 @@
 getAPIStr <- function(cmd, version=1) {
-  paste('http://api.twitter.com/', version, '/', cmd, '.json', sep='')
+  if (hasOAuth()) {
+    scheme <- "https"
+  } else {
+    scheme <- "http"
+  }
+  paste(scheme, '://api.twitter.com/', version, '/', cmd, '.json', sep='')
 }
 
 buildCommonArgs <- function(lang=NULL, since=NULL, until=NULL, locale=NULL,

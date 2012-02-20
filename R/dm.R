@@ -31,10 +31,10 @@ setRefClass("directMessage",
                   recipientSN <<- json[['recipient_screen_name']]
                   if (!is.null(json[['created']]))
                     created <<- twitterDateToPOSIX(json[['created']])
-                  if (!is.null(json[['recipient_id']]))
-                    recipientID <<- json[['recipient_id']]
-                  if (!is.null(json[['sender_id']]))
-                    senderID <<- json[['sender_id']]
+                  if (!is.null(json[['recipient']][['id_str']]))
+                    recipientID <<- json[['recipient']][['id_str']]
+                  if (!is.null(json[['sender']][['id_str']]))
+                    senderID <<- json[['sender']][['id_str']]
                   if (!is.null(json[['sender_screen_name']]))
                     senderSN <<- json[['sender_screen_name']]
                   if (!is.null(json[['id_str']])) {

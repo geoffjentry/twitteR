@@ -38,7 +38,12 @@ setRefClass('twAPIInterface',
                 ## Will provide some basic error checking, as well as suppress
                 ## warnings that always seem to come out of fromJSON, even
                 ## in good cases. 
-                out <- try(suppressWarnings(fromJSON(json, simplify=FALSE)), silent=TRUE)
+
+                ## FIXME: original code for RJSONIO, when I switch back,
+                ## use this line and not the next line ...
+                ##                out <- try(suppressWarnings(fromJSON(json, simplify=FALSE)), silent=TRUE)
+                ## FIXME: rjson's version of the line
+                out <- try(suppressWarnings(fromJSON(json)), silent=TRUE)
                 if (inherits(out, "try-error")) {
                   stop("Error: Malformed response from server, was not JSON")
                 }
@@ -98,6 +103,7 @@ setRefClass('twAPIInterface',
                     count <- count + 1
                   }
                 }
+
                 .self$twFromJSON(out)
               }
               )

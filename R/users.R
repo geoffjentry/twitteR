@@ -122,7 +122,7 @@ getUser <- function(user, ...) {
 
 lookupUsers <- function(users, includeNA=FALSE, ...) {
   MatchLookedUpUsers <- function(vals) {
-    order <- match(users, vals)
+    order <- match(tolower(users), tolower(vals))
     na.eles <- which(is.na(order))
     
     if (length(na.eles) > 0) {
@@ -148,8 +148,8 @@ lookupUsers <- function(users, includeNA=FALSE, ...) {
   ## Order these to match the users vector - if !includeNA,
   ## drop out the elements of the return list which weren't
   ## found
-  sn.lookups <- MatchLookedUpUsers(tolower(sapply(out,
-                                                  function(x) x$getScreenName())))
+  sn.lookups <- MatchLookedUpUsers(sapply(out,
+                                          function(x) x$getScreenName()))
   id.lookups <- MatchLookedUpUsers(sapply(out, function(x) x$getId()))
 
   ## The problem with doing it in the two batch way above is that

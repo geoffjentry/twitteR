@@ -75,8 +75,9 @@ setRefClass("status",
 statusFactory <- getRefClass("status")
 statusFactory$accessors(names(statusFactory$fields()))
 
-buildStatus <- function(json)
-  statusFactory$new(json)
+buildStatus <- function(json) {
+  return(statusFactory$new(json))
+}
 
 setMethod("show", signature="status", function(object) {
     print(paste(screenName(object), object$text, sep=": "))
@@ -95,8 +96,9 @@ updateStatus <- function(text, lat=NULL, long=NULL, placeID=NULL,
                             display_coordinates=displayCoords,
                             in_reply_to_status_id=inReplyTo)
   params[['status']] <- text
-  buildStatus(twInterfaceObj$doAPICall('statuses/update',
-                                       params=params, method='POST', ...))
+  json <- twInterfaceObj$doAPICall('statuses/update',
+                                   params=params, method='POST', ...)
+  return(buildStatus(json))
 }
             
 tweet <- function(text, ...) {

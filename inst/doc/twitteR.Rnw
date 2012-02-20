@@ -51,11 +51,6 @@ with the idea being that there'll now be a searchable archive and
 perhaps other users might be able to chime in.  The URL for this
 mailing list is \url{http://lists.hexdump.org/listinfo.cgi/twitter-users-hexdump.org}
 
-\subsection{Notes for this version}
-
-The reworking is still underway.  The primary change for this version
-has been better support for R-2.14
-
 \subsection{Notes on API coverage}
 
 The ultimate goal is to provide full coverage of the Twitter API, although
@@ -215,12 +210,12 @@ programatically.  The \Rpackage{ROAuth} package can be used to get around
 this issue.
 
 The first step is to create a Twitter application for yourself.  Go to
-\url{https://twitter.com/apps/new}.  Set the ``Application Type'' as
-``Client'', and ``Default Access Type'' as ``Read \& Write''.  This will
-provide you with two strings, a consumer key and a consumer secret.  Record 
-these for your future use.
+\url{https://twitter.com/apps/new} and log in. After filling in the
+basic info, go to the ``Settings'' tab and select "Read, Write and Access direct messages".
+Make sure to click on the save button after doing this. In the
+``Details'' tab, take note of your consumer key and consumer secret as
+well as the following:
 
-Three other pieces of information you will need:
 \begin{itemize}
 \item \em{requestURL}: \url{https://api.twitter.com/oauth/request_token}
 \item \em{accessURL}: \url{http://api.twitter.com/oauth/access_token}
