@@ -18,7 +18,9 @@ setRefClass("status",
               id="character",
               replyToUID="character",
               statusSource="character",
-              screenName="character"
+              screenName="character",
+              retweetCount="numeric",
+              retweeted="logical"
               ),
             methods=list(
               initialize = function(json, ...) {
@@ -66,6 +68,16 @@ setRefClass("status",
                   if (!is.null(json[['id_str']])) {
                     id <<- as.character(json[['id_str']])
                   }
+                  if (!is.null(json[["retweet_count"]])) {
+                    retweetCount <<- as.numeric(json[["retweet_count"]])
+                  }
+                  if ((is.null(json[['retweeted']])) ||
+                      (json[["retweeted"]] == FALSE)) {
+                    retweeted <<- FALSE
+                  } else {
+                    retweeted <<- TRUE
+                  }
+
                 }
                 callSuper(...)
               }
