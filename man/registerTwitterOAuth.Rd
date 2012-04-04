@@ -31,10 +31,10 @@ registerTwitterOAuth(oauth)
        ## A real example, but using a fictitious consumerkey and consumer
        ## secret - you'll need to supply your own
        reqURL <- "https://api.twitter.com/oauth/request_token"
-       accessURL = "http://api.twitter.com/oauth/access_token"
-       authURL = "http://api.twitter.com/oauth/authorize"
-       consumerKey = "12345pqrst6789ABCD"
-       consumerSecret = "abcd1234EFGH5678ijkl0987MNOP6543qrst21"
+       accessURL <- "http://api.twitter.com/oauth/access_token"
+       authURL <- "http://api.twitter.com/oauth/authorize"
+       consumerKey <- "12345pqrst6789ABCD"
+       consumerSecret <- "abcd1234EFGH5678ijkl0987MNOP6543qrst21"
        twitCred <- OAuthFactory$new(consumerKey=consumerKey,
                                     consumerSecret=consumerSecret,
                                     requestURL=reqURL,

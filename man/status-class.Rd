@@ -26,6 +26,10 @@
 \alias{screenName,status-method}
 \alias{statusText}
 \alias{statusText,status-method}
+\alias{retweetCount,status-method}
+\alias{retweetCount}
+\alias{retweeted,status-method}
+\alias{retweeted}
 \alias{[[,twitterObjList-method}
 \alias{as.data.frame,twitterObj-method}
 \alias{show,twitterObjList-method}
@@ -44,6 +48,8 @@
     \item{\code{created}:}{When this status was created}
     \item{\code{truncated}:}{Whether this status was truncated}
     \item{\code{favorited}:}{Whether this status has been favorited}
+    \item{\code{retweeted}:}{TRUE if this status has been retweeted}
+    \item{\code{retweetCount}:}{The number of times this status has been retweeted}
   }
 }
 \section{Methods}{
