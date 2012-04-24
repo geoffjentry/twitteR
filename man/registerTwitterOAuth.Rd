@@ -41,7 +41,7 @@ registerTwitterOAuth(oauth)
                                     accessURL=accessURL,
                                     authURL=authURL)
        twitCred$handshake()
-       registerTWitterOAuth(twitCred)
+       registerTwitterOAuth(twitCred)
     }
 }
 \keyword{ interface }
