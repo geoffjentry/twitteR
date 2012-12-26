@@ -10,7 +10,7 @@ searchTwitter <- function(searchString, n=25, lang=NULL,
     if (n <= 0)
         stop("n must be positive")
     n <- as.integer(n)
-
+    
     params <- buildCommonArgs(lang=lang, locale=locale, since=since, until=until,
                               geocode=geocode, since_id=sinceID)
     params[['q']] <- searchString

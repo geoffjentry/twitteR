@@ -23,7 +23,79 @@ getOAuth <- function() {
 ## has a completely different interface.  Trying to manage all of these below using one unified
 ## approach to actually sending the data back & receiving response and then providing multiple
 ## mechanisms to page
+twFromJSON = function(json) {
+  ## Will provide some basic error checking, as well as suppress
+  ## warnings that always seem to come out of fromJSON, even
+  ## in good cases. 
+#    browser()
+  ## FIXME: original code for RJSONIO, when I switch back,
+  ## use this line and not the next line ...
+  #out <- try(suppressWarnings(fromJSON(json, simplify=FALSE)), silent=TRUE)
+  ## FIXME: rjson's version of the line
+  out <- try(suppressWarnings(fromJSON(json)), silent=TRUE)
+  if (inherits(out, "try-error")) {
+    stop("Error: Malformed response from server, was not JSON")
+  }
+  if ('error' %in% names(out)) {
+    ## A few errors we want to stop on, and others we want to just
+    ## give a warning
+    if (length(grep("page parameter out of range",
+                    out$error)) > 0) {
+      warning("Error: ", out$error)
+    } else {
+      stop("Error: ", out$error)
+    }
+  }
+  if (length(out) == 2) {
+    names <- names(out)
+    if ((!is.null(names))&&(all(names(out) == c("request",
+                                                "error"))))
+      stop("Error: ", out$error)
+  }
+  out
+}
 
+doAPICall = function(cmd, params=NULL, method="GET", url=NULL, ...) {
+  ## will perform an API call and process the JSON.  For GET
+  ## calls, try to detect errors and if so attempt up to 3
+  ## more times before returning with an error.  Many twitter
+  ## HTML errors are very transient in nature and if it's a
+  ## real error there's little harm in repeating the call.
+  ## Don't do this on POST calls in case we incorrectly detect
+  ## an error, to avoid pushing the request multiple times.
+  if (is.null(url))
+    url <- getAPIStr(cmd)
+  if (hasOAuth()) {
+    APIFunc <- function(url, params, method, ...) {
+      oauth <- getOAuth()
+      print(url)
+      oauth$OAuthRequest(url, params, method, ...)
+    }
+  } else {
+    APIFunc <- function(url, params, method, ...) {
+      if (!is.null(params)) {
+        paramStr <- paste(paste(names(params), params, sep='='),
+                          collapse='&')
+        url <- paste(url, paramStr, sep='?')
+      }
+      getURL(URLencode(url), ...)
+    }
+  }
+  if (method == "POST") {
+    out <- APIFunc(url, params, method, ...)
+  } else {
+    count <- 1
+    while (count < 4) {
+      out <- APIFunc(url, params, method, ...)
+      if (length(grep('html', out)) == 0) {
+        break
+      }
+      count <- count + 1
+    }
+  }
+  
+  twFromJSON(out)
+}
 setRefClass('twAPIInterface',
             fields = list(
               maxResults = 'integer'
@@ -34,78 +106,8 @@ setRefClass('twAPIInterface',
                 callSuper(...)
                 .self
               },
-              twFromJSON = function(json) {
-                ## Will provide some basic error checking, as well as suppress
-                ## warnings that always seem to come out of fromJSON, even
-                ## in good cases. 
-
-                ## FIXME: original code for RJSONIO, when I switch back,
-                ## use this line and not the next line ...
-                ##                out <- try(suppressWarnings(fromJSON(json, simplify=FALSE)), silent=TRUE)
-                ## FIXME: rjson's version of the line
-                out <- try(suppressWarnings(fromJSON(json)), silent=TRUE)
-                if (inherits(out, "try-error")) {
-                  stop("Error: Malformed response from server, was not JSON")
-                }
-                if ('error' %in% names(out)) {
-                  ## A few errors we want to stop on, and others we want to just
-                  ## give a warning
-                  if (length(grep("page parameter out of range",
-                                  out$error)) > 0) {
-                    warning("Error: ", out$error)
-                  } else {
-                    stop("Error: ", out$error)
-                  }
-                }
-                if (length(out) == 2) {
-                  names <- names(out)
-                  if ((!is.null(names))&&(all(names(out) == c("request",
-                                                     "error"))))
-                    stop("Error: ", out$error)
-                }
-                out
-              },
-              doAPICall = function(cmd, params=NULL, method="GET",
-                url=NULL, ...) {
-                ## will perform an API call and process the JSON.  For GET
-                ## calls, try to detect errors and if so attempt up to 3
-                ## more times before returning with an error.  Many twitter
-                ## HTML errors are very transient in nature and if it's a
-                ## real error there's little harm in repeating the call.
-                ## Don't do this on POST calls in case we incorrectly detect
-                ## an error, to avoid pushing the request multiple times.
-                if (is.null(url))
-                  url <- getAPIStr(cmd)
-                if (hasOAuth()) {
-                  APIFunc <- function(url, params, method, ...) {
-                    oauth <- getOAuth()
-                    oauth$OAuthRequest(url, params, method, ...)
-                  }
-                } else {
-                  APIFunc <- function(url, params, method, ...) {
-                    if (!is.null(params)) {
-                      paramStr <- paste(paste(names(params), params, sep='='),
-                                        collapse='&')
-                      url <- paste(url, paramStr, sep='?')
-                    }
-                    getURL(URLencode(url), ...)
-                  }
-                }
-                if (method == "POST") {
-                  out <- APIFunc(url, params, method, ...)
-                } else {
-                  count <- 1
-                  while (count < 4) {
-                    out <- APIFunc(url, params, method, ...)
-                    if (length(grep('html', out)) == 0) {
-                      break
-                    }
-                    count <- count + 1
-                  }
-                }
-
-                .self$twFromJSON(out)
-              }
+              twFromJSON = twFromJSON,
+              doAPICall = doAPICall
               )
             )
 
@@ -113,6 +115,7 @@ setRefClass('twAPIInterface',
 tint <- getRefClass('twAPIInterface')
 tint$accessors(names(tint$fields()))
 twInterfaceObj <- tint$new()
+
 
 doPagedAPICall = function(cmd, num, params=NULL, method='GET', ...) {
   if (num <= 0)

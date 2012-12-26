@@ -126,11 +126,6 @@ deleteStatus <- function(status, ...) {
   TRUE
 }
 
-publicTimeline <- function(...) {
-  jsonList <- twInterfaceObj$doAPICall('statuses/public_timeline')
-  sapply(jsonList, buildStatus)
-}
-
 showStatus <- function(id, ...) {
   if (!is.numeric(id))
     stop("id argument must be numeric")
@@ -151,13 +146,7 @@ homeTimeline <- function(n=25, maxID=NULL, sinceID=NULL, ...)
   authStatusBase(n, 'home_timeline', maxID=maxID, sinceID=sinceID, ...)
 
 mentions <- function(n=25, maxID=NULL, sinceID=NULL, ...)
-  authStatusBase(n, 'mentions', maxID=maxID, sinceID=sinceID, ...)
-
-retweetedByMe <- function(n=25, maxID=NULL, sinceID=NULL, ...)
-  authStatusBase(n, 'retweeted_by_me', maxID=maxID, sinceID=sinceID, ...)
-
-retweetedToMe <- function(n=25, maxID=NULL, sinceID=NULL, ...) 
-  authStatusBase(n, 'retweeted_to_me', maxID=maxID, sinceID=sinceID, ...)
+  authStatusBase(n, 'mentions_timeline', maxID=maxID, sinceID=sinceID, ...)
 
 retweetsOfMe <- function(n=25, maxID=NULL, sinceID=NULL, ...)
   authStatusBase(n, 'retweets_of_me', maxID=maxID, sinceID=sinceID, ...)

@@ -32,7 +32,9 @@ setMethod("show", signature="rateLimitInfo", function(object) {
 })
 
 getCurRateLimitInfo <- function(...) {
-  json <- twInterfaceObj$doAPICall("account/rate_limit_status", ...)
+  stop("Temporarily disabled")
+  ## FIXME: this needs a lot more filled out
+  json <- twInterfaceObj$doAPICall("application/rate_limit_status", ...)
   buildRateLimitInfo(json)
 }
 

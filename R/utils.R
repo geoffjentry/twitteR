@@ -1,4 +1,4 @@
-getAPIStr <- function(cmd, version=1) {
+getAPIStr <- function(cmd, version=1.1) {
   if (hasOAuth()) {
     scheme <- "https"
   } else {
@@ -34,8 +34,20 @@ parseUsers <- function(users) {
   numUsers <- suppressWarnings(as.numeric(users))
   uids <- numUsers[!is.na(numUsers)]
   screen.names <- setdiff(users, uids)
-  return(list(user_id=paste(uids, collapse=','),
-              screen_name=paste(screen.names, collapse=',')))
+  
+  return(buildUserList(uids, screen.names))
+}
+
+buildUserList = function(uids, screen_names) {
+  user_list = list()  
+  if (length(uids) > 0) {
+    user_list$user_id = paste(uids, collapse=',')
+  }
+  if (length(screen_names) > 0) {
+    user_list$screen_name = paste(screen_names, collapse=',')
+  }
+  
+  return(user_list)  
 }
 
 twListToDF <- function(twList) {
