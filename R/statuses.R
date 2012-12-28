@@ -133,7 +133,6 @@ showStatus <- function(id, ...) {
 }
 
 userTimeline <- function(user, n=20, maxID=NULL, sinceID=NULL, ...) {
-    ## AUTH: Will not work if user is protected until OAuth
   uParams <- parseUsers(user)
   cmd <- 'statuses/user_timeline'
   params <- buildCommonArgs(max_id=maxID, since_id=sinceID)
@@ -152,9 +151,10 @@ retweetsOfMe <- function(n=25, maxID=NULL, sinceID=NULL, ...)
   authStatusBase(n, 'retweets_of_me', maxID=maxID, sinceID=sinceID, ...)
 
 authStatusBase <- function(n, type, maxID=NULL, sinceID=NULL, ...) {
-  if (!hasOAuth())
+  if (!hasOAuth()) {
     stop("OAuth is required for this functionality")
-
+  }
+  
   params <- buildCommonArgs(max_id=maxID, since_id=sinceID)
   cmd <- paste('statuses', type, sep='/')
   cmd <- paste('statuses', type, sep='/')

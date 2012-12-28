@@ -68,18 +68,11 @@ doAPICall = function(cmd, params=NULL, method="GET", url=NULL, ...) {
   if (hasOAuth()) {
     APIFunc <- function(url, params, method, ...) {
       oauth <- getOAuth()
-      print(url)
+#      print(url)
       oauth$OAuthRequest(url, params, method, ...)
     }
   } else {
-    APIFunc <- function(url, params, method, ...) {
-      if (!is.null(params)) {
-        paramStr <- paste(paste(names(params), params, sep='='),
-                          collapse='&')
-        url <- paste(url, paramStr, sep='?')
-      }
-      getURL(URLencode(url), ...)
-    }
+    stop("OAuth authentication is required with Twitter's API v1.1")
   }
   if (method == "POST") {
     out <- APIFunc(url, params, method, ...)
@@ -228,7 +221,7 @@ twitterDateToPOSIX <- function(dateStr) {
                             format="%a, %d %b %Y %H:%M:%S +0000")
   }
   ## might still be NA, but we tried
-  posDate
+  return(posDate)
 }
 
 

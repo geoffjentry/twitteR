@@ -13,7 +13,7 @@ ffBase <- function(type, user, n=NULL, ...) {
   doCursorAPICall(paste(type, 'ids', sep='/'), 'ids', num=n, params=params, method='GET', ...)
 }
 
-friendships = function(user_ids=character(), screen_names=character(), ...) {
+friendships = function(screen_names=character(), user_ids=character(), ...) {
   if ((length(user_ids) + length(screen_names)) > 100) {
     stop("friendships() has a maximum of 100 total user ids and screen names")
   }
@@ -28,5 +28,5 @@ friendships = function(user_ids=character(), screen_names=character(), ...) {
              followed_by=followed_by))    
   })
   
-  return(as.data.frame(do.call(rbind, friendship_dfs)))
+  return(as.data.frame(do.call(rbind, friendship_dfs), stringsAsFactors=FALSE))
 }

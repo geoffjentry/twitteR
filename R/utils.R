@@ -58,7 +58,7 @@ twListToDF <- function(twList) {
   if (length(classes) != 1) {
     stop("Not all elements of twList are of the same class")
   }
-  if (! classes %in% c('status', 'user', 'directMessage', 'trend', 'rateLimitInfo')) {
+  if (! classes %in% c('status', 'user', 'directMessage', 'rateLimitInfo')) {
     stop("Elements of twList are not of an appropriate class")
   }
   do.call('rbind', lapply(twList, as.data.frame))

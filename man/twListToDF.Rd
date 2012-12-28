@@ -15,7 +15,7 @@ twListToDF(twList)
 }
 \details{
   The classes supported by this function are \code{\link{status}}, \code{\link{user}},
-  \code{\link{directMessage}}, \code{\link{rateLimitInfo}}, and \code{\link{trend}}.
+  and \code{\link{directMessage}}.
 }
 \value{
 A \code{\link{data.frame}} with rows corresponding to the objects in the list and columns being the
@@ -25,11 +25,12 @@ fields of the class
 Jeff Gentry
 }
 \seealso{
-\code{\link{status}}, \code{\link{user}},
-  \code{\link{directMessage}}, \code{\link{rateLimitInfo}}, \code{\link{trend}}
+\code{\link{status}}, \code{\link{user}}, \code{\link{directMessage}}
 }
 \examples{
-  zz <- searchTwitter("#rstats")
-  twListToDF(zz)
+  \dontrun{
+    zz <- searchTwitter("#rstats")
+    twListToDF(zz)
+  }
 }
 \keyword{ interface }

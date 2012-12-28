@@ -81,16 +81,14 @@
 }
 \author{Jeff Gentry}
 \seealso{
-  \code{\link{publicTimeline}}, \code{\link{userTimeline}},
-  \code{\link{setRefClass}}
+  \code{\link{userTimeline}}, \code{\link{setRefClass}}
 }
 \examples{
-   ## This example is run, but likely not how you want to do things
-   st <- statusFactory$new(screenName="test", text="test message")
-   st$getScreenName()
-   st$getText()
-
    \dontrun{
+     st <- statusFactory$new(screenName="test", text="test message")
+     st$getScreenName()
+     st$getText()
+
      ## Assume 'json' is the return from a Twitter call
      st <- statusFactory$new(json)
      st$getScreenName()

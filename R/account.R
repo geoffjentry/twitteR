@@ -1,42 +1,23 @@
-rateLimitInfoFactory <- setRefClass("rateLimitInfo", 
-                                    contains='twitterObj',
-                                    fields=list(
-                                      remainingHits = "numeric",
-                                      resetTimeInSeconds = "numeric",
-                                      hourlyLimit = "numeric",
-                                      resetTime = "POSIXct"),
-                                    methods=list(
-                                      initialize = function(json, ...) {
-                                        if (!missing(json)) {
-                                          if (!is.null(json[["remaining_hits"]]))
-                                            remainingHits <<- as.numeric(json[["remaining_hits"]])
-                                          if (!is.null(json[["reset_time_in_seconds"]]))
-                                            resetTimeInSeconds <<- as.numeric(json[["reset_time_in_seconds"]])
-                                          if (!is.null(json[["hourly_limit"]]))
-                                            hourlyLimit <<- as.numeric(json[["hourly_limit"]])
-                                          if (!is.null(json[["reset_time"]]))
-                                            resetTime <<- twitterDateToPOSIX(json[["reset_time"]])
-                                        }
-                                        callSuper(...)
-                                      }
-                                      )
-                                    )
-
-rateLimitInfoFactory$accessors(names(rateLimitInfoFactory$fields()))
-
-buildRateLimitInfo <- function(json)
-  rateLimitInfoFactory$new(json)
-
-setMethod("show", signature="rateLimitInfo", function(object) {
-  print(object$getRemainingHits())
-})
-
-getCurRateLimitInfo <- function(...) {
-  stop("Temporarily disabled")
-  ## FIXME: this needs a lot more filled out
-  json <- twInterfaceObj$doAPICall("application/rate_limit_status", ...)
-  buildRateLimitInfo(json)
-}
+getCurRateLimitInfo <- function(resources=character(), ...) {
+  params = list()
+  if (length(resources) > 0) {
+    params[["resources"]] = paste(resources, collapse=",")
+  }
+  json <- twInterfaceObj$doAPICall("application/rate_limit_status", params=params, ...)
+  if (! "resources" %in% names(json)) {
+    stop("Invalid response from server - no 'resources' field in JSON")
+  }
+  resources = unlist(json[["resources"]], recursive=FALSE)
+  resource_names = sapply(strsplit(names(resources), "\\."), function(x) x[2])
+  resource_rows = lapply(resources, function(x) {
+    return(c(limit=x$limit, remaining=x$remaining, reset=twitterDateToPOSIX(x$reset)))
+  })
+  resource_matrix = cbind(resource=resource_names, do.call(rbind, resource_rows))
+  rownames(resource_matrix) = NULL
+  resource_df = as.data.frame(resource_matrix, stringsAsFactors=FALSE)
+  resource_df[, "reset"] = as.POSIXct(as.numeric(resource_df[, "reset"]), tz="UTC", origin="1970-01-01")
+  return(resource_df)
+ }
 
 
           

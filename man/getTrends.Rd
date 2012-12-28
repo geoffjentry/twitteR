@@ -1,5 +1,7 @@
 \name{getTrends}
 \alias{getTrends}
+\alias{availableTrendLocations}
+\alias{closestTrendLocations}
 \title{
 Functions to view Twitter trends
 }
@@ -8,34 +10,36 @@ Functions to view Twitter trends
   the Twitter API
 }
 \usage{
-getTrends(period = c("daily", "weekly"), exclude = NULL, date = NULL)
+  availableTrendLocations(...)
+  closestTrendLocations(lat, long, ...)
+  getTrends(woeid, exclude=NULL, ...)
 }
 \arguments{
-  \item{period}{One of\code{daily}, or \code{weekly},
-    to describe the time period to acquire data for}
+  \item{woeid}{A numerical identification code describing a location, a  Yahoo! Where On Earth ID}
+  \item{lat}{A numerical latitude value, between -180 and 180 inclusive. West is negative, East is positive}
+  \item{long}{A numerical longitude value, between -180 and 180 inclusive. South is negative, North is positive}
   \item{exclude}{If set to \code{hashtags}, will exclude hashtags}
-  \item{date}{For periods \code{daily} and \code{weekly}, the date to
-    use as a starting point, in the format \code{YYYY-MM-DD}.  Note that
-    going back too far (roughly 10-14 days) will result in an empty result}
+  \item{...}{Additional arguments to be passed to RCurl}
 }
 \details{
-  The \code{daily} period will return the top 20 trending topics per
-  hour for the given date
-
-  The \code{weekly} period will return the top 30 trending topics for
-  each day of the week starting with \code{date}
+  The \code{availableTrendLocations} and \code{closestTrendLocations} functions will return a 
+  data.frame with three columns - \code{name}, \code{country} and \code{woeid}. The \code{closestTrendLocations}
+  function will return the locations closest to the specified latitude and longitude.
+  
+  The \code{getTrends} function takes a specified woeid and returns the trending topics associated
+  with that woeid. It returns a data.frame with the columns being \code{name}, \code{url},
+  \code{promoted_content}, \code{query} and \code{woeid} - one row per trend.
 }
 \value{
-  A list of \code{\link{trend}} objects
+A data.frame with the columns specified in \code{Details} above
 }
 \author{
 Jeff Gentry
 }
-\seealso{
-\code{\link{trend}}
-}
 \examples{
-   t1 <- getTrends()
-   t2 <- getTrends('weekly', as.character(Sys.Date()-1))
+  \dontrun{
+    woeid = availableTrendLocations[1, "woeid"]
+    t1 <- getTrends(woeid)
+  }
 }
 \keyword{interface}

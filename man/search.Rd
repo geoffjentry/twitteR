@@ -56,13 +56,15 @@ Rtweets(n=25, lang=NULL, since=NULL, ...)
 \author{Jeff Gentry}
 \seealso{ \code{\link{status}}, \code{\link{registerTwitterOAuth}} }
 \examples{
-	searchTwitter("#beer", n=100)
-        Rtweets(n=37)
-
-	## Search between two dates
-        searchTwitter('charlie sheen', since='2011-03-01', until='2011-03-02')
-
-	## geocoded results
-	searchTwitter('patriots', geocode='42.375,-71.1061111,10mi')
+  \dontrun{
+  	searchTwitter("#beer", n=100)
+          Rtweets(n=37)
+  
+  	## Search between two dates
+          searchTwitter('charlie sheen', since='2011-03-01', until='2011-03-02')
+  
+  	## geocoded results
+  	searchTwitter('patriots', geocode='42.375,-71.1061111,10mi')
+  }
 }
 \keyword{ interface }

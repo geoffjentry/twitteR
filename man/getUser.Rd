@@ -40,9 +40,8 @@ lookupUsers(users, includeNA=FALSE, ...)
 \author{Jeff Gentry}
 \seealso{\code{\link{mentions}}}
 \examples{
-      tuser <- getUser('geoffjentry')
       \dontrun{
-        ## This requires OAuth authentication
+        tuser <- getUser('geoffjentry')
         users <- lookupUsers(c('geoffjentry', 'whitehouse'))
       }
 }

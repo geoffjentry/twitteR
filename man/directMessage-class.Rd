@@ -50,11 +50,10 @@
 \author{ Jeff Gentry }
 \seealso{\code{\link{dmGet}}, \code{\link{dmSend}}, \code{\link{dmDestroy}}, \code{\link{setRefClass}}}
 \examples{
-  ## This example is run, but likely not how you want to do things
-  dm <- dmFactory$new(text='foo', recipientSN='blah')
-  dm$getText()
-  
   \dontrun{
+    dm <- dmFactory$new(text='foo', recipientSN='blah')
+    dm$getText()
+  
     ## assume 'json' is the return from a Twitter call
     dm <- dmFactory$new(json)
     dm$getSenderID()
