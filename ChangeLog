@@ -1,3 +1,5 @@
+1/2/2013 - version 0.99.24:
+   - Convert search to the 1.1 API
 12/27/2012 - version 0.99.23:
    - Conversion for the 1.1 API
    - Multiple functions (e.g. publicTimeline()) were removed due to

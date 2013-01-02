@@ -34,6 +34,7 @@ twFromJSON = function(json) {
   ## FIXME: rjson's version of the line
   out <- try(suppressWarnings(fromJSON(json)), silent=TRUE)
   if (inherits(out, "try-error")) {
+    browser()
     stop("Error: Malformed response from server, was not JSON")
   }
   if ('error' %in% names(out)) {
@@ -162,39 +163,25 @@ doRppAPICall = function(num, params, ...) {
     stop("parameter 'q' must be supplied")
   maxResults <- twInterfaceObj$getMaxResults()
   params[['result_type']] <- 'recent'
-  params[['rpp']] <- ifelse(num < maxResults, num, maxResults)
-  params[['page']] <- 1
-  
-  url <- 'http://search.twitter.com/search.json'
-  
+  params[['count']] <- ifelse(num < maxResults, num, maxResults)
+    
   curDiff <- num
   jsonList <- list()
   while (curDiff > 0) {
-    fromJSON <- twInterfaceObj$doAPICall(NULL, params, 'GET', url=url, ...)
-    newList <- fromJSON$results
+    fromJSON <- twInterfaceObj$doAPICall("search/tweets", params, 'GET', ...)
+    newList <- fromJSON$statuses
     jsonList <- c(jsonList, newList)
     curDiff <- num - length(jsonList)
-    if (curDiff > 0) {
-      if ('next_page' %in% names(fromJSON)) {
-        ## The search API gives back the params part as an actual URL string, split this
-        ## back into list structure
-        splitParams <- strsplit(strsplit(gsub('\\?', '', URLdecode(fromJSON$next_page)), '&')[[1]], '=')
-        newParams <- lapply(splitParams, function(x) x[2])
-        names(newParams) <- sapply(splitParams, function(x) x[1])
-        ## As of 11/16/11 (at least) they've started returning a modified "q" field which Id
-        ## don't want to preserve. Take that out if it exists
-        newParams <- newParams[setdiff(names(newParams), "q")]
-        
-        params[names(newParams)] <- newParams
-        if (curDiff < maxResults)
-          ## If we no longer want max entities, only get curDiff
-          params[['rpp']] <- curDiff
-      } else {
-        break
-      }
+    if ((curDiff > 0) && ("search_metadata" %in% names(fromJSON)) && ("max_id_str" %in% names(fromJSON[["search_metadata"]]))) {
+      params[["max_id"]] = fromJSON[["search_metadata"]][["max_id_str"]]
     }
   }
-  jsonList
+  
+  if (length(jsonList) > num) {
+    jsonList = jsonList[seq_len(num)]
+  }
+  
+  return(jsonList)
 }
 
 twitterDateToPOSIX <- function(dateStr) {

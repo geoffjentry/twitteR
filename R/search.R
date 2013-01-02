@@ -5,9 +5,13 @@ Rtweets <- function(n=25, lang=NULL, since=NULL, ...) {
 searchTwitter <- function(searchString, n=25, lang=NULL,
                           since=NULL, until=NULL, locale=NULL,
                           geocode=NULL, sinceID=NULL, ...) {
-    ## A basic search function.  Only implements a search on a string
-    ## and will return n results
-    if (n <= 0)
+
+  if (nchar(searchString) > 1000) {
+    stop("searchString can only be up to 1000 characters")
+  }
+
+  
+  if (n <= 0)
         stop("n must be positive")
     n <- as.integer(n)
     
