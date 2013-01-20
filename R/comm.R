@@ -27,69 +27,58 @@ twFromJSON = function(json) {
   ## Will provide some basic error checking, as well as suppress
   ## warnings that always seem to come out of fromJSON, even
   ## in good cases. 
-#    browser()
-  ## FIXME: original code for RJSONIO, when I switch back,
-  ## use this line and not the next line ...
-  #out <- try(suppressWarnings(fromJSON(json, simplify=FALSE)), silent=TRUE)
-  ## FIXME: rjson's version of the line
-  out <- try(suppressWarnings(fromJSON(json)), silent=TRUE)
+  out <- try(suppressWarnings(rjson:::fromJSON(json, unexpected.escape="skip")), silent=TRUE)
   if (inherits(out, "try-error")) {
-    browser()
-    stop("Error: Malformed response from server, was not JSON")
-  }
-  if ('error' %in% names(out)) {
-    ## A few errors we want to stop on, and others we want to just
-    ## give a warning
-    if (length(grep("page parameter out of range",
-                    out$error)) > 0) {
-      warning("Error: ", out$error)
-    } else {
-      stop("Error: ", out$error)
-    }
-  }
-  if (length(out) == 2) {
-    names <- names(out)
-    if ((!is.null(names))&&(all(names(out) == c("request",
-                                                "error"))))
-      stop("Error: ", out$error)
-  }
-  out
-}
-
-doAPICall = function(cmd, params=NULL, method="GET", url=NULL, ...) {
-  ## will perform an API call and process the JSON.  For GET
-  ## calls, try to detect errors and if so attempt up to 3
-  ## more times before returning with an error.  Many twitter
-  ## HTML errors are very transient in nature and if it's a
-  ## real error there's little harm in repeating the call.
-  ## Don't do this on POST calls in case we incorrectly detect
-  ## an error, to avoid pushing the request multiple times.
-  if (is.null(url))
-    url <- getAPIStr(cmd)
-  if (hasOAuth()) {
-    APIFunc <- function(url, params, method, ...) {
-      oauth <- getOAuth()
-#      print(url)
-      oauth$OAuthRequest(url, params, method, ...)
-    }
-  } else {
-    stop("OAuth authentication is required with Twitter's API v1.1")
-  }
-  if (method == "POST") {
-    out <- APIFunc(url, params, method, ...)
-  } else {
-    count <- 1
-    while (count < 4) {
-      out <- APIFunc(url, params, method, ...)
-      if (length(grep('html', out)) == 0) {
-        break
-      }
-      count <- count + 1
-    }
+    stop("Error: Malformed response from server, was not JSON.\n",
+         "The most likely cause of this error is Twitter returning a character which\n",
+         "can't be properly parsed by R. Generally the only remedy is to wait long\n",
+         "enough for the offending character to disappear from searches (e.g. if\n",
+         "using searchTwitter()).")
   }
   
-  twFromJSON(out)
+  return(out)
+
 }
+
+doAPICall = function(cmd, params=NULL, method="GET", url=NULL, retryCount=5, 
+                     blockOnRateLimit=FALSE, ...) {
+  recall_func = function(count) {
+    return(doAPICall(cmd, params=params, method=method, url=url, retryCount=count,
+                     blockOnRateLimit=blockOnRateLimit, ...))
+  }
+  
+  if (is.null(url)) {
+    url <- getAPIStr(cmd)
+  }
+
+  if (!hasOAuth()) {
+    stop("OAuth authentication is required with Twitter's API v1.1")
+  }
+  
+  oauth = getOAuth()
+  out = try(oauth$OAuthRequest(url, params, method, ...), silent=TRUE)
+  if (inherits(out, "try-error")) {
+    error_message = gsub("\\r\\n", "", attr(out, "condition")[["message"]])
+    print(error_message)
+    if (error_message %in% c("Internal Server Error", "Service Unavailable")) {
+      print(paste("This error is likely transient, retrying up to", retryCount, "more times ..."))
+      ## These are typically fail whales or similar such things
+      Sys.sleep(1)
+      return(recall_func(retryCount - 1))      
+    } else if ((error_message == "Too Many Requests") && (blockOnRateLimit)) {
+      ## We're rate limited. Wait a while and try again
+      print("Rate limited .... blocking for a minute ...")
+      Sys.sleep(60)
+      return(recall_func(retryCount))      
+    } else {
+      stop("Error: ", error_message)
+    }
+  }    
+  json = twFromJSON(out)
+
+  return(json)  
+}
+
 setRefClass('twAPIInterface',
             fields = list(
               maxResults = 'integer'
@@ -158,7 +147,7 @@ doCursorAPICall = function(cmd, type, num=NULL, params=NULL, method='GET', ...) 
   vals
 }
 
-doRppAPICall = function(num, params, ...) {
+doRppAPICall = function(cmd, num, params, ...) {
   if (! 'q' %in% names(params))
     stop("parameter 'q' must be supplied")
   maxResults <- twInterfaceObj$getMaxResults()
@@ -168,7 +157,7 @@ doRppAPICall = function(num, params, ...) {
   curDiff <- num
   jsonList <- list()
   while (curDiff > 0) {
-    fromJSON <- twInterfaceObj$doAPICall("search/tweets", params, 'GET', ...)
+    fromJSON <- twInterfaceObj$doAPICall(cmd, params, 'GET', ...)
     newList <- fromJSON$statuses
     jsonList <- c(jsonList, newList)
     curDiff <- num - length(jsonList)

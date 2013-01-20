@@ -51,6 +51,7 @@ buildUserList = function(uids, screen_names) {
 }
 
 twListToDF <- function(twList) {
+  browser()
   ## iff all elements of twList are from a class defined in this
   ## package, and all of the same class, will collapse these into
   ## a data.frame and return

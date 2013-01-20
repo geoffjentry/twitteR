@@ -4,7 +4,8 @@ Rtweets <- function(n=25, lang=NULL, since=NULL, ...) {
 
 searchTwitter <- function(searchString, n=25, lang=NULL,
                           since=NULL, until=NULL, locale=NULL,
-                          geocode=NULL, sinceID=NULL, ...) {
+                          geocode=NULL, sinceID=NULL, 
+                          blockOnRateLimit=TRUE, ...) {
 
   if (nchar(searchString) > 1000) {
     stop("searchString can only be up to 1000 characters")
@@ -18,7 +19,7 @@ searchTwitter <- function(searchString, n=25, lang=NULL,
     params <- buildCommonArgs(lang=lang, locale=locale, since=since, until=until,
                               geocode=geocode, since_id=sinceID)
     params[['q']] <- searchString
-    jsonList <- doRppAPICall(n, params=params, ...)
+    jsonList <- doRppAPICall("search/tweets", n, params=params, blockOnRateLimit=blockOnRateLimit, ...)
     sapply(jsonList, buildStatus)
   }
 
