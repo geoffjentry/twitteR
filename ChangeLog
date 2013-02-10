@@ -1,3 +1,9 @@
+2/9/2013 - version 0.99.27:
+   - Added includeRts option to userTimeline
+   - Updated man pages and vignette to pass check
+1/21/2013 - version 0.99.26:
+   - use rjson 0.2.24 to avoid some unicode issues
+   - supply argument blockOnRateLimit which does what the name suggests
 1/2/2013 - version 0.99.24:
    - Convert search to the 1.1 API
 12/27/2012 - version 0.99.23:
