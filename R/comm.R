@@ -73,7 +73,8 @@ doAPICall = function(cmd, params=NULL, method="GET", url=NULL, retryCount=5,
     } else {
       stop("Error: ", error_message)
     }
-  }    
+  } 
+ 
   json = twFromJSON(out)
 
   return(json)  

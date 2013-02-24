@@ -1,3 +1,5 @@
+2/23/2013 - version 0.99.28:
+   - Added profileImageUrl to User class, along w/ getProfileImageUrl() method
 2/9/2013 - version 0.99.27:
    - Added includeRts option to userTimeline
    - Updated man pages and vignette to pass check

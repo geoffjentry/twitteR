@@ -24,7 +24,8 @@ setRefClass("user",
               id="character",
               lastStatus="status",
               listedCount="numeric",
-              followRequestSent="logical"
+              followRequestSent="logical",
+              profileImageUrl="character"
               ),
             methods = list(
               initialize = function(json, ...) {
@@ -77,7 +78,9 @@ setRefClass("user",
                   } else {
                     followRequestSent <<- TRUE
                   }
-
+                  if (!is.null(json[["profile_image_url"]])) {
+                    profileImageUrl <<- json[["profile_image_url"]]
+                  }
                 }
                 callSuper(...)
               },

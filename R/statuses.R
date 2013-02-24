@@ -132,12 +132,13 @@ showStatus <- function(id, ...) {
   buildStatus(twInterfaceObj$doAPICall(paste('statuses', 'show', id, sep='/'), ...))
 }
 
-userTimeline <- function(user, n=20, maxID=NULL, sinceID=NULL, ...) {
+userTimeline <- function(user, n=20, maxID=NULL, sinceID=NULL, includeRts=FALSE, ...) {
   uParams <- parseUsers(user)
   cmd <- 'statuses/user_timeline'
   params <- buildCommonArgs(max_id=maxID, since_id=sinceID)
   params[['user_id']] <- uParams[['user_id']]
   params[['screen_name']] <- uParams[['screen_name']]
+  params$includeRts = ifelse(includeRts == TRUE, "true", "false")
   statusBase(cmd, params, n, 3200, ...)
 }
 

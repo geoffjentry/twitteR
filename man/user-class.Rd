@@ -40,6 +40,8 @@
 \alias{listedCount}
 \alias{followRequestSent,user-method}
 \alias{followRequestSent}
+\alias{profileImageUrl}
+\alias{profileImageUrl,user-method}
 \title{A container object to model Twitter users }
 \description{This class is designed to represent a user on Twitter,
   modeling information available}
@@ -62,6 +64,7 @@
     \item{\code{location}:}{Location of the user}
     \item{\code{listedCount}:}{The number of times this user appears in public lists}
     \item{\code{followRequestSent}:}{If authenticated via OAuth, will be TRUE if you've sent a friend request to this user}
+    \item{\code{profileImageUrl}:}{URL of the user's profile image, if one exists}
   }
 }
 \section{Methods}{

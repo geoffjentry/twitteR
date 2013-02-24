@@ -9,7 +9,7 @@
   the Twitter universe
 }
 \usage{
-userTimeline(user, n=20, maxID=NULL, sinceID=NULL, ...)
+userTimeline(user, n=20, maxID=NULL, sinceID=NULL, includeRts=FALSE, ...)
 homeTimeline(n=25, maxID=NULL, sinceID=NULL, ...)
 mentions(n=25, maxID=NULL, sinceID=NULL, ...)
 retweetsOfMe(n=25, maxID=NULL, sinceID=NULL, ...)
@@ -20,6 +20,8 @@ retweetsOfMe(n=25, maxID=NULL, sinceID=NULL, ...)
   \item{n}{Number of tweets to retrieve, up to a maximum of 3200}
   \item{maxID}{Maximum ID to search for}
   \item{sinceID}{Minimum (not inclusive) ID to search for}
+  \item{includeRts}{If \code{FALSE} any native retweets (not old style RT retweets)
+  		       will be stripped from the results} 
   \item{...}{Optional arguments to be passed to \code{\link{getURL}}}
 }
 \value{

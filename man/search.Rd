@@ -8,7 +8,8 @@
 }
 \usage{
 searchTwitter(searchString, n=25, lang=NULL, since=NULL, until=NULL,
-              locale=NULL, geocode=NULL, sinceID=NULL, ...)
+              locale=NULL, geocode=NULL, sinceID=NULL, 
+	      blockOnRateLimit=TRUE, ...)
 Rtweets(n=25, lang=NULL, since=NULL, ...)
 }
 \arguments{
@@ -26,7 +27,11 @@ Rtweets(n=25, lang=NULL, since=NULL, ...)
     within a given radius of the given latitude/longitude. See
     \code{Details} below for more information}
   \item{sinceID}{If not \code{NULL}, returns tweets with IDs greater
-    (ie newer) than the specified ID}  
+    (ie newer) than the specified ID}
+  \item{blockOnRateLimit}{If \code{TRUE} this search command will block until
+                          completed regardless of rate limiting. This might lead
+                          to a much longer run time but the task will (eventually)
+                          complete}
   \item{...}{Optional arguments to be passed to \code{\link{getURL}}}
 }
 \details{
