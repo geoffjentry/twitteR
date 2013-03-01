@@ -1,3 +1,5 @@
+3/1/2013 - version 1.1.0:
+   - Release
 2/23/2013 - version 0.99.28:
    - Added profileImageUrl to User class, along w/ getProfileImageUrl() method
 2/9/2013 - version 0.99.27:
