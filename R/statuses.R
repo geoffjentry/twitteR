@@ -20,7 +20,9 @@ setRefClass("status",
               statusSource="character",
               screenName="character",
               retweetCount="numeric",
-              retweeted="logical"
+              retweeted="logical",
+              longitude="character",
+              latitude="character"
               ),
             methods=list(
               initialize = function(json, ...) {
@@ -77,6 +79,10 @@ setRefClass("status",
                   } else {
                     retweeted <<- TRUE
                   }
+                  if (!is.null(json[["coordinates"]]) && !(!is.null(json[["coordinates"]][["coordinates"]]))) {
+                    longitude <<- json[["coordinates"]][["coordinates"]]
+                    latitude <<- json[["coordinates"]][["coordinates"]]
+                  }
 
                 }
                 callSuper(...)
@@ -88,6 +94,7 @@ statusFactory <- getRefClass("status")
 statusFactory$accessors(names(statusFactory$fields()))
 
 buildStatus <- function(json) {
+  browser()
   return(statusFactory$new(json))
 }
 
