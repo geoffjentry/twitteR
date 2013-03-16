@@ -94,7 +94,6 @@ statusFactory <- getRefClass("status")
 statusFactory$accessors(names(statusFactory$fields()))
 
 buildStatus <- function(json) {
-  browser()
   return(statusFactory$new(json))
 }
 
