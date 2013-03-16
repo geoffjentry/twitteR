@@ -145,7 +145,7 @@ userTimeline <- function(user, n=20, maxID=NULL, sinceID=NULL, includeRts=FALSE,
   params <- buildCommonArgs(max_id=maxID, since_id=sinceID)
   params[['user_id']] <- uParams[['user_id']]
   params[['screen_name']] <- uParams[['screen_name']]
-  params$includeRts = ifelse(includeRts == TRUE, "true", "false")
+  params[["include_rts"]] <- ifelse(includeRts == TRUE, "true", "false")
   statusBase(cmd, params, n, 3200, ...)
 }
 
