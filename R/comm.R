@@ -160,10 +160,18 @@ doRppAPICall = function(cmd, num, params, ...) {
   while (curDiff > 0) {
     fromJSON <- twInterfaceObj$doAPICall(cmd, params, 'GET', ...)
     newList <- fromJSON$statuses
+    if (length(newList) == 0) {
+      break;
+    }
     jsonList <- c(jsonList, newList)
     curDiff <- num - length(jsonList)
-    if ((curDiff > 0) && ("search_metadata" %in% names(fromJSON)) && ("max_id_str" %in% names(fromJSON[["search_metadata"]]))) {
-      params[["max_id"]] = fromJSON[["search_metadata"]][["max_id_str"]]
+    if ((curDiff > 0) && ("search_metadata" %in% names(fromJSON)) && ("since_id_str" %in% names(fromJSON[["search_metadata"]]))) {
+      ## since_id_str will be "0" if there are no data anymore,
+      ## and search/tweets API v1.1 seems to ignore max_id if it is less than 2
+      if (as.numeric(fromJSON[["search_metadata"]][["since_id_str"]]) < 2) {
+        break;
+      }
+      params[["max_id"]] = fromJSON[["search_metadata"]][["since_id_str"]]
     }
   }
   
