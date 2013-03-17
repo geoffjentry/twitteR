@@ -128,8 +128,17 @@ deleteStatus <- function(status, ...) {
     stop("deleteStatus requires OAuth authentication")
   if (!inherits(status, 'status'))
     stop("status argument must be of class status")
-  twInterfaceObj$doAPICall('statuses/destroy', params=list(id=status$getId()), method='POST', ...)
-  TRUE
+  json <- twInterfaceObj$doAPICall(paste('statuses/destroy',
+                                         status$getId(), sep='/'),
+                                   method='POST', ...)
+  if (is.null(json$errors)) {
+    TRUE
+  } else {
+    for (error in json$errors) {
+      cat(error$message, error$code, fill = TRUE)
+    }
+    FALSE
+  }
 }
 
 showStatus <- function(id, ...) {
