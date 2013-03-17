@@ -86,10 +86,17 @@ dmDestroy <- function(dm, ...) {
     stop("dmDestroy requires OAuth authentication")
   if (!inherits(dm, "directMessage"))
     stop("dm must be of class directMessage")
-  twInterfaceObj$doAPICall(paste('direct_messages/destroy',
-                                 dm$getId(), sep='/'),
-                           method='POST', ...)
-  TRUE
+  json <- twInterfaceObj$doAPICall('direct_messages/destroy',
+                                   params=list(id=dm$getId()),
+                                   method='POST', ...)
+  if (is.null(json$errors)) {
+    TRUE
+  } else {
+    for (error in json$errors) {
+      cat(error$message, error$code, fill = TRUE)
+    }
+    FALSE
+  }
 }
 
 dmSend <- function(text, user, ...) {
