@@ -165,13 +165,11 @@ doRppAPICall = function(cmd, num, params, ...) {
     }
     jsonList <- c(jsonList, newList)
     curDiff <- num - length(jsonList)
-    if ((curDiff > 0) && ("search_metadata" %in% names(fromJSON)) && ("since_id_str" %in% names(fromJSON[["search_metadata"]]))) {
-      ## since_id_str will be "0" if there are no data anymore,
-      ## and search/tweets API v1.1 seems to ignore max_id if it is less than 2
-      if (as.numeric(fromJSON[["search_metadata"]][["since_id_str"]]) < 2) {
-        break;
-      }
-      params[["max_id"]] = fromJSON[["search_metadata"]][["since_id_str"]]
+    search_metadata = fromJSON[["search_metadata"]]
+    if ((curDiff > 0) && (!is.null(search_metadata)) && ("next_results" %in% names(search_metadata)) &&
+          (grep("max_id", search_metadata[["next_results"]]) > 0)) {
+      max_id = strsplit(strsplit(search_metadata[["next_results"]], "max_id=")[[1]][2], "&")[[1]][1]
+      params[["max_id"]] = max_id   
     }
   }
   
