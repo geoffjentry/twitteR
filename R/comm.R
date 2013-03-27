@@ -41,10 +41,10 @@ twFromJSON = function(json) {
 }
 
 doAPICall = function(cmd, params=NULL, method="GET", url=NULL, retryCount=5, 
-                     blockOnRateLimit=FALSE, ...) {
-  recall_func = function(count) {
+                     retryOnRateLimit=0, ...) {
+  recall_func = function(retryCount, rateLimitCount) {
     return(doAPICall(cmd, params=params, method=method, url=url, retryCount=count,
-                     blockOnRateLimit=blockOnRateLimit, ...))
+                     retryOnRateLimit=rateLimitCount, ...))
   }
   
   if (is.null(url)) {
@@ -64,12 +64,12 @@ doAPICall = function(cmd, params=NULL, method="GET", url=NULL, retryCount=5,
       print(paste("This error is likely transient, retrying up to", retryCount, "more times ..."))
       ## These are typically fail whales or similar such things
       Sys.sleep(1)
-      return(recall_func(retryCount - 1))      
-    } else if ((error_message == "Too Many Requests") && (blockOnRateLimit)) {
+      return(recall_func(retryCount - 1, rateLimitCount=retryOnRateLimit))      
+    } else if ((error_message == "Too Many Requests") && (retryOnRateLimit > 0)) {
       ## We're rate limited. Wait a while and try again
       print("Rate limited .... blocking for a minute ...")
       Sys.sleep(60)
-      return(recall_func(retryCount))      
+      return(recall_func(retryCount, retryOnRateLimit - 1))      
     } else {
       stop("Error: ", error_message)
     }
