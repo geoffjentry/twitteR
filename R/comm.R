@@ -7,12 +7,12 @@ registerTwitterOAuth <- function(oauth) {
   TRUE
 }
 
-getTwitterOAuth = function(consumer_key, consumer_secret) {
-  request_url = "https://api.twitter.com/oauth/request_token"
-  access_url = "http://api.twitter.com/oauth/access_token"
-  auth_url = "http://api.twitter.com/oauth/authorize"
+getTwitterOAuth <- function(consumer_key, consumer_secret) {
+  request_url <- "https://api.twitter.com/oauth/request_token"
+  access_url <- "http://api.twitter.com/oauth/access_token"
+  auth_url <- "http://api.twitter.com/oauth/authorize"
   
-  cred = OAuthFactory$new(consumerKey=consumer_key,
+  cred <- OAuthFactory$new(consumerKey=consumer_key,
                           consumerSecret=consumer_secret,
                           requestURL=request_url,
                           accessURL=access_url,
@@ -36,7 +36,7 @@ getOAuth <- function() {
 ## has a completely different interface.  Trying to manage all of these below using one unified
 ## approach to actually sending the data back & receiving response and then providing multiple
 ## mechanisms to page
-twFromJSON = function(json) {
+twFromJSON <- function(json) {
   ## Will provide some basic error checking, as well as suppress
   ## warnings that always seem to come out of fromJSON, even
   ## in good cases. 
@@ -53,7 +53,7 @@ twFromJSON = function(json) {
 
 }
 
-doAPICall = function(cmd, params=NULL, method="GET", url=NULL, retryCount=5, 
+doAPICall <- function(cmd, params=NULL, method="GET", url=NULL, retryCount=5, 
                      retryOnRateLimit=0, ...) {
   if (!is.numeric(retryOnRateLimit)) {
     stop("retryOnRateLimit must be a number")
@@ -76,8 +76,8 @@ doAPICall = function(cmd, params=NULL, method="GET", url=NULL, retryCount=5,
     stop("OAuth authentication is required with Twitter's API v1.1")
   }
   
-  oauth = getOAuth()
-  out = try(oauth$OAuthRequest(url, params, method, ...), silent=TRUE)
+  oauth <- getOAuth()
+  out <- try(oauth$OAuthRequest(url, params, method, ...), silent=TRUE)
   if (inherits(out, "try-error")) {
     error_message = gsub("\\r\\n", "", attr(out, "condition")[["message"]])
     print(error_message)
@@ -105,23 +105,23 @@ doAPICall = function(cmd, params=NULL, method="GET", url=NULL, retryCount=5,
     }
   } 
  
-  json = twFromJSON(out)
+  json <- twFromJSON(out)
 
   return(json)  
 }
 
 setRefClass('twAPIInterface',
-            fields = list(
-              maxResults = 'integer'
+            fields <- list(
+              maxResults <- 'integer'
               ),
-            methods = list(
+            methods <- list(
               initialize=function(...) {
                 maxResults <<- 100L
                 callSuper(...)
                 .self
               },
-              twFromJSON = twFromJSON,
-              doAPICall = doAPICall
+              twFromJSON <- twFromJSON,
+              doAPICall <- doAPICall
               )
             )
 
@@ -131,7 +131,7 @@ tint$accessors(names(tint$fields()))
 twInterfaceObj <- tint$new()
 
 
-doPagedAPICall = function(cmd, num, params=NULL, method='GET', ...) {
+doPagedAPICall <- function(cmd, num, params=NULL, method='GET', ...) {
   if (num <= 0)
     stop('num must be positive')
   else
@@ -156,7 +156,7 @@ doPagedAPICall = function(cmd, num, params=NULL, method='GET', ...) {
   jsonList
 }
 
-doCursorAPICall = function(cmd, type, num=NULL, params=NULL, method='GET', ...) {
+doCursorAPICall <- function(cmd, type, num=NULL, params=NULL, method='GET', ...) {
   cursor <- -1
   if (!is.null(num)) {
     if (num <= 0)
@@ -178,7 +178,7 @@ doCursorAPICall = function(cmd, type, num=NULL, params=NULL, method='GET', ...) 
   vals
 }
 
-doRppAPICall = function(cmd, num, params, ...) {
+doRppAPICall <- function(cmd, num, params, ...) {
   if (! 'q' %in% names(params))
     stop("parameter 'q' must be supplied")
   maxResults <- twInterfaceObj$getMaxResults()
@@ -195,16 +195,16 @@ doRppAPICall = function(cmd, num, params, ...) {
     }
     jsonList <- c(jsonList, newList)
     curDiff <- num - length(jsonList)
-    search_metadata = fromJSON[["search_metadata"]]
+    search_metadata <- fromJSON[["search_metadata"]]
     if ((curDiff > 0) && (!is.null(search_metadata)) && ("next_results" %in% names(search_metadata)) &&
           (grep("max_id", search_metadata[["next_results"]]) > 0)) {
       max_id = strsplit(strsplit(search_metadata[["next_results"]], "max_id=")[[1]][2], "&")[[1]][1]
-      params[["max_id"]] = max_id   
+      params[["max_id"]] <- max_id   
     }
   }
   
   if (length(jsonList) > num) {
-    jsonList = jsonList[seq_len(num)]
+    jsonList <- jsonList[seq_len(num)]
   }
   
   return(jsonList)

@@ -27,8 +27,8 @@ setRefClass("user",
               followRequestSent="logical",
               profileImageUrl="character"
               ),
-            methods = list(
-              initialize = function(json, ...) {
+            methods <- list(
+              initialize <- function(json, ...) {
                 if (!missing(json)) {
                   if (!is.null(json[['status']]))
                     lastStatus <<- buildStatus(json[['status']])
@@ -84,21 +84,21 @@ setRefClass("user",
                 }
                 callSuper(...)
               },
-              getFollowerIDs = function(n=NULL, ...) {
+              getFollowerIDs <- function(n=NULL, ...) {
                 return(unlist(followers(.self$id, n, ...)))
               },
-              getFollowers = function(n=NULL, ...) {
+              getFollowers <- function(n=NULL, ...) {
                 fol <- .self$getFollowerIDs(n, ...)
                 lookupUsers(fol, ...)
               },
-              getFriendIDs = function(n=NULL, ...) {
+              getFriendIDs <- function(n=NULL, ...) {
                 return(unlist(friends(.self$id, n, ...)))
               }, 
-              getFriends = function(n=NULL, ...) {
+              getFriends <- function(n=NULL, ...) {
                 fri <- .self$getFriendIDs(n, ...)
                 lookupUsers(fri, ...)
               },
-              toDataFrame = function(row.names=NULL, optional=FALSE) {
+              toDataFrame <- function(row.names=NULL, optional=FALSE) {
                 ## FIXME:
                 ## There is such little difference between this version
                 ## and the standard that there has to be a way to take

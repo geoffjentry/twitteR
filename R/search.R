@@ -19,12 +19,12 @@ searchTwitter <- function(searchString, n=25, lang=NULL,
   if (is.null(since)) {
     since_date = NULL
   } else {
-    since_date = strsplit(since, " ")[[1]][1]
+    since_date <- strsplit(since, " ")[[1]][1]
   }
   if (is.null(until)) {
-    until_date = NULL
+    until_date <- NULL
   } else {
-    until_date = strsplit(until, " ")[[1]][1] 
+    until_date <- strsplit(until, " ")[[1]][1] 
     if (until_date == since_date) {
       ## If since & until are on the same day nothing will be returned. Move
       ## until up a day and then we'll filter this later
@@ -33,11 +33,11 @@ searchTwitter <- function(searchString, n=25, lang=NULL,
   }
 
   if (!is.null(geocode)) {
-    geocheck = strsplit(geocode[[1]], ',')
-    lon = as.numeric(geocheck[[1]])
-    lat = as.numeric(geocheck[[2]])
+    geocheck <- strsplit(geocode[[1]], ',')
+    lon <- as.numeric(geocheck[[1]])
+    lat <- as.numeric(geocheck[[2]])
     if ((lon > 180) || (lon < -180)) {
-      stop('Longitude neet to be in range [180,-180].')
+      stop('Longitude need to be in range [180,-180].')
     }
     if ((lat > 90)||(lat < -90)) {
       stop('Latitude need to be in range [90.0,-90.0].')
@@ -48,20 +48,20 @@ searchTwitter <- function(searchString, n=25, lang=NULL,
                             geocode=geocode, since_id=sinceID)
   params[['q']] <- searchString
   jsonList <- doRppAPICall("search/tweets", n, params=params, retryOnRateLimit=retryOnRateLimit, ...)
-  statuses = sapply(jsonList, buildStatus)
+  statuses <- sapply(jsonList, buildStatus)
   
-  datetimes = sapply(statuses, function(x) x$getCreated())
+  datetimes <- sapply(statuses, function(x) x$getCreated())
   if (is.null(since)) {
-    since_statuses = seq_along(statuses)
+    since_statuses <- seq_along(statuses)
   } else {
-    since_statuses = which(datetimes >= as.numeric(as.POSIXct(since, tz="UTC")))
+    since_statuses <- which(datetimes >= as.numeric(as.POSIXct(since, tz="UTC")))
   }
   if (is.null(until)) {
-    until_statuses = seq_along(statuses)
+    until_statuses <- seq_along(statuses)
   } else {
-    until_statuses = which(datetimes <= as.numeric(as.POSIXct(until, tz="UTC")))
+    until_statuses <- which(datetimes <= as.numeric(as.POSIXct(until, tz="UTC")))
   }
-  good_statuses = intersect(since_statuses, until_statuses)
+  good_statuses <- intersect(since_statuses, until_statuses)
   return(statuses[good_statuses])
 }
 

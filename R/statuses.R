@@ -25,7 +25,7 @@ setRefClass("status",
               latitude="character"
               ),
             methods=list(
-              initialize = function(json, ...) {
+              initialize <- function(json, ...) {
                 if (!missing(json)) {
                   if ('user' %in% names(json)) {
                     userObj <- userFactory$new(json[['user']])
