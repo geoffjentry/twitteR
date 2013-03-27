@@ -38,13 +38,13 @@ parseUsers <- function(users) {
   return(buildUserList(uids, screen.names))
 }
 
-buildUserList = function(uids, screen_names) {
-  user_list = list()  
+buildUserList <- function(uids, screen_names) {
+  user_list <- list()  
   if (length(uids) > 0) {
-    user_list$user_id = paste(uids, collapse=',')
+    user_list$user_id <- paste(uids, collapse=',')
   }
   if (length(screen_names) > 0) {
-    user_list$screen_name = paste(screen_names, collapse=',')
+    user_list$screen_name <- paste(screen_names, collapse=',')
   }
   
   return(user_list)  
