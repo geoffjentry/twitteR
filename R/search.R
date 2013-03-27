@@ -25,16 +25,23 @@ searchTwitter <- function(searchString, n=25, lang=NULL,
     until_date = NULL
   } else {
     until_date = strsplit(until, " ")[[1]][1] 
+    if (until_date == since_date) {
+      ## If since & until are on the same day nothing will be returned. Move
+      ## until up a day and then we'll filter this later
+      until_date = as.Date(since_date) + 1
+    }
   }
 
-  # check geocode
   if (!is.null(geocode)) {
-    geocheck = strsplit(geocode[[1]],',')
+    geocheck = strsplit(geocode[[1]], ',')
     lon = as.numeric(geocheck[[1]])
     lat = as.numeric(geocheck[[2]])
-    if ((lon > 180)||(lon < -180)) stop('Longitude neet to be in range [180,-180].')
-    if ((lat > 90)||(lat < -90)) stop('Latitude need to be in range [90.0,-90.0].')
-    rm(geocheck,lon,lat)
+    if ((lon > 180) || (lon < -180)) {
+      stop('Longitude neet to be in range [180,-180].')
+    }
+    if ((lat > 90)||(lat < -90)) {
+      stop('Latitude need to be in range [90.0,-90.0].')
+    }
   }
 
   params <- buildCommonArgs(lang=lang, locale=locale, since=since_date, until=until_date,

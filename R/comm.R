@@ -1,12 +1,25 @@
 registerTwitterOAuth <- function(oauth) {
-  require("ROAuth") || stop("ROAuth must be installed for ",
-                            "OAuth functionality")
   if (!inherits(oauth, "OAuth"))
     stop("oauth argument must be of class OAuth")
   if (! oauth$getHandshakeComplete())
     stop("oauth has not completed its handshake")
   assign('oauth', oauth, envir=oauthCache)
   TRUE
+}
+
+getTwitterOAuth = function(consumer_key, consumer_secret) {
+  request_url = "https://api.twitter.com/oauth/request_token"
+  access_url = "http://api.twitter.com/oauth/access_token"
+  auth_url = "http://api.twitter.com/oauth/authorize"
+  
+  cred = OAuthFactory$new(consumerKey=consumer_key,
+                          consumerSecret=consumer_secret,
+                          requestURL=request_url,
+                          accessURL=access_url,
+                          authURL=auth_url)
+  cred$handshake()
+  registerTwitterOAuth(cred)
+  return(cred)
 }
 
 hasOAuth <- function() {
@@ -42,6 +55,14 @@ twFromJSON = function(json) {
 
 doAPICall = function(cmd, params=NULL, method="GET", url=NULL, retryCount=5, 
                      retryOnRateLimit=0, ...) {
+  if (!is.numeric(retryOnRateLimit)) {
+    stop("retryOnRateLimit must be a number")
+  }
+  
+  if (!is.numeric(retryCount)) {
+    stop("retryCount must be a number")
+  }
+  
   recall_func = function(retryCount, rateLimitCount) {
     return(doAPICall(cmd, params=params, method=method, url=url, retryCount=count,
                      retryOnRateLimit=rateLimitCount, ...))
@@ -64,12 +85,21 @@ doAPICall = function(cmd, params=NULL, method="GET", url=NULL, retryCount=5,
       print(paste("This error is likely transient, retrying up to", retryCount, "more times ..."))
       ## These are typically fail whales or similar such things
       Sys.sleep(1)
-      return(recall_func(retryCount - 1, rateLimitCount=retryOnRateLimit))      
-    } else if ((error_message == "Too Many Requests") && (retryOnRateLimit > 0)) {
-      ## We're rate limited. Wait a while and try again
-      print("Rate limited .... blocking for a minute ...")
-      Sys.sleep(60)
-      return(recall_func(retryCount, retryOnRateLimit - 1))      
+      return(recall_func(retryCount - 1, rateLimitCount=retryOnRateLimit))         
+    } else if (error_message == "Too Many Requests") {
+      if (retryOnRateLimit > 0) {
+        ## We're rate limited. Wait a while and try again
+        print("Rate limited .... blocking for a minute ...")
+        Sys.sleep(60)
+        return(recall_func(retryCount, retryOnRateLimit - 1))      
+      } else {
+        ## FIXME: very experimental - the idea is that if we're rate limited,
+        ## just give a warning and return. This should result in rate limited
+        ## operations returning the partial result
+        warning("Rate limit encountered & retry limit reached - returning partial results")
+        ## Setting out to {} will have the JSON creator provide an empty list
+        out = "{}" 
+      }
     } else {
       stop("Error: ", error_message)
     }
