@@ -27,6 +27,16 @@ searchTwitter <- function(searchString, n=25, lang=NULL,
     until_date = strsplit(until, " ")[[1]][1] 
   }
 
+  # check geocode
+  if (!is.null(geocode)) {
+    geocheck = strsplit(geocode[[1]],',')
+    lon = as.numeric(geocheck[[1]])
+    lat = as.numeric(geocheck[[2]])
+    if ((lon > 180)||(lon < -180)) stop('Longitude neet to be in range [180,-180].')
+    if ((lat > 90)||(lat < -90)) stop('Latitude need to be in range [90.0,-90.0].')
+    rm(geocheck,lon,lat)
+  }
+
   params <- buildCommonArgs(lang=lang, locale=locale, since=since_date, until=until_date,
                             geocode=geocode, since_id=sinceID)
   params[['q']] <- searchString
