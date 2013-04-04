@@ -142,8 +142,13 @@ deleteStatus <- function(status, ...) {
 }
 
 showStatus <- function(id, ...) {
-  if (!is.numeric(id))
-    stop("id argument must be numeric")
+  if (!is.character(id)) {
+    warning("Using numeric id value can lead to unexpected results for very large ids")
+  }
+  if (is.na(as.numeric(id))) {
+    stop("Malformed id, while it must be a string all ids must be representable as an integer")
+  }
+  
   buildStatus(twInterfaceObj$doAPICall(paste('statuses', 'show', id, sep='/'), ...))
 }
 
