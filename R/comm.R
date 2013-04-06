@@ -64,7 +64,7 @@ doAPICall = function(cmd, params=NULL, method="GET", url=NULL, retryCount=5,
   }
   
   recall_func = function(retryCount, rateLimitCount) {
-    return(doAPICall(cmd, params=params, method=method, url=url, retryCount=count,
+    return(doAPICall(cmd, params=params, method=method, url=url, retryCount=retryCount,
                      retryOnRateLimit=rateLimitCount, ...))
   }
   
@@ -200,6 +200,10 @@ doRppAPICall = function(cmd, num, params, ...) {
           (grep("max_id", search_metadata[["next_results"]]) > 0)) {
       max_id = strsplit(strsplit(search_metadata[["next_results"]], "max_id=")[[1]][2], "&")[[1]][1]
       params[["max_id"]] = max_id   
+    } else {
+      ## We've hit the end of what Twitter wants to give us
+      warning(num, " tweets were requested but the API can only return ", length(jsonList))
+      break
     }
   }
   

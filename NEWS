@@ -1,0 +1,113 @@
+CHANGES IN VERSION 1.1.6 (2013-04-05)
+------------------------
+
+BUG FIXES
+
+    o Fixed a bug in searchTwitter which would fill the tail end of a query
+    with duplicated tweets if the user requested more than available
+    
+    o Changed showStatus to use character based input due to large IDs
+
+CHANGES IN VERSION 1.1.5 (2013-03-26)
+------------------------
+
+NEW FEATURES
+
+    - Changed 'blockOnRateLimit' (boolean) to 'retryOnRateLimit' (integer). If
+     this value is supplied (to any of the twitteR API wrappers) the system
+     will retry up to N times if Twitter's rate limit in effect. If the 
+     retry limit is reached (even if it was 0) twitteR will now try to return
+     any partial results that had been accumulated prior to the rate limit
+     (with a warning)
+   - Added function getTwitterOAuth(consumer_key, consumer_secret) which is a 
+     wrapper around the ROAuth creation/handshaking process which embeds the
+     Twitter URLs. Will also call registerTwitterOAuth for you and then return
+     the OAuth credential so you can save it for future use if you wish.
+ 
+USER VISIBLE CHANGES  
+   - ROAuth (>= 0.9.4) is now a Depends
+
+CHANGES IN VERSION 1.1.4 (2013-03-18)
+------------------------
+
+USER VISIBLE CHANGES
+
+   - Allow for by-hour filtering in since/util
+
+CHANGES IN VERSION 1.1.3 (2013-03-17)
+------------------------
+
+BUG FIXES
+
+   - Fixing bug from 1.1.2's bug fix, search now works properly w/ max_id
+
+CHANGES IN VERSION 1.1.2 (2013-03-16)
+------------------------
+
+BUG FIXES
+
+   - Bug fixes from abicky
+   - removed a browser call to the status class
+
+CHANGES IN VERSION 1.1.1 (2013-03-03)
+------------------------
+
+NEW FEATURES
+
+    - Added 'longitude' and 'latitude' fields to the status class, pulls
+    from the 'coordinates' field of a tweet (when available)
+
+CHANGES IN VERSION 1.1.0 (2013-03-01)
+------------------------
+
+USER VISIBLE CHANGES
+
+     - Purely a version number bump to reflect the new API status
+
+CHANGES IN VERSION 0.99.28 (2013-02-23)
+--------------------------
+
+NEW FEATURES
+    
+     - Added profileImageUrl to the User class, along w/ getProfileImageUrl() 
+     method
+
+CHANGES IN VERSION 0.99.27 (2013-01-21)
+--------------------------
+
+NEW FEATURES
+
+     - Added includeRts option to userTimeline
+
+CHANGES IN VERSION 0.99.26 (2013-01-02)
+--------------------------
+
+USER VISIBLE CHANGES
+  
+     - now depending on rjson >= 0.2.24
+ 
+NEW FEATURES
+
+     - supply argument blockOnRateLimit which does as the name suggests
+
+CHANGES IN VERSION 0.99.24 (2013-01-02)
+-------------------------------------
+
+USER VISIBLE CHANGES 
+
+      - Convert search to using the 1.1 API
+
+CHANGES IN VERSION 0.99.23 (2012-12-27)
+---------------------------------------
+
+CONVERSION TO THE 1.1 API
+     
+       - Multiple functions (e.g. publicTimeline) were removed due to the
+       corresponding functionality being removed from the API
+    
+       - The trend system has been completely rewritten
+    
+       - The rate limit system has been completely rewritten
+ 
+       - The friendships() function has been added
+
