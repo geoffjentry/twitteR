@@ -202,13 +202,16 @@ doRppAPICall = function(cmd, num, params, ...) {
       params[["max_id"]] = max_id   
     } else {
       ## We've hit the end of what Twitter wants to give us
-      warning(num, " tweets were requested but the API can only return ", length(jsonList))
       break
     }
   }
   
   if (length(jsonList) > num) {
     jsonList = jsonList[seq_len(num)]
+  }
+  
+  if (length(jsonList) < num) {
+    warning(num, " tweets were requested but the API can only return ", length(jsonList))    
   }
   
   return(jsonList)
