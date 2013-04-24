@@ -37,6 +37,7 @@ getOAuth <- function() {
 ## approach to actually sending the data back & receiving response and then providing multiple
 ## mechanisms to page
 twFromJSON = function(json) {
+  browser()
   ## Will provide some basic error checking, as well as suppress
   ## warnings that always seem to come out of fromJSON, even
   ## in good cases. 
