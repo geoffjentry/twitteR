@@ -9,7 +9,7 @@
 \usage{
 searchTwitter(searchString, n=25, lang=NULL, since=NULL, until=NULL,
               locale=NULL, geocode=NULL, sinceID=NULL, 
-	      blockOnRateLimit=TRUE, ...)
+	            retryOnRateLimit=120, ...)
 Rtweets(n=25, lang=NULL, since=NULL, ...)
 }
 \arguments{
@@ -28,10 +28,9 @@ Rtweets(n=25, lang=NULL, since=NULL, ...)
     \code{Details} below for more information}
   \item{sinceID}{If not \code{NULL}, returns tweets with IDs greater
     (ie newer) than the specified ID}
-  \item{blockOnRateLimit}{If \code{TRUE} this search command will block until
-                          completed regardless of rate limiting. This might lead
-                          to a much longer run time but the task will (eventually)
-                          complete}
+  \item{retryOnRateLimit}{If non-zero the search command will block retry up to
+    X times if the rate limit is experienced. This might lead to a much longer run
+    time but the task will eventually complete if the retry count is high enough}
   \item{...}{Optional arguments to be passed to \code{\link{getURL}}}
 }
 \details{
