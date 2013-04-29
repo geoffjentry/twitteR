@@ -34,8 +34,8 @@ searchTwitter <- function(searchString, n=25, lang=NULL,
 
   if (!is.null(geocode)) {
     geocheck = strsplit(geocode[[1]], ',')[[1]]
-    lon = as.numeric(geocheck[1])
-    lat = as.numeric(geocheck[2])
+    lat = as.numeric(geocheck[1])
+    lon = as.numeric(geocheck[2])
     if ((lon > 180) || (lon < -180)) {
       stop('Longitude need to be in range [180,-180].')
     }
