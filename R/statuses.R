@@ -79,9 +79,9 @@ setRefClass("status",
                   } else {
                     retweeted <<- TRUE
                   }
-                  if (!is.null(json[["coordinates"]]) && !(!is.null(json[["coordinates"]][["coordinates"]]))) {
-                    longitude <<- json[["coordinates"]][["coordinates"]]
-                    latitude <<- json[["coordinates"]][["coordinates"]]
+                  if (!is.null(json[["coordinates"]]) && (!is.null(json[["coordinates"]][["coordinates"]]))) {
+                    longitude <<- as.character(json[["coordinates"]][["coordinates"]][1])
+                    latitude <<- as.character(json[["coordinates"]][["coordinates"]][2])
                   }
 
                 }
