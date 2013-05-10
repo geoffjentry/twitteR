@@ -98,7 +98,7 @@ setRefClass("user",
                 fri <- .self$getFriendIDs(n, ...)
                 lookupUsers(fri, ...)
               },
-              toDataFrame = function(row.names=NULL, optional=FALSE) {
+              toDataFrame = function(row.names=NULL, optional=FALSE, stringsAsFactors=FALSE) {
                 ## FIXME:
                 ## There is such little difference between this version
                 ## and the standard that there has to be a way to take
@@ -114,7 +114,7 @@ setRefClass("user",
                 })
                 names(fieldList) <- fields
                 as.data.frame(fieldList, row.names=row.names,
-                              optional=optional)
+                              optional=optional, stringsAsFactors=stringsAsFactors)
               }
               )
             )

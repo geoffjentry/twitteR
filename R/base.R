@@ -19,8 +19,8 @@ setRefClass('twitterObj',
             )
 
 setMethod('as.data.frame', signature='twitterObj',
-          function(x, row.names=NULL, optional=FALSE, ...)
-          x$toDataFrame(row.names, optional))
+          function(x, row.names=NULL, optional=FALSE, stringsAsFactors=FALSE, ...)
+          x$toDataFrame(row.names, optional, stringsAsFactors))
 
 setRefClass('twitterObjList',
             contains = 'VIRTUAL',
