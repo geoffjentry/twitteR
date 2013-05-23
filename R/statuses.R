@@ -11,6 +11,7 @@ setRefClass("status",
             fields = list(
               text="character",
               favorited="logical",
+              favoriteCount="numeric",
               replyToSN="character",
               created="POSIXct",
               truncated="logical",
@@ -78,6 +79,9 @@ setRefClass("status",
                     retweeted <<- FALSE
                   } else {
                     retweeted <<- TRUE
+                  }
+                  if (!is.null(json[["favorite_count"]])) {
+                    favoriteCount <<- as.numeric(json[["favorite_count"]])
                   }
                   if (!is.null(json[["coordinates"]]) && (!is.null(json[["coordinates"]][["coordinates"]]))) {
                     longitude <<- as.character(json[["coordinates"]][["coordinates"]][1])

@@ -40,6 +40,13 @@ setRefClass("user",
                     followersCount <<- as.numeric(json[['followers_count']])
                   if (!is.null(json[['friends_count']]))
                     friendsCount <<- as.numeric(json[['friends_count']])
+
+                  ## NOTE: Twitter uses the british spelling for historical reasons
+                  if (!is.null(json[['favourites_count']])) {
+                    favoritesCount <<- as.numeric(json[['favourites_count']])
+                  }
+                  
+                  
                   if ((!is.null(json[['url']]))&&(!is.na(json[['url']])))
                     url <<- json[['url']]
                   if (is.character(json[['name']]))
@@ -97,6 +104,9 @@ setRefClass("user",
               getFriends = function(n=NULL, ...) {
                 fri <- .self$getFriendIDs(n, ...)
                 lookupUsers(fri, ...)
+              },
+              getFavouritesCount = function() {
+                return(favoritesCount)
               },
               toDataFrame = function(row.names=NULL, optional=FALSE, stringsAsFactors=FALSE) {
                 ## FIXME:

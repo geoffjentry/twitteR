@@ -1,12 +1,19 @@
 CHANGES IN VERSION 1.1.7 (2013-x-y)
 -----------------------
 
+NEW FEATURES
+    
+    o Added favoriteCount field to the status class, i.e. x$getFavoriteCount()
+
+
 BUG FIXES
 
     o Fixed a bug in the assignment of latitude/longitude for tweets, these
     will now be properly populated
     
     o users$toDataFrame will now honor the stringsAsFactors argument
+
+    o getFavoritesCount() will now work properly on users.
 
 
 CHANGES IN VERSION 1.1.6 (2013-04-05)
