@@ -166,6 +166,10 @@ lookupUsers <- function(users, includeNA=FALSE, ...) {
     return(out)
   }
   
+  if (is.null(users) || length(users) == 0) {
+    return(list())
+  }
+  
   batches <- split(users, ceiling(seq_along(users) / 100))
   results <- lapply(batches, function(batch) {
     params <- parseUsers(batch)
