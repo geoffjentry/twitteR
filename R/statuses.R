@@ -21,6 +21,7 @@ setRefClass("status",
               statusSource="character",
               screenName="character",
               retweetCount="numeric",
+              isRetweet="logical",
               retweeted="logical",
               longitude="character",
               latitude="character"
@@ -87,7 +88,9 @@ setRefClass("status",
                     longitude <<- as.character(json[["coordinates"]][["coordinates"]][1])
                     latitude <<- as.character(json[["coordinates"]][["coordinates"]][2])
                   }
-
+                  
+                  ## If retweeted_status is provided (which contains the full original status), this is a retweet
+                  isRetweet <<- "retweeted_status" %in% names(json)
                 }
                 callSuper(...)
               }
