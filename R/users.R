@@ -108,6 +108,9 @@ setRefClass("user",
               getFavouritesCount = function() {
                 return(favoritesCount)
               },
+              getFavorites = function(n=20, max_id=NULL, since_id=NULL, ...) {
+                return(favorites(screenName, n=n, max_id=max_id, since_id=since_id, ...))
+              },
               toDataFrame = function(row.names=NULL, optional=FALSE, stringsAsFactors=FALSE) {
                 ## FIXME:
                 ## There is such little difference between this version

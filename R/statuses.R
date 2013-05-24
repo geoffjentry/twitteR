@@ -159,6 +159,15 @@ showStatus <- function(id, ...) {
   buildStatus(twInterfaceObj$doAPICall(paste('statuses', 'show', id, sep='/'), ...))
 }
 
+favorites = function(user, n=20, max_id=NULL, since_id=NULL, ...) {
+  uParams = parseUsers(user)
+  cmd = "favorites/list"
+  params = buildCommonArgs(max_id=max_id, since_id=since_id)
+  params[["user_id"]] = uParams[["user_id"]]
+  params[["screen_name"]] = uParams[["screen_name"]]
+  statusBase(cmd, params, n, 200, ...)
+}
+
 userTimeline <- function(user, n=20, maxID=NULL, sinceID=NULL, includeRts=FALSE, ...) {
   uParams <- parseUsers(user)
   cmd <- 'statuses/user_timeline'

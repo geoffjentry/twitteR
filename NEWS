@@ -2,9 +2,11 @@ CHANGES IN VERSION 1.1.7 (2013-x-y)
 -----------------------
 
 NEW FEATURES
-    
+    o Added function "favorites" which takes a user and returns a list of
+      their n most recent favorited tweets. Also added convenience method
+      to the user class getFavorites()    
     o Added favoriteCount field to the status class, i.e. x$getFavoriteCount()
-
+    o Added isRetweet field to the status class, i.e. x$getIsRetweet()
 
 BUG FIXES
 
