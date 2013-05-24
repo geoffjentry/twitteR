@@ -25,12 +25,17 @@ buildCommonArgs <- function(lang=NULL, since=NULL, until=NULL, locale=NULL,
 parseUsers <- function(users) {
   ## many functions have 'user' input which can be one of class 'user', a UID or a screen name,
   ## try to do something rational here
-  users <- sapply(users, function(x) {
-    if (inherits(x, 'user'))
-      x$getScreenName()
-    else
-      x
-  })
+  if ((length(users) == 1) && (inherits(users, "user"))) {
+    users = users$getScreenName()
+  } else {
+    users <- sapply(users, function(x) {
+      if (inherits(x, 'user'))
+        x$getScreenName()
+      else
+        x
+    })
+  }
+  
   numUsers <- suppressWarnings(as.numeric(users))
   uids <- numUsers[!is.na(numUsers)]
   screen.names <- setdiff(users, uids)

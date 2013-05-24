@@ -12,6 +12,9 @@ NEW FEATURES
 
 BUG FIXES
 
+    o Fixed a bug where userTimeline would fail if given a single user
+    object (as opposed to simple screen names, IDs, etc)
+
     o Fixed a bug in lookupUsers - if the user arg was NULL an error would
     be thrown. Now returns empty list
 
