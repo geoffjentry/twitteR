@@ -6,6 +6,8 @@ exportMethods(as.data.frame, screenName, show, favorited, replyToSN,
               description, name, id, statusText, truncated, statusSource)
 
 export("favorites")
+exportPattern("^import*")
+exportPattern("^jsonTo*")
 export("getTwitterOAuth")
 export("getCurRateLimitInfo")
 export('statusFactory')

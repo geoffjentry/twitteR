@@ -97,17 +97,16 @@ setRefClass("status",
               )
             )
 
-statusFactory <- getRefClass("status")
+statusFactory = getRefClass("status")
 statusFactory$accessors(names(statusFactory$fields()))
 
-buildStatus <- function(json) {
+buildStatus = function(json) {
   return(statusFactory$new(json))
 }
 
 setMethod("show", signature="status", function(object) {
     print(paste(screenName(object), object$text, sep=": "))
 })
-
 
 updateStatus <- function(text, lat=NULL, long=NULL, placeID=NULL,
                          displayCoords=NULL, inReplyTo=NULL, ...) {
@@ -117,38 +116,41 @@ updateStatus <- function(text, lat=NULL, long=NULL, placeID=NULL,
   if (nchar(text) > 140)
     stop("Status can not be more than 140 characters")
 
-  params <- buildCommonArgs(lat=lat, long=long, place_id=placeID,
+  params = buildCommonArgs(lat=lat, long=long, place_id=placeID,
                             display_coordinates=displayCoords,
                             in_reply_to_status_id=inReplyTo)
   params[['status']] <- text
-  json <- twInterfaceObj$doAPICall('statuses/update',
-                                   params=params, method='POST', ...)
+  json = twInterfaceObj$doAPICall('statuses/update',
+                                 params=params, method='POST', ...)
   return(buildStatus(json))
 }
             
-tweet <- function(text, ...) {
-    updateStatus(text, ...)
+tweet = function(text, ...) {
+    return(updateStatus(text, ...))
 }
 
-deleteStatus <- function(status, ...) {
-  if (!hasOAuth())
+deleteStatus = function(status, ...) {
+  if (!hasOAuth()) {
     stop("deleteStatus requires OAuth authentication")
-  if (!inherits(status, 'status'))
+  }
+  if (!inherits(status, 'status')) {
     stop("status argument must be of class status")
-  json <- twInterfaceObj$doAPICall(paste('statuses/destroy',
-                                         status$getId(), sep='/'),
-                                   method='POST', ...)
+  }
+  
+  json = twInterfaceObj$doAPICall(paste('statuses/destroy',
+                                       status$getId(), sep='/'),
+                                       method='POST', ...)
   if (is.null(json$errors)) {
-    TRUE
+    return(TRUE)
   } else {
     for (error in json$errors) {
       cat(error$message, error$code, fill = TRUE)
     }
-    FALSE
+    return(FALSE)
   }
 }
 
-showStatus <- function(id, ...) {
+showStatus = function(id, ...) {
   if (!is.character(id)) {
     warning("Using numeric id value can lead to unexpected results for very large ids")
   }
@@ -165,27 +167,30 @@ favorites = function(user, n=20, max_id=NULL, since_id=NULL, ...) {
   params = buildCommonArgs(max_id=max_id, since_id=since_id)
   params[["user_id"]] = uParams[["user_id"]]
   params[["screen_name"]] = uParams[["screen_name"]]
-  statusBase(cmd, params, n, 200, ...)
+  return(statusBase(cmd, params, n, 200, ...))
 }
 
-userTimeline <- function(user, n=20, maxID=NULL, sinceID=NULL, includeRts=FALSE, ...) {
+userTimeline = function(user, n=20, maxID=NULL, sinceID=NULL, includeRts=FALSE, ...) {
   uParams <- parseUsers(user)
   cmd <- 'statuses/user_timeline'
   params <- buildCommonArgs(max_id=maxID, since_id=sinceID)
   params[['user_id']] <- uParams[['user_id']]
   params[['screen_name']] <- uParams[['screen_name']]
   params[["include_rts"]] <- ifelse(includeRts == TRUE, "true", "false")
-  statusBase(cmd, params, n, 3200, ...)
+  return(statusBase(cmd, params, n, 3200, ...))
 }
 
-homeTimeline <- function(n=25, maxID=NULL, sinceID=NULL, ...) 
-  authStatusBase(n, 'home_timeline', maxID=maxID, sinceID=sinceID, ...)
+homeTimeline <- function(n=25, maxID=NULL, sinceID=NULL, ...) {
+  return(authStatusBase(n, 'home_timeline', maxID=maxID, sinceID=sinceID, ...))
+}
 
-mentions <- function(n=25, maxID=NULL, sinceID=NULL, ...)
-  authStatusBase(n, 'mentions_timeline', maxID=maxID, sinceID=sinceID, ...)
+mentions <- function(n=25, maxID=NULL, sinceID=NULL, ...) {
+  return(authStatusBase(n, 'mentions_timeline', maxID=maxID, sinceID=sinceID, ...))
+}
 
-retweetsOfMe <- function(n=25, maxID=NULL, sinceID=NULL, ...)
-  authStatusBase(n, 'retweets_of_me', maxID=maxID, sinceID=sinceID, ...)
+retweetsOfMe <- function(n=25, maxID=NULL, sinceID=NULL, ...) {
+  return(authStatusBase(n, 'retweets_of_me', maxID=maxID, sinceID=sinceID, ...))
+}
 
 authStatusBase <- function(n, type, maxID=NULL, sinceID=NULL, ...) {
   if (!hasOAuth()) {
@@ -195,7 +200,7 @@ authStatusBase <- function(n, type, maxID=NULL, sinceID=NULL, ...) {
   params <- buildCommonArgs(max_id=maxID, since_id=sinceID)
   cmd <- paste('statuses', type, sep='/')
   cmd <- paste('statuses', type, sep='/')
-  statusBase(cmd, params, n, 800, ...)
+  return(statusBase(cmd, params, n, 800, ...))
 }
 
 statusBase <- function(cmd, params, n, maxN, ...) {
@@ -204,5 +209,5 @@ statusBase <- function(cmd, params, n, maxN, ...) {
     warning(cmd, " has a cap of ", maxN, " statuses, clipping")
     n <- maxN
   }
-  sapply(doPagedAPICall(cmd, n, params, ...), buildStatus)
+  return(sapply(doPagedAPICall(cmd, n, params, ...), buildStatus))
 }

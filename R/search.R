@@ -48,7 +48,7 @@ searchTwitter <- function(searchString, n=25, lang=NULL,
                             geocode=geocode, since_id=sinceID)
   params[['q']] <- searchString
   jsonList <- doRppAPICall("search/tweets", n, params=params, retryOnRateLimit=retryOnRateLimit, ...)
-  statuses = sapply(jsonList, buildStatus)
+  statuses = importStatuses(jsonList)
   
   datetimes = sapply(statuses, function(x) x$getCreated())
   if (is.null(since)) {
