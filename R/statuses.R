@@ -93,6 +93,9 @@ setRefClass("status",
                   isRetweet <<- "retweeted_status" %in% names(json)
                 }
                 callSuper(...)
+              },
+              getRetweets(n=20, ...) {
+                return(retweets(self$getId(), n, ...))
               }
               )
             )
@@ -159,6 +162,23 @@ showStatus = function(id, ...) {
   }
   
   buildStatus(twInterfaceObj$doAPICall(paste('statuses', 'show', id, sep='/'), ...))
+}
+
+retweets = function(id, n=20, ...) {
+  if (!is.character(id)) {
+    warning("Using numeric id value can lead to unexpected results for very large ids")
+  }
+  if (is.na(as.numeric(id))) {
+    stop("Malformed id, while it must be a string all ids must be representable as an integer")
+  }
+
+  if (n> 100) {
+    stop("n must be less than 100, set to ", n)
+  }
+  
+  cmd = "statuses/retweets"
+  params = list(id=id, count=n)
+  return(sapply(doAPICall(cmd, params=params), buildStatus))  
 }
 
 favorites = function(user, n=20, max_id=NULL, since_id=NULL, ...) {

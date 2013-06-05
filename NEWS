@@ -10,6 +10,9 @@ NEW FEATURES
 
     o Added isRetweet field to the status class, i.e. x$getIsRetweet()
 
+    o Added retweets function to get retweets of a status, and a 
+    $getRetweets() convenience method to the status class.
+
 BUG FIXES
 
     o Fixed a bug where userTimeline would fail if given a single user
