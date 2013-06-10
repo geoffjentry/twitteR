@@ -1,3 +1,26 @@
+
+## shamelessly stolen from Tony Breyal's blog post on how to attempt to decode
+## URLs. Slight modifications made, perhaps more in the future
+decode_short_url <- function(url, ...) {
+  decode <- function(u) {
+    Sys.sleep(0.5)
+    x <- try(getURL(u, header = TRUE, nobody = TRUE, followlocation = FALSE, 
+      	 	    ...))
+    if (inherits(x, 'try-error') | length(grep(".*Location: (\\S+).*", x)) <1) {
+      return(u)
+    } else {
+      return(gsub('.*Location: (\\S+).*', '\\1', x))
+    }
+  }
+ 
+  # return decoded URLs
+  urls <- c(url, ...)
+  l <- vector(mode = "list", length = length(urls))
+  l <- lapply(urls, decode)
+  names(l) <- urls
+  return(l)
+}
+
 getAPIStr <- function(cmd, version=1.1) {
   if (hasOAuth()) {
     scheme <- "https"
