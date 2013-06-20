@@ -37,6 +37,8 @@ getOAuth <- function() {
 ## approach to actually sending the data back & receiving response and then providing multiple
 ## mechanisms to page
 twFromJSON = function(json) {
+  #twitter sends data in UTF-8, paranoidly confirm encoding
+  json<-iconv(json, "", "UTF-8", sub="")
   ## Will provide some basic error checking, as well as suppress
   ## warnings that always seem to come out of fromJSON, even
   ## in good cases. 
