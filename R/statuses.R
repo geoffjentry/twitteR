@@ -24,7 +24,8 @@ setRefClass("status",
               isRetweet="logical",
               retweeted="logical",
               longitude="character",
-              latitude="character"
+              latitude="character",
+              urls="data.frame"
               ),
             methods=list(
               initialize = function(json, ...) {
@@ -91,6 +92,8 @@ setRefClass("status",
                   
                   ## If retweeted_status is provided (which contains the full original status), this is a retweet
                   isRetweet <<- "retweeted_status" %in% names(json)
+                  
+                  urls <<- build_urls_data_frame(json)
                 }
                 callSuper(...)
               },
@@ -230,4 +233,14 @@ statusBase <- function(cmd, params, n, maxN, ...) {
     n <- maxN
   }
   return(sapply(doPagedAPICall(cmd, n, params, ...), buildStatus))
+}
+
+build_urls_data_frame = function(json) {
+  ## takes a status JSON and will either return a data.frame of the URLs entity or an
+  ## empty data.frame if there were none provided
+  if (length(json$entities$urls) > 0) {
+    return(as.data.frame(json$entities$urls))
+  } else {
+    data.frame(url=character(), expanded_url=character(), dispaly_url=character(), indices=numeric(), stringsAsFactors=FALSE)
+  }
 }

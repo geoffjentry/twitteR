@@ -2,6 +2,17 @@ CHANGES IN VERSION 1.1.7 (2013-x-y)
 -----------------------
 
 NEW FEATURES
+    o Added a 'urls' slot to the Status class. This is a data.frame containing
+    information about any t.co shortened URLs, providing the expanded URL,
+    a display string and the character positions the URL was extracted from.
+    This only applies to t.co shortened URLs.
+
+    o Added a function decode_short_urls as a utility to help users process
+    shortened URLs which were not t.co shortened.
+
+    o Included patch to force all characters to UTF-8 before passing along
+    to rjson
+
     o Added function "favorites" which takes a user and returns a list of
     their n most recent favorited tweets. Also added convenience method
     to the user class getFavorites()    

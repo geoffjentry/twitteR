@@ -47,6 +47,8 @@ searchTwitter <- function(searchString, n=25, lang=NULL,
   params <- buildCommonArgs(lang=lang, locale=locale, since=since_date, until=until_date,
                             geocode=geocode, since_id=sinceID)
   params[['q']] <- searchString
+  params[["include_entities"]] = TRUE
+  
   jsonList <- doRppAPICall("search/tweets", n, params=params, retryOnRateLimit=retryOnRateLimit, ...)
   statuses = importStatuses(jsonList)
   
@@ -65,3 +67,5 @@ searchTwitter <- function(searchString, n=25, lang=NULL,
   return(statuses[good_statuses])
 }
 
+## I don't know how many times I've typod this, making an alias
+searchTwitteR = searchTwitter

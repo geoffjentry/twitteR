@@ -10,8 +10,8 @@ importTrends = function(rawData, conversionFunc=jsonToTrends) {
   return(importObj(rawData, conversionFunc))
 }
 
-importObj = function(rawData, conversionFunc) {
-  return(conversionFunc(rawData))
+importObj = function(rawData, conversionFunc, ...) {
+  return(conversionFunc(rawData, ...))
 }
 
 jsonToUsers = function(rawData) {

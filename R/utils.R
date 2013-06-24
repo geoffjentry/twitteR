@@ -1,24 +1,7 @@
 
-## shamelessly stolen from Tony Breyal's blog post on how to attempt to decode
-## URLs. Slight modifications made, perhaps more in the future
 decode_short_url <- function(url, ...) {
-  decode <- function(u) {
-    Sys.sleep(0.5)
-    x <- try(getURL(u, header = TRUE, nobody = TRUE, followlocation = FALSE, 
-      	 	    ...))
-    if (inherits(x, 'try-error') | length(grep(".*Location: (\\S+).*", x)) <1) {
-      return(u)
-    } else {
-      return(gsub('.*Location: (\\S+).*', '\\1', x))
-    }
-  }
- 
-  # return decoded URLs
-  urls <- c(url, ...)
-  l <- vector(mode = "list", length = length(urls))
-  l <- lapply(urls, decode)
-  names(l) <- urls
-  return(l)
+  request_url = paste("http://api.longurl.org/v2/expand?url=", url, "&format=json", sep="")
+  return(fromJSON(getURL(request_url, useragent="twitteR", ...))[["long-url"]])
 }
 
 getAPIStr <- function(cmd, version=1.1) {
