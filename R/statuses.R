@@ -238,8 +238,17 @@ statusBase <- function(cmd, params, n, maxN, ...) {
 build_urls_data_frame = function(json) {
   ## takes a status JSON and will either return a data.frame of the URLs entity or an
   ## empty data.frame if there were none provided
+  split_indices = function(urls_block) {
+    urls_block$start_index = urls_block$indices[1]
+    urls_block$stop_index = urls_block$indices[2]
+    urls_block$indices = NULL
+    urls_block
+  }
+  
   if (length(json$entities$urls) > 0) {
-    return(as.data.frame(json$entities$urls))
+    urls = json$entities$urls
+    massaged_urls = lapply(urls, split_indices)
+    return(do.call("rbind", lapply(massaged_urls, as.data.frame, stringsAsFactors=FALSE)))
   } else {
     data.frame(url=character(), expanded_url=character(), dispaly_url=character(), indices=numeric(), stringsAsFactors=FALSE)
   }
