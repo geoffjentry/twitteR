@@ -23,7 +23,7 @@ A list of \code{link{status}} objects corresponding to the \code{n} most recent 
 \url{https://dev.twitter.com/docs/api/1.1/get/favorites/list}
 }
 \author{
-Jeff Gentry}
+Jeff Gentry
 }
 \seealso{
 \code{\link{getUser}}, \code{\link{status}}

@@ -2,8 +2,9 @@ setRefClass('twitterObj',
             contains='VIRTUAL',
             methods = list(
               toDataFrame = function(row.names=NULL, optional=FALSE,
-                stringsAsFactors=FALSE) {
-                fields <- names(.self$getRefClass()$fields())
+                stringsAsFactors=FALSE, fieldsToRemove=character()) {
+                fields <- setdiff(names(.self$getRefClass()$fields()),
+                                  fieldsToRemove)
                 fieldList <- lapply(fields, function(x) {
                   val <- .self$field(x)
                   if (length(val) == 0)

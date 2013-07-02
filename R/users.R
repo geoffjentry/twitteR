@@ -112,25 +112,11 @@ setRefClass("user",
                 return(favorites(screenName, n=n, max_id=max_id, since_id=since_id, ...))
               },
               toDataFrame = function(row.names=NULL, optional=FALSE, stringsAsFactors=FALSE) {
-                ## FIXME:
-                ## There is such little difference between this version
-                ## and the standard that there has to be a way to take
-                ## advantage of inheritance here
-                fields <- setdiff(names(.self$getRefClass()$fields()),
-                                  'lastStatus')
-                fieldList <- lapply(fields, function(x) {
-                  val <- .self$field(x)
-                  if (length(val) == 0)
-                    NA
-                  else
-                    val
-                })
-                names(fieldList) <- fields
-                as.data.frame(fieldList, row.names=row.names,
-                              optional=optional, stringsAsFactors=stringsAsFactors)
+                callSuper(row.names=row.names, optional=optional, stringsAsFactors=stringsAsFactors, 
+                          fieldsToRemove='lastStatus')
               }
-              )
             )
+          )
 
 userFactory <- getRefClass("user")
 userFactory$accessors(names(userFactory$fields()))
