@@ -1,25 +1,27 @@
-importUsers = function(rawData, conversionFunc=jsonToUsers) {
-  return(importObj(rawData, conversionFunc))
+import_users = function(raw_data, conversion_func=jsonToUsers) {
+  return(importObj(raw_data, conversion_func))
 }
 
-importStatuses = function(rawData, conversionFunc=jsonToStatuses) {
-  return(importObj(rawData, conversionFunc))
+import_statuses = function(raw_data, conversion_func=jsonToStatuses) {
+  return(importObj(raw_data, conversion_func))
 }
 
-importTrends = function(rawData, conversionFunc=jsonToTrends) {
-  return(importObj(rawData, conversionFunc))
+import_trends = function(raw_data, conversion_func=jsonToTrends) {
+  return(importObj(raw_data, conversion_func))
 }
 
-importObj = function(rawData, conversionFunc, ...) {
-  return(conversionFunc(rawData, ...))
+import_obj = function(raw_data, conversion_func, ...) {
+  return(conversion_func(raw_data, ...))
 }
 
-jsonToUsers = function(rawData) {
-  return(sapply(rawData, buildUser))
+json_to_users = function(raw_data) {
+  return(sapply(raw_data, buildUser))
 }
 
-jsonToStatuses = function(rawData) {
-  return(sapply(rawData, buildStatus))
+json_to_statuses = function(raw_data) {
+  return(sapply(raw_data, buildStatus))
 }
 
-jsonToTrends = buildTrendLocationDf
+json_to_trends = function(raw_data) {
+  buildTrendLocationDf(raw_data)
+}
