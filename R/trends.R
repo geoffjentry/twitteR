@@ -1,13 +1,13 @@
 availableTrendLocations = function(...) {
   locs = twInterfaceObj$doAPICall("trends/available", ...)
-  return(importTrends(locs))
+  return(import_trends(locs))
 }
 
 closestTrendLocations = function(lat, long, ...) {
   params=list(lat=lat, long=long)
   
   locs = twInterfaceObj$doAPICall("trends/closest", params=params, ...)
-  return(importTrends(locs))
+  return(import_trends(locs))
 }
 
 buildTrendLocationDf = function(loc_json) {

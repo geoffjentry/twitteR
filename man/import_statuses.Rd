@@ -15,10 +15,10 @@ sources. Currently only JSON is supported, and this entire branch of functionali
 should be considered experimental & under development.
 }
 \usage{
-import_statuses(raw_data, conversion_func = jsonToStatuses)
-import_trends(raw_data, conversion_func = jsonToStatuses)
-import_users(raw_data, conversion_func = jsonToStatuses)
-import_obj(raw_data, conversion_funct, ...)
+import_statuses(raw_data, conversion_func = json_to_statuses)
+import_trends(raw_data, conversion_func = json_to_trends)
+import_users(raw_data, conversion_func = json_to_users)
+import_obj(raw_data, conversion_func, ...)
 json_to_users(raw_data)
 json_to_statuses(raw_data)
 json_to_trends(raw_data)
@@ -26,13 +26,13 @@ json_to_trends(raw_data)
 \arguments{
   \item{raw_data}{Data to be be parsed via the prescribed function}
   \item{conversion_func}{The function to convert \code{raw_data} into the specified twitteR object}
-  \item{dots}{Arguments to pass along to \code{conversion_func}}
+  \item{...}{Arguments to pass along to \code{conversion_func}}
 }
 \value{
 A list of twitteR objects of the appropriate type, e.g. \code{\link{status}}, \code{\link{user}}, etc
 }
 \author{Jeff Gentry}
-\seealso{\code{\link{status}}, \code{\link{user}}, \code{\link{trend}}}
+\seealso{\code{\link{status}}, \code{\link{user}}}
 \examples{
    \dontrun{
       status_list = import_statuses(list_of_status_json)   
