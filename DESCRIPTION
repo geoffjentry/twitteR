@@ -1,7 +1,7 @@
 Package: twitteR
 Title: R based Twitter client
 Description: Provides an interface to the Twitter web API
-Version: 1.1.8
+Version: 1.1.7
 Author: Jeff Gentry <geoffjentry@gmail.com>
 Maintainer: Jeff Gentry <geoffjentry@gmail.com>
 Depends: R (>= 2.12.0), ROAuth (>= 0.9.3), RCurl, rjson (>= 0.2.12), methods
