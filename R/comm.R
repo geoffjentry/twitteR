@@ -36,9 +36,11 @@ getOAuth <- function() {
 ## has a completely different interface.  Trying to manage all of these below using one unified
 ## approach to actually sending the data back & receiving response and then providing multiple
 ## mechanisms to page
-twFromJSON = function(json) {
+twFromJSON = function(json, forceUtf8Conversion=TRUE) {
   #twitter sends data in UTF-8, paranoidly confirm encoding
-  json = iconv(json, "", "UTF-8", sub="")
+  if (forceUtf8Conversion) {
+    json = iconv(json, "", "UTF-8", sub="")
+  }
   ## Will provide some basic error checking, as well as suppress
   ## warnings that always seem to come out of fromJSON, even
   ## in good cases. 
@@ -107,7 +109,7 @@ doAPICall = function(cmd, params=NULL, method="GET", url=NULL, retryCount=5,
     }
   } 
  
-  json = twFromJSON(out)
+  json = twFromJSON(out, ...)
 
   return(json)  
 }
