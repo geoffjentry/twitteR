@@ -1,3 +1,13 @@
+CHANGES IN VERSION 1.1.8 (????-?-?)
+-----------------------
+
+NEW FEATURES
+    o Added a function 'retweeters' and a convenience method 'getRetweeters'
+    to the Status class. This function takes an ID of a tweet and a count
+    (default is 20) and will return the IDs of users who have retweeted this
+    tweet. The getRetweeters convenience method only takes the count.
+
+
 CHANGES IN VERSION 1.1.7 (2013-7-8)
 -----------------------
 

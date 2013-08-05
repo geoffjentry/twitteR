@@ -100,6 +100,9 @@ setRefClass("status",
               getRetweets = function(n=20, ...) {
                 return(retweets(self$getId(), n, ...))
               },
+              getRetweeters = function(n=20, ...) {
+                return(retweeters(self$getId(), n, ...))
+              }
               toDataFrame = function(row.names=NULL, optional=FALSE, stringsAsFactors=FALSE) {
                 callSuper(row.names=row.names, optional=optional, stringsAsFactors=stringsAsFactors, 
                           fieldsToRemove="urls")
@@ -162,31 +165,29 @@ deleteStatus = function(status, ...) {
 }
 
 showStatus = function(id, ...) {
-  if (!is.character(id)) {
-    warning("Using numeric id value can lead to unexpected results for very large ids")
-  }
-  if (is.na(as.numeric(id))) {
-    stop("Malformed id, while it must be a string all ids must be representable as an integer")
-  }
-  
+  check_id(id)  
   buildStatus(twInterfaceObj$doAPICall(paste('statuses', 'show', id, sep='/'), ...))
 }
 
 retweets = function(id, n=20, ...) {
-  if (!is.character(id)) {
-    warning("Using numeric id value can lead to unexpected results for very large ids")
-  }
-  if (is.na(as.numeric(id))) {
-    stop("Malformed id, while it must be a string all ids must be representable as an integer")
-  }
+  check_id(id)
 
-  if (n> 100) {
+  if (n > 100) {
     stop("n must be less than 100, set to ", n)
   }
   
   cmd = "statuses/retweets"
   params = list(id=id, count=n)
   return(sapply(doAPICall(cmd, params=params), buildStatus))  
+}
+
+retweeters = function(id, n=20, ...) {
+  check_id(id)
+  
+  cmd = "statuses/retweeters/ids"
+  params = list(id=id, count=n)
+  json = doCursorAPICall(cmd, "ids", num=n, params=params, method="GET", ...)
+  json
 }
 
 favorites = function(user, n=20, max_id=NULL, since_id=NULL, ...) {

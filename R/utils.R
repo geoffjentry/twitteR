@@ -1,3 +1,13 @@
+check_id = function(id) {
+  if (!is.character(id)) {
+    warning("Using numeric id value can lead to unexpected results for very large ids")
+  }
+  if (is.na(as.numeric(id))) {
+    stop("Malformed id, while it must be a string all ids must be representable as an integer")
+  }
+
+  return(TRUE)
+}
 
 decode_short_url <- function(url, ...) {
   request_url = paste("http://api.longurl.org/v2/expand?url=", url, "&format=json", sep="")

@@ -1,6 +1,0 @@
-\documentclass[letter]{article}
-%\VignetteIndexEntry{Twitter client for R}
-%\VignettePackage{twitteR}
-%\VignetteKeywords{Documentation}
-\begin{document}
-\end{document}

@@ -6,6 +6,7 @@ exportMethods(as.data.frame, screenName, show, favorited, replyToSN,
               description, name, id, statusText, truncated, statusSource)
 
 export("searchTwitteR")
+export("retweeters")
 export("favorites")
 exportPattern("^import*")
 exportPattern("^jsonTo*")
