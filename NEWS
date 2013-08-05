@@ -7,6 +7,10 @@ NEW FEATURES
     (default is 20) and will return the IDs of users who have retweeted this
     tweet. The getRetweeters convenience method only takes the count.
 
+    o Added argument forceUtf8Conversion (accessible via ... in all exposed
+    functionality) which if set to FALSE (default is TRUE) will disable the
+    forced conversion to UTF-8. Note that doing this can cause bad behavior
+    if responses pass on characters outside of UTF-8.
 
 CHANGES IN VERSION 1.1.7 (2013-7-8)
 -----------------------
