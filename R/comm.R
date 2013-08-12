@@ -1,35 +1,44 @@
-registerTwitterOAuth <- function(oauth) {
-  if (!inherits(oauth, "OAuth"))
-    stop("oauth argument must be of class OAuth")
-  if (! oauth$getHandshakeComplete())
-    stop("oauth has not completed its handshake")
-  assign('oauth', oauth, envir=oauthCache)
-  TRUE
-}
 
 getTwitterOAuth = function(consumer_key, consumer_secret) {
-  request_url = "https://api.twitter.com/oauth/request_token"
-  access_url = "http://api.twitter.com/oauth/access_token"
-  auth_url = "http://api.twitter.com/oauth/authorize"
-  
-  cred = OAuthFactory$new(consumerKey=consumer_key,
-                          consumerSecret=consumer_secret,
-                          requestURL=request_url,
-                          accessURL=access_url,
-                          authURL=auth_url)
-  cred$handshake()
-  registerTwitterOAuth(cred)
-  return(cred)
+  stop("ROAuth is no longer used in favor of httr, please see ?setup_twitter_oauth")
 }
 
-hasOAuth <- function() {
-  exists('oauth', envir=oauthCache)
+registerTwitterOAuth <- function(oauth) {
+  stop("ROAuth is no longer used in favor of httr, please see ?setup_twitter_oauth")
 }
 
-getOAuth <- function() {
-  if (!hasOAuth())
+setup_twitter_oauth = function(consumer_key, consumer_secret, access_token, access_secret,
+                               credentials_file=NULL) {
+  Sys.setenv(TWITTER_CONSUMER_SECRET=consumer_secret)
+  app = suppressMessages(oauth_app("twitter", key=consumer_key))
+  sig = suppressMessages(sign_oauth1.0(app, token=access_token, token_secret=access_secret))
+  set_oauth_sig(sig)
+  if (!is.null(credentials_file)) {
+    save(sig, file=credentials_file)
+  }
+}
+
+load_twitter_oauth = function(credentials_file) {
+  if (!file.exists(credentials_file)) {
+    stop("credentials_file does not exist!")
+  }  
+  load(credentials_file)
+  set_oauth_sig(sig)
+}
+
+set_oauth_sig = function(sig) {
+  assign("oauth_sig", sig, envir=oauthCache)  
+}
+
+has_oauth_sig = function() {
+  exists("oauth_sig", envir=oauthCache)
+}
+
+get_oauth_sig = function() {
+  if (!has_oauth_sig()) {
     stop("OAuth has not been registered for this session")
-  get("oauth", envir=oauthCache)
+  }  
+  return(get("oauth_sig", envir=oauthCache))
 }
 
 ## twitter API has multiple methods of handling paging issues, not to mention the search API
@@ -57,7 +66,12 @@ twFromJSON = function(json, forceUtf8Conversion=TRUE) {
 
 }
 
-doAPICall = function(cmd, params=NULL, method="GET", url=NULL, retryCount=5, 
+prep_get_url = function(url, params) {
+  args = paste(sapply(names(params), function(x) paste(x, params[[x]], sep="=")), collapse="&")
+  return(URLencode(paste(url, args, sep="?")))
+}
+
+doAPICall = function(cmd, params=NULL, method="GET", retryCount=5, 
                      retryOnRateLimit=0, ...) {
   if (!is.numeric(retryOnRateLimit)) {
     stop("retryOnRateLimit must be a number")
@@ -68,20 +82,16 @@ doAPICall = function(cmd, params=NULL, method="GET", url=NULL, retryCount=5,
   }
   
   recall_func = function(retryCount, rateLimitCount) {
-    return(doAPICall(cmd, params=params, method=method, url=url, retryCount=retryCount,
+    return(doAPICall(cmd, params=params, method=method, retryCount=retryCount,
                      retryOnRateLimit=rateLimitCount, ...))
   }
-  
-  if (is.null(url)) {
-    url <- getAPIStr(cmd)
-  }
 
-  if (!hasOAuth()) {
-    stop("OAuth authentication is required with Twitter's API v1.1")
+  url = getAPIStr(cmd)
+  if (method == "POST") {
+  } else {
+    url = prep_get_url(url, params)
+    out = try(GET(url, get_oauth_sig()), silent=TRUE)
   }
-  
-  oauth = getOAuth()
-  out = try(oauth$OAuthRequest(url, params, method, ...), silent=TRUE)
   if (inherits(out, "try-error")) {
     error_message = gsub("\\r\\n", "", attr(out, "condition")[["message"]])
     print(error_message)

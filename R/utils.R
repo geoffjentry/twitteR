@@ -15,7 +15,7 @@ decode_short_url <- function(url, ...) {
 }
 
 getAPIStr <- function(cmd, version=1.1) {
-  if (hasOAuth()) {
+  if (has_oauth_sig()) {
     scheme <- "https"
   } else {
     scheme <- "http"
