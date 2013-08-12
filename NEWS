@@ -1,6 +1,11 @@
 CHANGES IN VERSION 1.1.8 (????-?-?)
 -----------------------
 
+USER VISIBLE CHANGES
+     o The use of ROAuth and RCurl has been removed in favor of the httr
+     package. This changes how OAuth authentication is handled, with the
+     new system going through setup_twitter_oauth() and load_twitter_oauth().
+
 NEW FEATURES
     o Added a function 'retweeters' and a convenience method 'getRetweeters'
     to the Status class. This function takes an ID of a tweet and a count

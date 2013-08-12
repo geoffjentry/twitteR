@@ -68,7 +68,7 @@ dmSent <- function(n=25, sinceID=NULL, maxID=NULL, ...) {
 }
 
 dmGETBase <- function(n, sinceID, maxID, type='', ...) {
-  if (!hasOAuth())
+  if (!has_oauth_sig())
     stop("dmGet requires OAuth authentication")
 
   if (n <= 0)
@@ -82,7 +82,7 @@ dmGETBase <- function(n, sinceID, maxID, type='', ...) {
 }
 
 dmDestroy <- function(dm, ...) {
-  if (!hasOAuth())
+  if (!has_oauth_sig())
     stop("dmDestroy requires OAuth authentication")
   if (!inherits(dm, "directMessage"))
     stop("dm must be of class directMessage")
@@ -100,7 +100,7 @@ dmDestroy <- function(dm, ...) {
 }
 
 dmSend <- function(text, user, ...) {
-  if (!hasOAuth()) {
+  if (!has_oauth_sig()) {
     stop("dmSend requires OAuth authentication")
   }
   if (inherits(user, "user")) {

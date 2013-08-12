@@ -1,5 +1,5 @@
 taskStatus <- function(expr, to, msg="") {
-  if (!hasOAuth())
+  if (!has_oauth_sig())
     stop("taskStatus requires OAuth authentication")
   
   status <- try(expr, silent=TRUE)
