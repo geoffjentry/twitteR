@@ -102,7 +102,7 @@ setRefClass("status",
               },
               getRetweeters = function(n=20, ...) {
                 return(retweeters(self$getId(), n, ...))
-              }
+              },
               toDataFrame = function(row.names=NULL, optional=FALSE, stringsAsFactors=FALSE) {
                 callSuper(row.names=row.names, optional=optional, stringsAsFactors=stringsAsFactors, 
                           fieldsToRemove="urls")
