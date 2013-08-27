@@ -46,7 +46,7 @@ get_oauth_sig = function() {
 ## approach to actually sending the data back & receiving response and then providing multiple
 ## mechanisms to page
 twFromJSON = function(json, forceUtf8Conversion=TRUE) {
-  #twitter sends data in UTF-8, paranoidly confirm encoding
+  ## twitter sends data in UTF-8, paranoidly confirm encoding
   if (forceUtf8Conversion) {
     json = iconv(json, "", "UTF-8", sub="")
   }
@@ -88,6 +88,7 @@ doAPICall = function(cmd, params=NULL, method="GET", retryCount=5,
 
   url = getAPIStr(cmd)
   if (method == "POST") {
+    out = try(POST(url, get_oauth_sig(), body=params), silent=TRUE)
   } else {
     url = prep_get_url(url, params)
     out = try(GET(url, get_oauth_sig()), silent=TRUE)
