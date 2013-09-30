@@ -199,13 +199,14 @@ favorites = function(user, n=20, max_id=NULL, since_id=NULL, ...) {
   return(statusBase(cmd, params, n, 200, ...))
 }
 
-userTimeline = function(user, n=20, maxID=NULL, sinceID=NULL, includeRts=FALSE, ...) {
+userTimeline = function(user, n=20, maxID=NULL, sinceID=NULL, includeRts=FALSE, excludeReplies=FALSE, ...) {
   uParams <- parseUsers(user)
   cmd <- 'statuses/user_timeline'
   params <- buildCommonArgs(max_id=maxID, since_id=sinceID)
   params[['user_id']] <- uParams[['user_id']]
   params[['screen_name']] <- uParams[['screen_name']]
   params[["include_rts"]] <- ifelse(includeRts == TRUE, "true", "false")
+  params[["exclude_replies"]] <- ifelse(excludeReplies == TRUE, "true", "false")
   return(statusBase(cmd, params, n, 3200, ...))
 }
 
