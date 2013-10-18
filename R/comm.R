@@ -206,17 +206,13 @@ doRppAPICall = function(cmd, num, params, ...) {
     fromJSON <- twInterfaceObj$doAPICall(cmd, params, 'GET', ...)
     newList <- fromJSON$statuses
     if (length(newList) == 0) {
-      break;
+      break
     }
     jsonList <- c(jsonList, newList)
     curDiff <- num - length(jsonList)
-    search_metadata = fromJSON[["search_metadata"]]
-    if ((curDiff > 0) && (!is.null(search_metadata)) && ("next_results" %in% names(search_metadata)) &&
-          (grep("max_id", search_metadata[["next_results"]]) > 0)) {
-      max_id = strsplit(strsplit(search_metadata[["next_results"]], "max_id=")[[1]][2], "&")[[1]][1]
-      params[["max_id"]] = max_id   
+    if ((curDiff > 0) && (length(newList) == params[["count"]])) {
+      params[["max_id"]] = as.character(as.int64(min(sapply(newList, function(x) x$id))) - 1)      
     } else {
-      ## We've hit the end of what Twitter wants to give us
       break
     }
   }

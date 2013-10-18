@@ -72,6 +72,10 @@ buildUserList = function(uids, screen_names) {
 }
 
 twListToDF <- function(twList) {
+  if (length(twList) == 0) {
+    stop("Empty list passed to twListToDF")
+  }
+  
   ## iff all elements of twList are from a class defined in this
   ## package, and all of the same class, will collapse these into
   ## a data.frame and return

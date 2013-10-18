@@ -237,6 +237,7 @@ Unfortunately I didn't give the package the most easily searched name! If you
 know of a good example please let me know.
 
 \begin{itemize}
+  \item Shiny based sentiment analysis example: \url{http://spark.rstudio.com/procogia/dashboard/}
   \item Jeffrey Breen's sentiment analysis example: \url{http://www.inside-r.org/howto/mining-twitter-airline-consumer-sentiment}
   \item Mapping your followers: \url{http://simplystatistics.org/2011/12/21/an-r-function-to-map-your-twitter-followers/}
   \item Yangchao Zhao's book on data mining w/ R \url{http://www.amazon.com/Data-Mining-Examples-Case-Studies/dp/0123969638}
