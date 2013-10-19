@@ -45,15 +45,11 @@ get_oauth_sig = function() {
 ## has a completely different interface.  Trying to manage all of these below using one unified
 ## approach to actually sending the data back & receiving response and then providing multiple
 ## mechanisms to page
-twFromJSON = function(json, forceUtf8Conversion=TRUE) {
-  ## twitter sends data in UTF-8, paranoidly confirm encoding
-  if (forceUtf8Conversion) {
-    json = iconv(json, "", "UTF-8", sub="")
-  }
+tw_from_response = function(response) {
   ## Will provide some basic error checking, as well as suppress
   ## warnings that always seem to come out of fromJSON, even
   ## in good cases. 
-  out <- try(suppressWarnings(rjson:::fromJSON(json, unexpected.escape="skip")), silent=TRUE)
+  out <- try(suppressWarnings(content(response, as="parsed")), silent=TRUE)
   if (inherits(out, "try-error")) {
     stop("Error: Malformed response from server, was not JSON.\n",
          "The most likely cause of this error is Twitter returning a character which\n",
@@ -63,12 +59,6 @@ twFromJSON = function(json, forceUtf8Conversion=TRUE) {
   }
   
   return(out)
-
-}
-
-prep_get_url = function(url, params) {
-  args = paste(sapply(names(params), function(x) paste(x, params[[x]], sep="=")), collapse="&")
-  return(URLencode(paste(url, args, sep="?")))
 }
 
 doAPICall = function(cmd, params=NULL, method="GET", retryCount=5, 
@@ -85,13 +75,11 @@ doAPICall = function(cmd, params=NULL, method="GET", retryCount=5,
     return(doAPICall(cmd, params=params, method=method, retryCount=retryCount,
                      retryOnRateLimit=rateLimitCount, ...))
   }
-
   url = getAPIStr(cmd)
   if (method == "POST") {
     out = try(POST(url, get_oauth_sig(), body=params), silent=TRUE)
   } else {
-    url = prep_get_url(url, params)
-    out = try(GET(url, get_oauth_sig()), silent=TRUE)
+    out = try(GET(url, query=lapply(params, function(x) URLencode(as.character(x))), get_oauth_sig()), silent=TRUE)
   }
   if (inherits(out, "try-error")) {
     error_message = gsub("\\r\\n", "", attr(out, "condition")[["message"]])
@@ -120,8 +108,12 @@ doAPICall = function(cmd, params=NULL, method="GET", retryCount=5,
     }
   } 
  
-  json = twFromJSON(out, ...)
+  json = tw_from_response(out, ...)
 
+  if (length(json[["errrors"]]) > 0) {
+    stop(json[["errors"]][[1]][["message"]])
+  }
+  
   return(json)  
 }
 
@@ -135,7 +127,7 @@ setRefClass('twAPIInterface',
                 callSuper(...)
                 .self
               },
-              twFromJSON = twFromJSON,
+              tw_from_response = tw_from_response,
               doAPICall = doAPICall
               )
             )
