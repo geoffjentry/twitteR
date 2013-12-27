@@ -62,7 +62,11 @@ tw_from_response = function(response) {
 }
 
 doAPICall = function(cmd, params=NULL, method="GET", retryCount=5, 
-                     retryOnRateLimit=0, ...) {
+                     retryOnRateLimit=0, debug=FALSE, ...) {
+  if (debug) {
+    browser()
+  }
+  
   if (!is.numeric(retryOnRateLimit)) {
     stop("retryOnRateLimit must be a number")
   }
@@ -79,7 +83,12 @@ doAPICall = function(cmd, params=NULL, method="GET", retryCount=5,
   if (method == "POST") {
     out = try(POST(url, get_oauth_sig(), body=params), silent=TRUE)
   } else {
-    out = try(GET(url, query=lapply(params, function(x) URLencode(as.character(x))), get_oauth_sig()), silent=TRUE)
+    if (is.null(params)) {
+      query = NULL
+    } else {
+      queryl = lapply(params, function(x) URLencode(as.character(x)))
+    }
+    out = try(GET(url, query=query, get_oauth_sig()), silent=TRUE)
   }
   if (inherits(out, "try-error")) {
     error_message = gsub("\\r\\n", "", attr(out, "condition")[["message"]])
