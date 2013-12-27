@@ -86,7 +86,7 @@ doAPICall = function(cmd, params=NULL, method="GET", retryCount=5,
     if (is.null(params)) {
       query = NULL
     } else {
-      queryl = lapply(params, function(x) URLencode(as.character(x)))
+      query = lapply(params, function(x) URLencode(as.character(x)))
     }
     out = try(GET(url, query=query, get_oauth_sig()), silent=TRUE)
   }
