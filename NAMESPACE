@@ -9,6 +9,7 @@ exportMethods(as.data.frame, screenName, show, favorited, replyToSN,
 export("setup_twitter_oauth")
 export("load_twitter_oauth")
 export("searchTwitteR")
+export("retweets")
 export("retweeters")
 export("favorites")
 exportPattern("^import*")

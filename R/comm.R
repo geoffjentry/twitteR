@@ -14,16 +14,25 @@ setup_twitter_oauth = function(consumer_key, consumer_secret, access_token, acce
   sig = suppressMessages(sign_oauth1.0(app, token=access_token, token_secret=access_secret))
   set_oauth_sig(sig)
   if (!is.null(credentials_file)) {
-    save(sig, file=credentials_file)
+    save(consumer_key, consumer_secret, access_token, access_secret, file=credentials_file)
   }
 }
 
 load_twitter_oauth = function(credentials_file) {
   if (!file.exists(credentials_file)) {
     stop("credentials_file does not exist!")
-  }  
-  load(credentials_file)
-  set_oauth_sig(sig)
+  }
+  consumer_key = consumer_secret = access_token = access_secret = sig = NULL # To get R CMD check to stop bitching
+  provided = load(credentials_file) 
+  if ("sig" %in% provided) {
+     warning("This credentials object is deprecated (and might no longer work), please regenerate it using setup_twitter_oauth")
+     set_oauth_sig(sig)
+  } else {
+    if (! all("consumer_key", "consumer_secret", "access_token", "access_secret") %in% provided) {
+      stop("Malformed credentials object, please regenerate using setup_twitter_oauth")
+    }
+    setup_twitter_oauth(consumer_key, consumer_secret, access_token, access_secret)
+  }
 }
 
 set_oauth_sig = function(sig) {

@@ -32,7 +32,7 @@ Rtweets(n=25, lang=NULL, since=NULL, ...)
   \item{retryOnRateLimit}{If non-zero the search command will block retry up to
     X times if the rate limit is experienced. This might lead to a much longer run
     time but the task will eventually complete if the retry count is high enough}
-  \item{...}{Optional arguments to be passed to \code{\link{getURL}}}
+  \item{...}{Optional arguments to be passed to \code{\link{GET}}}
 }
 \details{
   These commands will return any authorized tweets which match the
@@ -59,7 +59,7 @@ Rtweets(n=25, lang=NULL, since=NULL, ...)
   A list of \code{\link{status}} objects
 }
 \author{Jeff Gentry}
-\seealso{ \code{\link{status}}, \code{\link{registerTwitterOAuth}} }
+\seealso{ \code{\link{status}}}
 \examples{
   \dontrun{
   	searchTwitter("#beer", n=100)

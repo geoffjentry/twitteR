@@ -11,7 +11,7 @@ showStatus(id, ...)
 }
 \arguments{
   \item{id}{Numerical ID of a specific tweet}
-  \item{\dots}{Optional arguments to be passed to \code{\link{getURL}}}
+  \item{\dots}{Optional arguments to be passed to \code{\link{GET}}}
 }
 \value{
   An object of class \code{\link{status}}

@@ -11,7 +11,13 @@ check_id = function(id) {
 
 decode_short_url <- function(url, ...) {
   request_url = paste("http://api.longurl.org/v2/expand?url=", url, "&format=json", sep="")
-  return(fromJSON(getURL(request_url, useragent="twitteR", ...))[["long-url"]])
+  response = GET(request_url, query=list(useragent="twitteR"), ...)
+  parsed = content(response, as="parsed")
+  if (! "long-url" %in% names(parsed)) {
+    return(url)
+  } else {
+    return(parsed[["long-url"]])
+  }
 }
 
 getAPIStr <- function(cmd, version=1.1) {
