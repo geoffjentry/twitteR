@@ -28,7 +28,7 @@ load_twitter_oauth = function(credentials_file) {
      warning("This credentials object is deprecated (and might no longer work), please regenerate it using setup_twitter_oauth")
      set_oauth_sig(sig)
   } else {
-    if (! all("consumer_key", "consumer_secret", "access_token", "access_secret") %in% provided) {
+    if (! all(c("consumer_key", "consumer_secret", "access_token", "access_secret") %in% provided)) {
       stop("Malformed credentials object, please regenerate using setup_twitter_oauth")
     }
     setup_twitter_oauth(consumer_key, consumer_secret, access_token, access_secret)
@@ -212,16 +212,26 @@ doRppAPICall = function(cmd, num, params, ...) {
     
   curDiff <- num
   jsonList <- list()
+  ids = list()
   while (curDiff > 0) {
     fromJSON <- twInterfaceObj$doAPICall(cmd, params, 'GET', ...)
     newList <- fromJSON$statuses
-    if (length(newList) == 0) {
-      break
+    
+    curIds = sapply(newList, function(x) x[["id"]])
+    dups = which(ids %in% ids)
+    if (length(dups) > 0) {
+      curIds = curIds[-dups]
+      newList = newList[-dups]
     }
+    
+    if (length(curIds) == 0) {
+      break
+    } 
+
     jsonList <- c(jsonList, newList)
     curDiff <- num - length(jsonList)
-    if ((curDiff > 0) && (length(newList) == params[["count"]])) {
-      params[["max_id"]] = as.character(as.int64(min(sapply(newList, function(x) x$id))) - 1)      
+    if ((curDiff > 0)) { #&& (length(newList) == params[["count"]])) {
+      params[["max_id"]] = as.character(as.int64(min(curIds)) - 1)      
     } else {
       break
     }
