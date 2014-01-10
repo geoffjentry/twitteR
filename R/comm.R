@@ -1,4 +1,3 @@
-
 getTwitterOAuth = function(consumer_key, consumer_secret) {
   stop("ROAuth is no longer used in favor of httr, please see ?setup_twitter_oauth")
 }
@@ -231,7 +230,7 @@ doRppAPICall = function(cmd, num, params, ...) {
     jsonList <- c(jsonList, newList)
     curDiff <- num - length(jsonList)
     if ((curDiff > 0)) { #&& (length(newList) == params[["count"]])) {
-      params[["max_id"]] = as.character(as.int64(min(curIds)) - 1)      
+      params[["max_id"]] = as.character(as.integer64(min(curIds)) - 1)      
     } else {
       break
     }
