@@ -96,34 +96,35 @@ doAPICall = function(cmd, params=NULL, method="GET", retryCount=5,
     } else {
       query = lapply(params, function(x) URLencode(as.character(x)))
     }
-    out = try(GET(url, query=query, get_oauth_sig()), silent=TRUE)
+    out = GET(url, query=query, get_oauth_sig())
   }
-  if (inherits(out, "try-error")) {
-    error_message = gsub("\\r\\n", "", attr(out, "condition")[["message"]])
-    print(error_message)
-    if (error_message %in% c("Internal Server Error", "Service Unavailable")) {
-      print(paste("This error is likely transient, retrying up to", retryCount, "more times ..."))
-      ## These are typically fail whales or similar such things
-      Sys.sleep(1)
-      return(recall_func(retryCount - 1, rateLimitCount=retryOnRateLimit))         
-    } else if (error_message == "Too Many Requests") {
-      if (retryOnRateLimit > 0) {
-        ## We're rate limited. Wait a while and try again
-        print("Rate limited .... blocking for a minute ...")
-        Sys.sleep(60)
-        return(recall_func(retryCount, retryOnRateLimit - 1))      
-      } else {
-        ## FIXME: very experimental - the idea is that if we're rate limited,
-        ## just give a warning and return. This should result in rate limited
-        ## operations returning the partial result
-        warning("Rate limit encountered & retry limit reached - returning partial results")
-        ## Setting out to {} will have the JSON creator provide an empty list
-        out = "{}" 
-      }
+  httr_status = out$status
+  http_message = http_status(httr_status)$message
+  
+  if (httr_status %in% c(500, 502)) {
+    print(http_message)
+    print(paste("This error is likely transient, retrying up to", retryCount, "more times ..."))
+    ## These are typically fail whales or similar such things
+    Sys.sleep(1)
+    return(recall_func(retryCount - 1, rateLimitCount=retryOnRateLimit))         
+  } else if (httr_status == 431) {
+    print(http_message)
+    if (retryOnRateLimit > 0) {
+      ## We're rate limited. Wait a while and try again
+      print("Rate limited .... blocking for a minute ...")
+      Sys.sleep(60)
+      return(recall_func(retryCount, retryOnRateLimit - 1))      
     } else {
-      stop("Error: ", error_message)
+      ## FIXME: very experimental - the idea is that if we're rate limited,
+      ## just give a warning and return. This should result in rate limited
+      ## operations returning the partial result
+      warning("Rate limit encountered & retry limit reached - returning partial results")
+      ## Setting out to {} will have the JSON creator provide an empty list
+      out = "{}" 
     }
-  } 
+  }
+  ## Generic catch-all for any other errors
+  stop_for_status(out)
  
   json = tw_from_response(out, ...)
 

@@ -6,6 +6,7 @@ exportMethods(as.data.frame, screenName, show, favorited, replyToSN,
               protected, verified, location, lastStatus, show,
               description, name, id, statusText, truncated, statusSource)
 
+export("strip_retweets")
 export("setup_twitter_oauth")
 export("load_twitter_oauth")
 export("searchTwitteR")

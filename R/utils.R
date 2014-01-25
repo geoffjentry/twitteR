@@ -95,3 +95,36 @@ twListToDF <- function(twList) {
   do.call('rbind', lapply(twList, as.data.frame))
 }
 
+strip_retweets = function(tweets, strip_manual=TRUE, strip_mt=TRUE) {
+  if ((!is.list(tweets)) || (!all(sapply(tweets, function(x) inherits(x, "status"))))) {
+    stop("tweets argument must be a list of class status")
+  }
+  ## Find/remove the tweets flagged as retweets
+  is_retweets = which(sapply(tweets, function(x) x$getIsRetweet()))
+  
+  if (length(is_retweets) > 0) {
+    filtered_tweets = tweets[-is_retweets]
+  } else {
+    filtered_tweets = tweets
+  }
+  
+  if (strip_manual) {
+    statuses = sapply(filtered_tweets, function(x) x$getText())
+    
+    if (strip_mt) {
+      rt_pattern = "(RT|MT)"
+    } else {
+      rt_pattern = "RT"
+    }
+    
+    ## Find and remove RT based retweets. This will be overeager but we're not losing many
+    ## tweets anyways
+    split_tweets = sapply(strsplit(statuses, paste0("[[:space:]]?", rt_pattern)), function(x) x[1])
+    manual_retweets = which(split_tweets == "")
+    if (length(manual_retweets) > 0) {
+      filtered_tweets = filtered_tweets[-manual_retweets]
+    }
+  }
+  
+  filtered_tweets
+}
