@@ -116,7 +116,7 @@ doAPICall = function(cmd, params=NULL, method="GET", retryCount=5,
     ## These are typically fail whales or similar such things
     Sys.sleep(1)
     return(recall_func(retryCount - 1, rateLimitCount=retryOnRateLimit))         
-  } else if (httr_status == 431) {
+  } else if (httr_status == 429) {
     print(http_message)
     if (retryOnRateLimit > 0) {
       ## We're rate limited. Wait a while and try again
