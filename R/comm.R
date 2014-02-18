@@ -6,12 +6,21 @@ registerTwitterOAuth <- function(oauth) {
   stop("ROAuth is no longer used in favor of httr, please see ?setup_twitter_oauth")
 }
 
+check_twitter_oauth = function() {
+  if (!url_ok("https://api.twitter.com/1.1/account/settings.json", get_oauth_sig())) {
+    stop("OAuth authentication error:\nThis most likely means that you have incorrectly called setup_twitter_oauth()'")
+  }  
+}
+
 setup_twitter_oauth = function(consumer_key, consumer_secret, access_token, access_secret,
                                credentials_file=NULL) {
   Sys.setenv(TWITTER_CONSUMER_SECRET=consumer_secret)
   app = suppressMessages(oauth_app("twitter", key=consumer_key))
   sig = suppressMessages(sign_oauth1.0(app, token=access_token, token_secret=access_secret))
   set_oauth_sig(sig)
+
+  check_twitter_oauth()
+  
   if (!is.null(credentials_file)) {
     save(consumer_key, consumer_secret, access_token, access_secret, file=credentials_file)
   }
@@ -99,7 +108,7 @@ doAPICall = function(cmd, params=NULL, method="GET", retryCount=5,
     out = GET(url, query=query, get_oauth_sig())
   }
   httr_status = out$status
-  http_message = http_status(httr_status)$message
+  http_message = http_status(out)$message
   
   if (httr_status %in% c(500, 502)) {
     print(http_message)
@@ -122,6 +131,8 @@ doAPICall = function(cmd, params=NULL, method="GET", retryCount=5,
       ## Setting out to {} will have the JSON creator provide an empty list
       out = "{}" 
     }
+  } else if (httr_status == 401) {
+    stop("OAuth authentication error:\nThis most likely means that you have incorrectly called setup_twitter_oauth()'")    
   }
   ## Generic catch-all for any other errors
   stop_for_status(out)
