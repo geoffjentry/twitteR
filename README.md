@@ -7,7 +7,7 @@ twitteR is an R package which provides access to the Twitter API. Most functiona
 - I generally recommend that users track this GitHub version as opposed to the CRAN version as releases only happen every few months (if not more) and many fixes can show up in that time. Currently there's also a dependence on the github version of [httr](https://github.com/hadley/httr). To do this:
   - Create a Twitter application at http://dev.twitter.com. Make sure to give the app read, write and direct message authority.
   - Take note of the following values from the Twitter app page: "API key", "API secret", "Access token", and "Access token secret". 
-  - `install.packages("devtools")`
+  - `install.packages(c("devtools", "bit64"))`
   - `install_github("httr")`
   - `install_github("twitteR", username="geoffjentry")`
   - Make sure to restart your R session at this point
