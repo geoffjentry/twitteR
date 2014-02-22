@@ -10,6 +10,9 @@ USER VISIBLE CHANGES
  
      o setup_twitter_oauth() will report if an authentication attempt fails
 
+BUG FIXES
+    o getCurRateLimitInfo now requires at least one supported resource family
+
 NEW FEATURES
     o Added a function strip_retweets which will attempt to remove retweets
     from a list of Status objects.

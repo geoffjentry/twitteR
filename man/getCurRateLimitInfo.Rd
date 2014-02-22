@@ -1,5 +1,6 @@
 \name{getCurRateLimitInfo}
 \alias{getCurRateLimitInfo}
+\alias{resource_families}
 \title{
   A function to retrieve current rate limit information
 }
@@ -8,20 +9,21 @@
   displayed as a data.frame displaying specifc information for every Twitter resource
 }
 \usage{
-getCurRateLimitInfo(resources=character(), ...)
+getCurRateLimitInfo(resources=resource_families, ...)
 }
 \arguments{
-  \item{resources}{An optional character vector of specific resources to get information for}
+  \item{resources}{A character vector of specific resources to get information for}
   \item{\dots}{Optional arguments to pass to cURL}
 }
 \details{
-  Using the \code{resources} argument will filter the returned data.frame to only
-  list the specified resource values
+  By default, all known resource families will be polled. These families are contained
+  in the object \code{resource_families}. If you would like to filter this down you
+  may tweak the \code{resources} argument.
 
   The full list of allowed values in \code{resources} is as follows: \code{lists},
   \code{application}, \code{friendships}, \code{blocks}, \code{geo}, \code{users},
   \code{followers}, \code{statuses}, \code{help}, \code{friends}, \code{direct_messages},
-  \code{account}, \code{favorites}, \code{saved_searches}, \code{search}, \code{trends}
+  \code{account}, \code{favorites}, \code{saved_searches}, \code{search}, \code{trends}.
 }
 \value{
   A four column data.frame with columns \code{resource}, \code{limit}, \code{remaining}
