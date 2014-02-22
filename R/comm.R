@@ -66,7 +66,7 @@ tw_from_response = function(response) {
   ## Will provide some basic error checking, as well as suppress
   ## warnings that always seem to come out of fromJSON, even
   ## in good cases. 
-  out <- try(suppressWarnings(content(response, as="parsed")), silent=TRUE)
+  out <- try(suppressWarnings(fromJSON(content(response, as="text", encoding="UTF-8"))), silent=TRUE)
   if (inherits(out, "try-error")) {
     stop("Error: Malformed response from server, was not JSON.\n",
          "The most likely cause of this error is Twitter returning a character which\n",
