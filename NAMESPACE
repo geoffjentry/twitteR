@@ -5,6 +5,13 @@ exportMethods(as.data.frame, screenName, show, favorited, replyToSN,
               favoritesCount, friendsCount, userURL, created,
               protected, verified, location, lastStatus, show,
               description, name, id, statusText, truncated, statusSource)
+export("register_db_backend")
+export("register_sqlite_backend")
+export("register_mysql_backend")
+export("store_tweets_db")
+export("load_tweets_db")
+export("store_users_db")
+export("load_users_db")
 export("resource_families")
 export("strip_retweets")
 export("setup_twitter_oauth")

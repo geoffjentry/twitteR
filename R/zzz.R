@@ -1,5 +1,4 @@
-oauthCache <- new.env(hash=TRUE)
+oauth_cache <- new.env(hash=TRUE)
+db_backend_cache = new.env(hash=TRUE)
 
-## Detect if ROAuth is available, if so load it.  
-suppressWarnings(require("ROAuth", quietly=TRUE))
 
