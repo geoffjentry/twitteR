@@ -35,47 +35,66 @@ setRefClass("status",
                     screenName <<- userObj$getScreenName()
                   } else if ('from_user' %in% names(json)) {
                     screenName <<- json[['from_user']]
-                  } else {
+                  } else if ("screen_name" %in% names(json)) {
+                    screenName <<- json[["screen_name"]]  
+                  }  else {
                     screenName <<- "Unknown"
                   }
+                  
                   if (!is.null(json[['text']]))
                     text <<- json[['text']]
+                  
                   if ((is.null(json[['favorited']])) ||
                       (json[["favorited"]] == FALSE)) {
                     favorited <<- FALSE
                   } else {
                     favorited <<- TRUE
                   }
+                  
                   if ((is.null(json[['truncated']])) ||
                       (json[["truncated"]] == FALSE)) {
                     truncated <<- FALSE
                   } else {
                     truncated <<- TRUE
                   }
-                  if (!is.null(json[['source']]))
-                    statusSource <<- json[['source']]
-                  if (is.null(json[['created_at']]))
+                  
+                  status_source = get_json_value(json, c("source", "status_source"))
+                  if (!is.null(status_source)) {
+                    statusSource <<- status_source
+                  }
+
+                  created_at = get_json_value(json, c("created_at", "created"))
+                  if (is.null(created_at)) {
                     created <<- Sys.time()
-                  else
-                    created <<- twitterDateToPOSIX(json[['created_at']])
-                  if ((!is.null(json[['in_reply_to_screen_name']])) &&
-                      (!is.na(json[['in_reply_to_screen_name']]))) {
-                    replyToSN <<- json[['in_reply_to_screen_name']]
+                  } else {
+                    created <<- twitterDateToPOSIX(created_at)
                   }
-                  if ((!is.null(json[['in_reply_to_status_id_str']])) &&
-                      (!is.na(json[['in_reply_to_status_id_str']]))) {
-                    replyToSID <<- as.character(json[['in_reply_to_status_id_str']])
+                  
+                  in_reply_to_screen_name = get_json_value(json, c("reply_to_s_n", "in_reply_to_screen_name"))
+                  if (!is.null(in_reply_to_screen_name) && (!is.na(in_reply_to_screen_name))) {
+                    replyToSN <<- as.character(in_reply_to_screen_name)
                   }
-                  if ((!is.null(json[['in_reply_to_user_id_str']])) &&
-                      (!is.na(json[['in_reply_to_user_id_str']]))) {
-                    replyToUID <<- as.character(json[['in_reply_to_user_id_str']])
+                  
+                  in_reply_to_sid = get_json_value(json, c("reply_to_s_i_d", "in_reply_to_status_id_str"))
+                  if ((!is.null(in_reply_to_sid)) && (!is.na(in_reply_to_sid))) {
+                    replyToSID <<- as.character(in_reply_to_sid)
                   }
-                  if (!is.null(json[['id_str']])) {
-                    id <<- as.character(json[['id_str']])
+
+                  reply_to_uid = get_json_value(json, c("reply_to_u_i_d", "in_reply_to_user_id_str"))
+                  if ((!is.null(reply_to_uid)) && (!is.na(reply_to_uid))) {
+                    replyToUID <<- as.character(reply_to_uid)
                   }
+
+                  # Note: Make sure id_str is first here, otherwise numeric id will be snagged
+                  id_field = get_json_value(json, c("id_str", "id"))
+                  if (!is.null(id_field)) {
+                    id <<- as.character(id_field)
+                  }
+
                   if (!is.null(json[["retweet_count"]])) {
                     retweetCount <<- as.numeric(json[["retweet_count"]])
                   }
+                  
                   if ((is.null(json[['retweeted']])) ||
                       (json[["retweeted"]] == FALSE)) {
                     retweeted <<- FALSE
@@ -88,10 +107,17 @@ setRefClass("status",
                   if (!is.null(json[["coordinates"]]) && (!is.null(json[["coordinates"]][["coordinates"]]))) {
                     longitude <<- as.character(json[["coordinates"]][["coordinates"]][1])
                     latitude <<- as.character(json[["coordinates"]][["coordinates"]][2])
+                  } else {
+                    if (!is.null(json[["longitude"]])) {
+                      longitude <<- as.character(json[["longitude"]])
+                    }
+                    if (!is.null(json[["latitude"]])) {
+                      latitude <<- as.character(json[["latitude"]])
+                    }
                   }
                   
                   ## If retweeted_status is provided (which contains the full original status), this is a retweet
-                  isRetweet <<- "retweeted_status" %in% names(json)
+                  isRetweet <<- any(c("retweeted_status", "isRetweet") %in% names(json))
                   
                   urls <<- build_urls_data_frame(json)
                 }

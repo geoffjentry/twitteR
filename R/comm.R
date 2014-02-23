@@ -44,18 +44,18 @@ load_twitter_oauth = function(credentials_file) {
 }
 
 set_oauth_sig = function(sig) {
-  assign("oauth_sig", sig, envir=oauthCache)  
+  assign("oauth_sig", sig, envir=oauth_cache)  
 }
 
 has_oauth_sig = function() {
-  exists("oauth_sig", envir=oauthCache)
+  exists("oauth_sig", envir=oauth_cache)
 }
 
 get_oauth_sig = function() {
   if (!has_oauth_sig()) {
     stop("OAuth has not been registered for this session")
   }  
-  return(get("oauth_sig", envir=oauthCache))
+  return(get("oauth_sig", envir=oauth_cache))
 }
 
 ## twitter API has multiple methods of handling paging issues, not to mention the search API

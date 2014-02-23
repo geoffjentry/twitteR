@@ -1,3 +1,13 @@
+get_json_value = function(json, names) {
+  for (name in names) {
+    if (!is.null(json[[name]])) {
+      return(json[[name]])
+    }
+  }
+  
+  NULL
+}
+
 check_id = function(id) {
   if (!is.character(id)) {
     warning("Using numeric id value can lead to unexpected results for very large ids")
