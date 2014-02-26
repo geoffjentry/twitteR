@@ -8,9 +8,10 @@ twitteR is an R package which provides access to the Twitter API. Most functiona
   - Create a Twitter application at http://dev.twitter.com. Make sure to give the app read, write and direct message authority.
   - Take note of the following values from the Twitter app page: "API key", "API secret", "Access token", and "Access token secret". 
   - `install.packages(c("devtools", "rjson", "bit64"))`
+  - Make sure to restart your R session at this point
+  - `library(devtools)`
   - `install_github("httr")`
   - `install_github("twitteR", username="geoffjentry")`
-  - Make sure to restart your R session at this point
   - `library(twitteR)`
   - `setup_twitter_oauth("API key", "API secret", "Access token", "Access token secret", credentials_file="filename")`
     - All values besides `filename` are from the Twitter app page above. The `credentials_file` argument is optional and allows you to restore your authentication later on (using `load_twitter_oauth("filename")`)
