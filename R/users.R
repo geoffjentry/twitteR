@@ -21,6 +21,7 @@ setRefClass("user",
               verified="logical",
               screenName="character",
               location="character",
+              lang="character",
               id="character",
               lastStatus="status",
               listedCount="numeric",
@@ -87,6 +88,10 @@ setRefClass("user",
                   
                   if (!is.null(json[['location']])) {
                     location <<- json[['location']]
+                  }
+
+                  if (!is.null(json[['lang']])) {
+                    lang <<- json[['lang']]
                   }
                   
                   if (!is.null(json[["listed_count"]])) {
