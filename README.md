@@ -13,7 +13,7 @@ twitteR is an R package which provides access to the Twitter API. Most functiona
   - `install_github("httr")`
   - `install_github("twitteR", username="geoffjentry")`
   - `library(twitteR)`
-  - `setup_twitter_oauth("API key", "API secret", "Access token", "Access token secret", credentials_file="filename")`
-    - All values besides `filename` are from the Twitter app page above. The `credentials_file` argument is optional and allows you to restore your authentication later on (using `load_twitter_oauth("filename")`)
+  - `setup_twitter_oauth("API key", "API secret")`
+    - The `API key` and `API secret` are from the Twitter app page above. This will lead you through `httr`'s OAuth authentication process. I recommend you look at the man page for `Token` in `httr` for an explanation of how it handles caching. 
   - You should be ready to go!
 - If you have any questions or issues, check out the [mailing list](http://lists.hexdump.org/listinfo.cgi/twitter-users-hexdump.org)
