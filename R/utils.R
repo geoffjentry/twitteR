@@ -31,12 +31,7 @@ decode_short_url <- function(url, ...) {
 }
 
 getAPIStr <- function(cmd, version=1.1) {
-  if (has_oauth_sig()) {
-    scheme <- "https"
-  } else {
-    scheme <- "http"
-  }
-  paste(scheme, '://api.twitter.com/', version, '/', cmd, '.json', sep='')
+  paste("https://api.twitter.com/", version, '/', cmd, '.json', sep='')
 }
 
 buildCommonArgs <- function(lang=NULL, since=NULL, until=NULL, locale=NULL,

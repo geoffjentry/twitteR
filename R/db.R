@@ -42,7 +42,16 @@ load_users_db = function(as.data.frame=FALSE, table_name="users") {
   users_df = load_from_db(table_name)
   
   if (as.data.frame) {
+    if (length(setdiff(colnames(df), user_columns)) > 0) {
+      stop("Malformed user data.frame, columns don't match")
+    }
     
+    for (logical_col in c("protected", "verified", "followRequestSent")) {
+      users_df[, logical_col] = convert_logical_column(users_df[, logical_col])
+    }
+    users_df$created = convert_date_column(users_df$created)
+    
+    users_df
   } else {
     # We don't need to do the checks & type massaging as the normal structure
     # of the import will take care of it

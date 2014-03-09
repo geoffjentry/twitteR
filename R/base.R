@@ -7,10 +7,11 @@ setRefClass('twitterObj',
                                   fieldsToRemove)
                 fieldList <- lapply(fields, function(x) {
                   val <- .self$field(x)
-                  if (length(val) == 0)
+                  if (length(val) == 0) {
                     NA
-                  else
+                  } else {
                     val
+                  }
                 })
                 names(fieldList) <- fields
                 as.data.frame(fieldList, row.names=row.names,
