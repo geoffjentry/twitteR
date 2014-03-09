@@ -5,6 +5,8 @@ exportMethods(as.data.frame, screenName, show, favorited, replyToSN,
               favoritesCount, friendsCount, userURL, created,
               protected, verified, location, lastStatus, show,
               description, name, id, statusText, truncated, statusSource)
+
+export("setup_twitter_oauth")
 export("register_db_backend")
 export("register_sqlite_backend")
 export("register_mysql_backend")
@@ -14,8 +16,6 @@ export("store_users_db")
 export("load_users_db")
 export("resource_families")
 export("strip_retweets")
-export("setup_twitter_oauth")
-export("load_twitter_oauth")
 export("searchTwitteR")
 export("retweets")
 export("retweeters")

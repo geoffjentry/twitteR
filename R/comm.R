@@ -7,55 +7,31 @@ registerTwitterOAuth <- function(oauth) {
 }
 
 check_twitter_oauth = function() {
-  if (!url_ok("https://api.twitter.com/1.1/account/settings.json", get_oauth_sig())) {
+  req = try(stop_for_status(GET("https://api.twitter.com/1.1/account/settings.json", 
+                                config(token=get_oauth_sig()))), silent=TRUE)
+  
+  if (inherits(req, "try-error")) {
     stop("OAuth authentication error:\nThis most likely means that you have incorrectly called setup_twitter_oauth()'")
   }  
 }
 
-setup_twitter_oauth = function(consumer_key, consumer_secret, access_token, access_secret,
-                               credentials_file=NULL) {
-  Sys.setenv(TWITTER_CONSUMER_SECRET=consumer_secret)
-  app = suppressMessages(oauth_app("twitter", key=consumer_key))
-  sig = suppressMessages(sign_oauth1.0(app, token=access_token, token_secret=access_secret))
-  set_oauth_sig(sig)
-
+setup_twitter_oauth = function(consumer_key, consumer_secret) {
+  myapp <- oauth_app("twitter", key=consumer_key, secret=consumer_secret)
+  twitter_token = oauth1.0_token(oauth_endpoints$twitter, myapp)
+  assign("oauth_token", twitter_token, envir=oauth_cache)  
   check_twitter_oauth()
-  
-  if (!is.null(credentials_file)) {
-    save(consumer_key, consumer_secret, access_token, access_secret, file=credentials_file)
-  }
 }
 
-load_twitter_oauth = function(credentials_file) {
-  if (!file.exists(credentials_file)) {
-    stop("credentials_file does not exist!")
-  }
-  consumer_key = consumer_secret = access_token = access_secret = sig = NULL # To get R CMD check to stop bitching
-  provided = load(credentials_file) 
-  if ("sig" %in% provided) {
-     warning("This credentials object is deprecated (and might no longer work), please regenerate it using setup_twitter_oauth")
-     set_oauth_sig(sig)
-  } else {
-    if (! all(c("consumer_key", "consumer_secret", "access_token", "access_secret") %in% provided)) {
-      stop("Malformed credentials object, please regenerate using setup_twitter_oauth")
-    }
-    setup_twitter_oauth(consumer_key, consumer_secret, access_token, access_secret)
-  }
-}
-
-set_oauth_sig = function(sig) {
-  assign("oauth_sig", sig, envir=oauth_cache)  
-}
-
-has_oauth_sig = function() {
-  exists("oauth_sig", envir=oauth_cache)
+has_oauth_token = function() {
+  exists("oauth_token", envir=oauth_cache)
 }
 
 get_oauth_sig = function() {
-  if (!has_oauth_sig()) {
+  if (!has_oauth_token()) {
     stop("OAuth has not been registered for this session")
   }  
-  return(get("oauth_sig", envir=oauth_cache))
+  
+  return(get("oauth_token", envir=oauth_cache))
 }
 
 ## twitter API has multiple methods of handling paging issues, not to mention the search API
@@ -98,14 +74,14 @@ doAPICall = function(cmd, params=NULL, method="GET", retryCount=5,
   }
   url = getAPIStr(cmd)
   if (method == "POST") {
-    out = try(POST(url, get_oauth_sig(), body=params), silent=TRUE)
+    out = try(POST(url, config(token=get_oauth_sig()), body=params), silent=TRUE)
   } else {
     if (is.null(params)) {
       query = NULL
     } else {
       query = lapply(params, function(x) URLencode(as.character(x)))
     }
-    out = GET(url, query=query, get_oauth_sig())
+    out = GET(url, query=query, config(token=get_oauth_sig()))
   }
   httr_status = out$status
   http_message = http_status(out)$message

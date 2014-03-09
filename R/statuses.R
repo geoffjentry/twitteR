@@ -150,7 +150,7 @@ setMethod("show", signature="status", function(object) {
 
 updateStatus <- function(text, lat=NULL, long=NULL, placeID=NULL,
                          displayCoords=NULL, inReplyTo=NULL, ...) {
-  if (!has_oauth_sig())
+  if (!has_oauth_token())
     stop("updateStatus requires OAuth authentication")
 
   if (nchar(text) > 140)
@@ -170,7 +170,7 @@ tweet = function(text, ...) {
 }
 
 deleteStatus = function(status, ...) {
-  if (!has_oauth_sig()) {
+  if (!has_oauth_token()) {
     stop("deleteStatus requires OAuth authentication")
   }
   if (!inherits(status, 'status')) {
@@ -249,7 +249,7 @@ retweetsOfMe <- function(n=25, maxID=NULL, sinceID=NULL, ...) {
 }
 
 authStatusBase <- function(n, type, maxID=NULL, sinceID=NULL, ...) {
-  if (!has_oauth_sig()) {
+  if (!has_oauth_token()) {
     stop("OAuth is required for this functionality")
   }
   
