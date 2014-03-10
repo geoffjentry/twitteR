@@ -23,7 +23,7 @@ messages ('\emph{tweets}') for others to read.  These can be used to
 communicate wtih friends, to display headlines, for restaurants to
 list daily specials, and more.  The \Rpackage{twitteR} package is
 intended to provide access to the Twitter API within R.  Users can make 
-access large amounts of Twitter  data for data mining and other tasks.  
+access large amounts of Twitter data for data mining and other tasks.  
 
 This package is intended to be combined with the \Rpackage{ROAuth} package
 as as of March 2013 the Twitter API requires the use of OAuth authentication.
@@ -41,20 +41,6 @@ with the idea being that there'll now be a searchable archive and
 perhaps other users might be able to chime in.  The URL for this
 mailing list is \url{http://lists.hexdump.org/listinfo.cgi/twitter-users-hexdump.org}
 
-\subsection{Notes on API coverage}
-
-The ultimate goal is to provide full coverage of the Twitter API, although
-this is not currently the case.  Aspects of the API will be added over
-time, although if there are particular places that you find missing,
-please contact me. Please take a look at Twitter's documentation on the 1.1 
-API for more information on what is possible. For most actions, \Robject{twitteR}
-either supports the options presented there or provides a superset of that
-functionality (via processing in R). The API documentation is available at 
-\url{https://dev.twitter.com/docs/api/1.1}.
-
-I've long neglected Twitter's streaming API and someone else has picked up my
-slack with the \Rpackage{streamR} package.
-
 \section{Authentication with OAuth}
 
 As of March 2013 OAuth authentication is \emph{required} for all Twitter
@@ -64,8 +50,8 @@ OAuth is an authentication mechanism gaining popularity which allows
 applications to provide client functionality to a web service without
 granting an end user's credentials to the client itself.  This causes
 a few wrinkles for cases like ours, where we're accessing Twitter 
-programatically.  The \Rpackage{ROAuth} package can be used to get around
-this issue.
+programatically.  \Rpackage{twitteR} uses the \Rpackage{httr} package under
+the hood to manage this.
 
 The first step is to create a Twitter application for yourself.  Go to
 \url{https://twitter.com/apps/new} and log in. After filling in the
@@ -73,24 +59,16 @@ basic info, go to the ``Settings'' tab and select "Read, Write and Access direct
 Make sure to click on the save button after doing this. In the
 ``Details'' tab, take note of your consumer key and consumer secret.
 
-In your R session, you'll want to do the following:
+In your R session, you'll want to do the following with the appropriate values from
+the web page:
 
 <<ROAuth,eval=FALSE>>=
-   cred = getTwitterOAuth(YOURKEY, YOURSECRET)
+   setup_twitter_oauth("API key", "API secret")
 @
 
-During this process, you'll be prompted with another URL, go to that URL with 
-your browser and you'll be asked to approve the connection for this 
-application.  Once you do this, you'll be presented with a PIN, enter 
-that into your R session.  Your object is now verified.  
-
-To use this token in future sessions, save \Robject{cred} to a file,
-and from there you can use \Rfunction{load} in another session and call
-\Rfunction{registerTwitterOAuth}:
-
-<<RegisterOAuth,eval=FALSE>>=
-   registerTwitterOAuth(cred)
-@
+This will authenticate via \Rpackage{httr}, I recommend looking at that package's
+\Rfunction{Token} man page for more information regarding how to manage the
+authentication and caching processes.
 
 \section{Getting Started}
 
@@ -105,18 +83,22 @@ library(twitteR)
 @
 
 <<auth, echo=FALSE>>=
-load("credTwit.rda")
-registerTwitterOAuth(cred)
+setup_twitter_oauth(FIXME, FIXME)
 @
 
 \section{Exploring Twitter}
 \subsection{Searching Twitter}
 
 The \Rfunction{searchTwitter} function can be used to search for
-tweets that match a desired term.  Example searches are such things as hashtags,
+tweets that match a desired term. Example searches are such things as hashtags,
 @usernames, and other such things which can also be manipulated with
-basic boolean logic such as AND and OR.  The \Rfunarg{n} argument
-can be used to specify the number of tweets to return, defaulting to 25.
+basic boolean logic such as AND and OR. It is worth looking at \url{https://dev.twitter.com/docs/using-search}
+for an example of what can and can not be done here. The \Rfunarg{n} argument
+can be used to specify the number of tweets to return, defaulting to 25. Note
+that while \Rfunction{searchTwitter} will wrap an arbitrary number of actual
+search calls to provide the number of tweets requested, the Twitter API has limitations
+on just how much it will actually return. In general you can only go back a handful
+of days worth of tweets.
 
 <<search>>=
    sea <- searchTwitter('#twitter', n=50)
@@ -136,6 +118,22 @@ follow, retweets, and more.
    crantastic$getFriends(n=5)
    crantastic$getFavorites(n=5)
 @
+
+\subsection{Conversion to data.frames}
+
+There are times when it is convenient to display the object lists as
+an \Robject{data.frame} structure.  To do this, every class has a
+reference method \Rfunction{toDataFrame} as well as a corresponding S4
+method \Rfunction{as.data.frame} that works in the traditional sense.
+Converting a single object will typically not be particularly useful
+by itself but there is a convenience method to convert an entire list,
+\Rfunction{twListToDF} which takes a list of objects from a single
+\Rpackage{twitteR} class:
+
+<<dataFrame>>=
+   df <- twListToDF(r_tweets)
+   head(df)
+@ 
 
 \subsection{Trends}
 
@@ -211,22 +209,6 @@ due to issues with character encoding, locales, etc.
    sources <- sapply(sources, function(x) ifelse(length(x) > 1, x[2], x[1]))
    source_table = table(sources)
    pie(source_table[source_table > 10])
-@ 
-
-\subsection{Conversion to data.frames}
-
-There are times when it is convenient to display the object lists as
-an \Robject{data.frame} structure.  To do this, every class has a
-reference method \Rfunction{toDataFrame} as well as a corresponding S4
-method \Rfunction{as.data.frame} that works in the traditional sense.
-Converting a single object will typically not be particularly useful
-by itself but there is a convenience method to convert an entire list,
-\Rfunction{twListToDF} which takes a list of objects from a single
-\Rpackage{twitteR} class:
-
-<<dataFrame>>=
-   df <- twListToDF(r_tweets)
-   head(df)
 @ 
 
 \section{Examples Of twitteR In The Wild}
