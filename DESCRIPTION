@@ -12,5 +12,5 @@ LazyData: yes
 BuildVignettes: no
 URL: http://lists.hexdump.org/listinfo.cgi/twitter-users-hexdump.org
 Collate: allGenerics.R base.R account.R statuses.R users.R trends.R 
-	 s4methods.R convert.R dm.R comm.R followers.R search.R db.R
+	 s4methods.R convert.R dm.R oauth.R comm.R followers.R search.R db.R
 	 df_columns.R db_connections.R toys.R utils.R zzz.R

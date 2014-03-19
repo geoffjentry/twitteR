@@ -1,4 +1,4 @@
-\documentclass[letter]{article}
+\documentclass{article}
 %\VignetteIndexEntry{Twitter client for R}
 %\VignettePackage{twitteR}
 %\VignetteKeywords{Documentation}
@@ -11,6 +11,7 @@
 \newcommand{\Rclass}[1]{{\textit{#1}}}
 
 \begin{document}
+\SweaveOpts{concordance=TRUE}
 
 \title{Twitter client for R}
 \author{Jeff Gentry}
@@ -19,14 +20,16 @@
 \section{Introduction}
 
 Twitter is a popular service that allows users to broadcast short
-messages ('\emph{tweets}') for others to read.  These can be used to
-communicate wtih friends, to display headlines, for restaurants to
-list daily specials, and more.  The \Rpackage{twitteR} package is
-intended to provide access to the Twitter API within R.  Users can make 
-access large amounts of Twitter data for data mining and other tasks.  
+messages ('\emph{tweets}') for others to read.  Over the years this has become
+a valuable tool not just for standard social media purposes but also for 
+data mining experiments such as sentiment analysis. The \Rpackage{twitteR} package
+is intended to provide access to the Twitter API within R, allowing users to 
+grab interesting subsets of Twitter data for their analyses.
 
-This package is intended to be combined with the \Rpackage{ROAuth} package
-as as of March 2013 the Twitter API requires the use of OAuth authentication.
+This document is not intended to be exhaustive nor comprehensive but rather
+a brief introduction to some of the more common bits of functionality and
+some basic examples of how they can be used. In the last section I've included
+a variety of links to people using \Rpackage{twitteR} to solve real world problems.
 
 \section{Some Initial Notes}
 
@@ -70,6 +73,14 @@ This will authenticate via \Rpackage{httr}, I recommend looking at that package'
 \Rfunction{Token} man page for more information regarding how to manage the
 authentication and caching processes.
 
+If you are in a headless environment or otherwise don't want to deal with the browser
+based authentication dance, you can get your access token and secret from your apps 
+webpage and call \Rfunction{setup\_twitter\_oauth} a bit differently:
+
+<<ROAuth2,eval=FALSE>>=
+  setup_twitter_oauth("API key", "API secret", "Access token", "Access secret")
+@
+
 \section{Getting Started}
 
 This document is intended to demonstrate basic techniques rather than
@@ -82,8 +93,8 @@ at the end.
 library(twitteR)
 @
 
-<<auth, echo=FALSE>>=
-setup_twitter_oauth(FIXME, FIXME)
+<<auth,eval=FALSE>>=
+setup_twitter_oauth("API key", "API secret")
 @
 
 \section{Exploring Twitter}
@@ -101,8 +112,24 @@ on just how much it will actually return. In general you can only go back a hand
 of days worth of tweets.
 
 <<search>>=
-   sea <- searchTwitter('#twitter', n=50)
-   sea[1:5]
+   tweets <- searchTwitter('#rstats', n=50)
+   head(tweets)
+@
+
+There's a handy utility method, \Rfunction{strip\_retweets} which attempts to
+do exactly what it describes. It takes a list of \Rclass{status} objects (e.g.
+from \Rfunction{searchTwitter}) and by default will remove official API-based
+retweets from Twitter, i.e. cases where the retweet button was pressed instead
+of the manual \emph{RT @soandso ....} method. However there are two arguments,
+\Rfunarg{strip\_manual} and \Rfunarg{strip\_mt}, corresponding to the manual retweets
+described above and modified retweets (\emph{MT}). If either of these are \Robject{TRUE},
+the appropriate type of tweets will also be removed, but leaving everything to the
+left of the \emph{RT}/\emph{MT}.
+
+Note that this example may or may not do anything depending on the data available
+when this vignette was compiled.
+<<strip_retweets>>=
+  head(strip_retweets(tweets, strip_manual=TRUE, strip_mt=TRUE))
 @
 
 \subsection{Looking at users}
@@ -111,10 +138,13 @@ To take a closer look at a Twitter user (including yourself!), run the
 command \Rfunction{getUser}.  This will only work correctly with users
 who have their profiles public, or if you're authenticated and granted
 access. You can also see things such as a user's followers, who they
-follow, retweets, and more.
+follow, retweets, and more. The \Rfunction{getUser} function returns 
+a \Rclass{user} object, which can then be polled for further information.
 
 <<getUser>>=
    crantastic <- getUser('crantastic')
+   crantastic$getDescription()
+   crantastic$getFollowersCount()
    crantastic$getFriends(n=5)
    crantastic$getFavorites(n=5)
 @
@@ -131,30 +161,31 @@ by itself but there is a convenience method to convert an entire list,
 \Rpackage{twitteR} class:
 
 <<dataFrame>>=
-   df <- twListToDF(r_tweets)
+   df <- twListToDF(tweets)
    head(df)
 @ 
 
-\subsection{Trends}
+\subsection{Database Persistence}
+A question that I'm often asked is how to retrieve data from the past, generally
+people are doing a study on some major event that has already happened (e.g.
+Arab Spring, an election, etc). Using the Twitter API this is impossible as you 
+can only go back a small amount. However, if you have the ability to look ahead,
+it is easy to enable a prospective study by collecting data and automatically 
+persisting it to a database. This will then allow you to load everything into
+a later R session, including using tools such as \Rpackage{dplyr}. There's a 
+full writeup of this functionality at \url{http://geoffjentry.blogspot.com/2014/02/twitter-now-supports-database.html}.
 
-Twitter keeps track of topics that are popular at any given point of time,
-and allows one to extract that data. The \Rfunction{getTrends} function is 
-used to pull current trend information from a given location, which is specified
-using a WOEID (see \url{http://developer.yahoo.com/geo/geoplanet/}). Luckily
-there are two other functions to help you identify WOEIDs that you might be 
-interested in. The \Rfunction{availableTrendLocations} function will return
-a \Robject{data.frame} with a location in each row and the \Robject{woeid} giving
-that location's WOEID. Similarly the \Rfunction{closestTrendLocations} function
-is passed a latitude and longitude and will return the same style \Robject{data.frame}.
+Here's a brief example:
 
-<<trends>>=
-  availTrends = availableTrendLocations()
-  head(availTrends)
-  closeTrends = closestTrendLocations(-42.8, -71.1)
-  head(closeTrends)
-  trends = getTrends(2367105)
-  head(trends)
+<<db>>=
+  sql_lite_file = tempfile()
+  register_sqlite_backend(sql_lite_file)
+  store_tweets_db(tweets)
+ 
+  from_db = load_tweets_db()
+  head(from_db)
 @
+
 
 \subsection{Timelines}
 A Twitter \emph{timeline} is simply a stream of tweets. We support two
@@ -169,24 +200,43 @@ user's name or an object of class \Rclass{user} (more on this
 later).  For this example, let's use the user \emph{cranatic}.
 
 <<userTimeline>>=
-   cranTweets <- userTimeline('cranatic')
-   cranTweets[1:5]
+   cran_tweets <- userTimeline('cranatic')
+   cran_tweets[1:5]
 @
 
 By default this command returns the 20 most recent tweet.  
 As with most (but not all) of the functions, it also provides a mechanism 
 to retrieve an arbitrarily large number of tweets up to limits set by
 the Twitter API, which vary based on the specific type of request.
-(warning:  At least as of now there is no protection from overloading the 
-API rate limit so be reasonable with your requests).
 
 <<userTimeline2>>=
-   cranTweetsLarge <- userTimeline('cranatic', n=100)
-   length(cranTweetsLarge)
+   cran_tweets_large <- userTimeline('cranatic', n=100)
+   length(cran_tweets_large)
 @
 
 The \Rfunction{homeTimeline} function works nearly identically except you do not
 pass in a user, it uses your own timeline.
+
+\subsection{Trends}
+
+Twitter keeps track of topics that are popular at any given point of time,
+and allows one to extract that data. The \Rfunction{getTrends} function is 
+used to pull current trend information from a given location, which is specified
+using a WOEID (see \url{http://developer.yahoo.com/geo/geoplanet/}). Luckily
+there are two other functions to help you identify WOEIDs that you might be 
+interested in. The \Rfunction{availableTrendLocations} function will return
+a \Robject{data.frame} with a location in each row and the \Robject{woeid} giving
+that location's WOEID. Similarly the \Rfunction{closestTrendLocations} function
+is passed a latitude and longitude and will return the same style \Robject{data.frame}.
+
+<<trends>>=
+  avail_trends = availableTrendLocations()
+  head(avail_trends)
+  close_trends = closestTrendLocations(-42.8, -71.1)
+  head(close_trends)
+  trends = getTrends(2367105)
+  head(trends)
+@
 
 \subsection{A simple example}
 

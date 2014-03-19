@@ -1,39 +1,3 @@
-getTwitterOAuth = function(consumer_key, consumer_secret) {
-  stop("ROAuth is no longer used in favor of httr, please see ?setup_twitter_oauth")
-}
-
-registerTwitterOAuth <- function(oauth) {
-  stop("ROAuth is no longer used in favor of httr, please see ?setup_twitter_oauth")
-}
-
-check_twitter_oauth = function() {
-  req = try(stop_for_status(GET("https://api.twitter.com/1.1/account/settings.json", 
-                                config(token=get_oauth_sig()))), silent=TRUE)
-  
-  if (inherits(req, "try-error")) {
-    stop("OAuth authentication error:\nThis most likely means that you have incorrectly called setup_twitter_oauth()'")
-  }  
-}
-
-setup_twitter_oauth = function(consumer_key, consumer_secret) {
-  myapp <- oauth_app("twitter", key=consumer_key, secret=consumer_secret)
-  twitter_token = oauth1.0_token(oauth_endpoints$twitter, myapp)
-  assign("oauth_token", twitter_token, envir=oauth_cache)  
-  check_twitter_oauth()
-}
-
-has_oauth_token = function() {
-  exists("oauth_token", envir=oauth_cache)
-}
-
-get_oauth_sig = function() {
-  if (!has_oauth_token()) {
-    stop("OAuth has not been registered for this session")
-  }  
-  
-  return(get("oauth_token", envir=oauth_cache))
-}
-
 ## twitter API has multiple methods of handling paging issues, not to mention the search API
 ## has a completely different interface.  Trying to manage all of these below using one unified
 ## approach to actually sending the data back & receiving response and then providing multiple
