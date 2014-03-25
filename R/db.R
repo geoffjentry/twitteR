@@ -73,7 +73,7 @@ load_from_db = function(table_name) {
 }
 
 get_db_handle_check_table = function(table_name) {    
-  if (!table_exists(table_name, db_handle)) {
+  if (!table_exists(table_name)) {
     stop("Supplied table_name does not exist: ", table_name)
   }
 
