@@ -27,7 +27,7 @@ get_twitter_token_via_sign = function(app, access_token, access_secret) {
 
 get_twitter_token_via_browser = function(app, ...) {
   print("Using browser based authentication") 
-  oauth1.0_token(oauth_endpoints$twitter, app)
+  oauth1.0_token(oauth_endpoints('twitter'), app)
 }
 
 setup_twitter_oauth = function(consumer_key, consumer_secret, access_token=NULL, access_secret=NULL) {
