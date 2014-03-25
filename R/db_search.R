@@ -12,5 +12,5 @@ search_twitter_and_store = function(searchString, table_name="tweets", lang=NULL
     store_db(new_tweets, table_name)
   }
   
-  TRUE
+  length(new_tweets)
 }
