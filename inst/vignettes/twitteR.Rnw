@@ -17,6 +17,11 @@
 \author{Jeff Gentry}
 \maketitle
 
+<<echo=FALSE,print=false,include=FALSE,results=hide>>=
+library(twitteR)
+setup_twitter_oauth(consumer_key, consumer_secret, access_token, access_secret)
+@
+
 \section{Introduction}
 
 Twitter is a popular service that allows users to broadcast short
@@ -242,8 +247,8 @@ is passed a latitude and longitude and will return the same style \Robject{data.
 
 Just a quick example of how one can interact with actual data.  Here we 
 will pull the most recent results from the public timeline and see the
-clients that were used to post those statuses.  We can look at a pie chart
-to get a sense for the most common clients.
+clients that were used to post those statuses.  We can look at a plot of the
+most common clients, as well as seeing hos many others were used.
 
 Note that sources which are not the standard web interface will be
 presented as an anchored URL string (<A>...</A>).  There are more 
@@ -252,13 +257,17 @@ below, but this is a bit more robust for the purposes of this vignette
 due to issues with character encoding, locales, etc.
 
 <<seeSources,fig=TRUE>>=
+   library(ggplot2)
    r_tweets <- searchTwitter("#rstats", n=300)
    sources <- sapply(r_tweets, function(x) x$getStatusSource())
    sources <- gsub("</a>", "", sources)
    sources <- strsplit(sources, ">")
    sources <- sapply(sources, function(x) ifelse(length(x) > 1, x[2], x[1]))
-   source_table = table(sources)
-   pie(source_table[source_table > 10])
+   source_table = table(sources)   
+   filtered_sources = names(source_table[source_table < quantile(source_table, 0.9)])
+   sources[sources %in% filtered_sources] = "other"  
+   source_df = as.data.frame(sources)
+   ggplot(source_df, aes(sources)) + geom_bar() + coord_flip()
 @ 
 
 \section{Examples Of twitteR In The Wild}

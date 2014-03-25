@@ -4,7 +4,7 @@ Description: Provides an interface to the Twitter web API
 Version: 1.1.7
 Author: Jeff Gentry <geoffjentry@gmail.com>
 Maintainer: Jeff Gentry <geoffjentry@gmail.com>
-Depends: R (>= 2.12.0), httr (>= 0.2.99)
+Depends: R (>= 2.12.0), httr (>= 0.3)
 Imports: methods, bit64, rjson
 Suggests: RSQLite, RSQLite.extfuns
 License: Artistic-2.0
@@ -13,4 +13,5 @@ BuildVignettes: no
 URL: http://lists.hexdump.org/listinfo.cgi/twitter-users-hexdump.org
 Collate: allGenerics.R base.R account.R statuses.R users.R trends.R 
 	 s4methods.R convert.R dm.R oauth.R comm.R followers.R search.R db.R
-	 df_columns.R db_connections.R toys.R utils.R zzz.R
+	 df_columns.R db_connections.R db_utils.R db_search.R toys.R utils.R 
+         zzz.R

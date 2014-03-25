@@ -68,13 +68,21 @@ store_db = function(to_store, table_name) {
 }
 
 load_from_db = function(table_name) {
-  db_handle = get_db_backend()
-  
-  if (!table_name %in% dbListTables(db_handle)) {
+  db_handle = get_db_handle_check_table(table_name)
+  dbReadTable(db_handle, table_name)
+}
+
+get_db_handle_check_table = function(table_name) {    
+  if (!table_exists(table_name, db_handle)) {
     stop("Supplied table_name does not exist: ", table_name)
   }
-  
-  dbReadTable(db_handle, table_name)
+
+  get_db_backend()
+}
+
+table_exists = function(table_name) {
+  db_handle = get_db_backend()
+  table_name %in% dbListTables(db_handle)  
 }
 
 convert_logical_column = function(column) {
