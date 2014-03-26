@@ -12,7 +12,7 @@
 \usage{
 tweet(text, ...)
 updateStatus(text, lat=NULL, long=NULL, placeID=NULL,
-             displayCoords=NULL, inReplyTo=NULL, ...) 
+             displayCoords=NULL, inReplyTo=NULL, mediaPath=NULL, ...)
 deleteStatus(status, ...)
 }
 \arguments{
@@ -27,6 +27,7 @@ deleteStatus(status, ...)
         \code{true} or \code{false} if not \code{NULL}}
   \item{inReplyTo}{If not \code{NULL}, denotes the status this is in reply to.  Either an object of
         class \code{\link{status}} or an ID value}
+  \item{mediaPath}{If not \code{NULL}, file path to a supported media format (PNG, JPG and GIF) to be included in the status update}
   \item{...}{Optional arguments to be passed to \code{\link{GET}}}
 }
 \details{

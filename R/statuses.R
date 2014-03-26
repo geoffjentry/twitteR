@@ -149,7 +149,7 @@ setMethod("show", signature="status", function(object) {
 })
 
 updateStatus <- function(text, lat=NULL, long=NULL, placeID=NULL,
-                         displayCoords=NULL, inReplyTo=NULL, ...) {
+                         displayCoords=NULL, inReplyTo=NULL, mediaPath=NULL, ...) {
   if (!has_oauth_token())
     stop("updateStatus requires OAuth authentication")
 
@@ -160,8 +160,15 @@ updateStatus <- function(text, lat=NULL, long=NULL, placeID=NULL,
                             display_coordinates=displayCoords,
                             in_reply_to_status_id=inReplyTo)
   params[['status']] <- text
-  json = twInterfaceObj$doAPICall('statuses/update',
+
+  if (is.null(mediaPath)){
+	json = twInterfaceObj$doAPICall('statuses/update',
                                  params=params, method='POST', ...)
+  } else {
+    params[['media']] <- upload_file(mediaPath)
+	json = twInterfaceObj$doAPICall('statuses/update_with_media',
+                                 params=params, method='POST', multipart=TRUE, ...)
+  }
   return(buildStatus(json))
 }
             

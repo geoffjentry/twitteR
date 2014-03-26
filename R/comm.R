@@ -19,7 +19,7 @@ tw_from_response = function(response) {
 }
 
 doAPICall = function(cmd, params=NULL, method="GET", retryCount=5, 
-                     retryOnRateLimit=0, debug=FALSE, ...) {
+                     retryOnRateLimit=0, multipart=FALSE, debug=FALSE, ...) {
   if (debug) {
     browser()
   }
@@ -38,7 +38,11 @@ doAPICall = function(cmd, params=NULL, method="GET", retryCount=5,
   }
   url = getAPIStr(cmd)
   if (method == "POST") {
-    out = try(POST(url, config(token=get_oauth_sig()), body=params), silent=TRUE)
+    if (multipart){
+      out = try(POST(url, config(token=get_oauth_sig()), body=params), silent=TRUE)
+	}else{
+      out = try(POST(url, config(token=get_oauth_sig()), body=params, multipart=multipart), silent=TRUE)
+	}
   } else {
     if (is.null(params)) {
       query = NULL
@@ -47,6 +51,7 @@ doAPICall = function(cmd, params=NULL, method="GET", retryCount=5,
     }
     out = GET(url, query=query, config(token=get_oauth_sig()))
   }
+
   httr_status = out$status
   http_message = http_status(out)$message
   
