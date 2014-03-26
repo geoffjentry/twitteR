@@ -5,7 +5,6 @@ followers <- function(user, n=NULL, ...) {
 friends <- function(user, n=NULL, ...) {
   ffBase('friends', user, n, ...)
 }
-  
 
 ffBase <- function(type, user, n=NULL, ...) {
   params <- parseUsers(user)

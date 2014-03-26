@@ -1,4 +1,12 @@
-getCurRateLimitInfo <- function(resources=character(), ...) {
+resource_families = c("account", "application", "blocks", "direct_message", "favorites", "followers",
+             "friends", "friendships", "geo", "help", "lists", "saved_searches", "search",
+             "statuses", "trends", "users")
+
+getCurRateLimitInfo <- function(resources=resource_families, ...) {
+  if ((length(resources) == 0) || (!all(resources %in% resource_families))){
+    stop("Must provide at least one valid resource family: ", 
+         paste(resource_families, collapse=", "))
+  }
   params = list()
   if (length(resources) > 0) {
     params[["resources"]] = paste(resources, collapse=",")

@@ -27,7 +27,7 @@ deleteStatus(status, ...)
         \code{true} or \code{false} if not \code{NULL}}
   \item{inReplyTo}{If not \code{NULL}, denotes the status this is in reply to.  Either an object of
         class \code{\link{status}} or an ID value}
-  \item{...}{Optional arguments to be passed to \code{\link{getURL}}}
+  \item{...}{Optional arguments to be passed to \code{\link{GET}}}
 }
 \details{
   These messages will only operate properly if the user is authenticated
@@ -47,9 +47,6 @@ deleteStatus(status, ...)
 }
 \author{
    Jeff Gentry
-}
-\seealso{
-  \code{\link{registerTwitterOAuth}}
 }
 \examples{
    \dontrun{

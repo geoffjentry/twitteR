@@ -6,7 +6,23 @@ USER VISIBLE CHANGES
      package. This changes how OAuth authentication is handled, with the
      new system going through setup_twitter_oauth() and load_twitter_oauth().
 
+     o Changed from using int64 to bit64 for large integer support
+ 
+     o setup_twitter_oauth() will report if an authentication attempt fails
+
+BUG FIXES
+    o getCurRateLimitInfo now requires at least one supported resource family
+
 NEW FEATURES
+    o Added a DB persistence layer, with store_tweets_db/load_tweets_db and 
+    store_users_db/load_users_db. 
+   
+    o Added a convenience method search_twitter_and_store() which can be used
+    to periodically update a database table with search results. 
+
+    o Added a function strip_retweets which will attempt to remove retweets
+    from a list of Status objects.
+
     o Added a function 'retweeters' and a convenience method 'getRetweeters'
     to the Status class. This function takes an ID of a tweet and a count
     (default is 20) and will return the IDs of users who have retweeted this

@@ -16,7 +16,7 @@ lookupUsers(users, includeNA=FALSE, ...)
     an \code{\link{user}} object.}
   \item{users}{A vector of either user IDs or screen names or a mix of both}
   \item{includeNA}{If \code{TRUE} will leave an NA element in the return list for users that don't exist}
-  \item{...}{Optional arguments to be passed to \code{\link{getURL}}}
+  \item{...}{Optional arguments to be passed to \code{\link{GET}}}
 }
 \details{
   These functions will only return fully formed objects if the

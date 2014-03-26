@@ -1,59 +1,12 @@
-
-getTwitterOAuth = function(consumer_key, consumer_secret) {
-  stop("ROAuth is no longer used in favor of httr, please see ?setup_twitter_oauth")
-}
-
-registerTwitterOAuth <- function(oauth) {
-  stop("ROAuth is no longer used in favor of httr, please see ?setup_twitter_oauth")
-}
-
-setup_twitter_oauth = function(consumer_key, consumer_secret, access_token, access_secret,
-                               credentials_file=NULL) {
-  Sys.setenv(TWITTER_CONSUMER_SECRET=consumer_secret)
-  app = suppressMessages(oauth_app("twitter", key=consumer_key))
-  sig = suppressMessages(sign_oauth1.0(app, token=access_token, token_secret=access_secret))
-  set_oauth_sig(sig)
-  if (!is.null(credentials_file)) {
-    save(sig, file=credentials_file)
-  }
-}
-
-load_twitter_oauth = function(credentials_file) {
-  if (!file.exists(credentials_file)) {
-    stop("credentials_file does not exist!")
-  }  
-  load(credentials_file)
-  set_oauth_sig(sig)
-}
-
-set_oauth_sig = function(sig) {
-  assign("oauth_sig", sig, envir=oauthCache)  
-}
-
-has_oauth_sig = function() {
-  exists("oauth_sig", envir=oauthCache)
-}
-
-get_oauth_sig = function() {
-  if (!has_oauth_sig()) {
-    stop("OAuth has not been registered for this session")
-  }  
-  return(get("oauth_sig", envir=oauthCache))
-}
-
 ## twitter API has multiple methods of handling paging issues, not to mention the search API
 ## has a completely different interface.  Trying to manage all of these below using one unified
 ## approach to actually sending the data back & receiving response and then providing multiple
 ## mechanisms to page
-twFromJSON = function(json, forceUtf8Conversion=TRUE) {
-  ## twitter sends data in UTF-8, paranoidly confirm encoding
-  if (forceUtf8Conversion) {
-    json = iconv(json, "", "UTF-8", sub="")
-  }
+tw_from_response = function(response) {
   ## Will provide some basic error checking, as well as suppress
   ## warnings that always seem to come out of fromJSON, even
   ## in good cases. 
-  out <- try(suppressWarnings(rjson:::fromJSON(json, unexpected.escape="skip")), silent=TRUE)
+  out <- try(suppressWarnings(fromJSON(content(response, as="text", encoding="UTF-8"))), silent=TRUE)
   if (inherits(out, "try-error")) {
     stop("Error: Malformed response from server, was not JSON.\n",
          "The most likely cause of this error is Twitter returning a character which\n",
@@ -63,16 +16,14 @@ twFromJSON = function(json, forceUtf8Conversion=TRUE) {
   }
   
   return(out)
-
-}
-
-prep_get_url = function(url, params) {
-  args = paste(sapply(names(params), function(x) paste(x, params[[x]], sep="=")), collapse="&")
-  return(URLencode(paste(url, args, sep="?")))
 }
 
 doAPICall = function(cmd, params=NULL, method="GET", retryCount=5, 
-                     retryOnRateLimit=0, ...) {
+                     retryOnRateLimit=0, debug=FALSE, ...) {
+  if (debug) {
+    browser()
+  }
+  
   if (!is.numeric(retryOnRateLimit)) {
     stop("retryOnRateLimit must be a number")
   }
@@ -85,43 +36,53 @@ doAPICall = function(cmd, params=NULL, method="GET", retryCount=5,
     return(doAPICall(cmd, params=params, method=method, retryCount=retryCount,
                      retryOnRateLimit=rateLimitCount, ...))
   }
-
   url = getAPIStr(cmd)
   if (method == "POST") {
-    out = try(POST(url, get_oauth_sig(), body=params), silent=TRUE)
+    out = try(POST(url, config(token=get_oauth_sig()), body=params), silent=TRUE)
   } else {
-    url = prep_get_url(url, params)
-    out = try(GET(url, get_oauth_sig()), silent=TRUE)
-  }
-  if (inherits(out, "try-error")) {
-    error_message = gsub("\\r\\n", "", attr(out, "condition")[["message"]])
-    print(error_message)
-    if (error_message %in% c("Internal Server Error", "Service Unavailable")) {
-      print(paste("This error is likely transient, retrying up to", retryCount, "more times ..."))
-      ## These are typically fail whales or similar such things
-      Sys.sleep(1)
-      return(recall_func(retryCount - 1, rateLimitCount=retryOnRateLimit))         
-    } else if (error_message == "Too Many Requests") {
-      if (retryOnRateLimit > 0) {
-        ## We're rate limited. Wait a while and try again
-        print("Rate limited .... blocking for a minute ...")
-        Sys.sleep(60)
-        return(recall_func(retryCount, retryOnRateLimit - 1))      
-      } else {
-        ## FIXME: very experimental - the idea is that if we're rate limited,
-        ## just give a warning and return. This should result in rate limited
-        ## operations returning the partial result
-        warning("Rate limit encountered & retry limit reached - returning partial results")
-        ## Setting out to {} will have the JSON creator provide an empty list
-        out = "{}" 
-      }
+    if (is.null(params)) {
+      query = NULL
     } else {
-      stop("Error: ", error_message)
+      query = lapply(params, function(x) URLencode(as.character(x)))
     }
-  } 
+    out = GET(url, query=query, config(token=get_oauth_sig()))
+  }
+  httr_status = out$status
+  http_message = http_status(out)$message
+  
+  if (httr_status %in% c(500, 502)) {
+    print(http_message)
+    print(paste("This error is likely transient, retrying up to", retryCount, "more times ..."))
+    ## These are typically fail whales or similar such things
+    Sys.sleep(1)
+    return(recall_func(retryCount - 1, rateLimitCount=retryOnRateLimit))         
+  } else if (httr_status == 429) {
+    print(http_message)
+    if (retryOnRateLimit > 0) {
+      ## We're rate limited. Wait a while and try again
+      print("Rate limited .... blocking for a minute ...")
+      Sys.sleep(60)
+      return(recall_func(retryCount, retryOnRateLimit - 1))      
+    } else {
+      ## FIXME: very experimental - the idea is that if we're rate limited,
+      ## just give a warning and return. This should result in rate limited
+      ## operations returning the partial result
+      warning("Rate limit encountered & retry limit reached - returning partial results")
+      ## Setting out to {} will have the JSON creator provide an empty list
+      out = "{}" 
+    }
+  } else if (httr_status == 401) {
+    stop("OAuth authentication error:\nThis most likely means that you have incorrectly called setup_twitter_oauth()'")    
+  }
+  ## Generic catch-all for any other errors
+  stop_for_status(out)
  
-  json = twFromJSON(out, ...)
+  json = tw_from_response(out, ...)
 
+  if (length(json[["errrors"]]) > 0) {
+    stop(json[["errors"]][[1]][["message"]])
+  }
+  
   return(json)  
 }
 
@@ -135,7 +96,7 @@ setRefClass('twAPIInterface',
                 callSuper(...)
                 .self
               },
-              twFromJSON = twFromJSON,
+              tw_from_response = tw_from_response,
               doAPICall = doAPICall
               )
             )
@@ -202,21 +163,27 @@ doRppAPICall = function(cmd, num, params, ...) {
     
   curDiff <- num
   jsonList <- list()
+  ids = list()
   while (curDiff > 0) {
     fromJSON <- twInterfaceObj$doAPICall(cmd, params, 'GET', ...)
     newList <- fromJSON$statuses
-    if (length(newList) == 0) {
-      break;
+    
+    curIds = sapply(newList, function(x) x[["id"]])
+    dups = which(ids %in% ids)
+    if (length(dups) > 0) {
+      curIds = curIds[-dups]
+      newList = newList[-dups]
     }
+    
+    if (length(curIds) == 0) {
+      break
+    } 
+
     jsonList <- c(jsonList, newList)
     curDiff <- num - length(jsonList)
-    search_metadata = fromJSON[["search_metadata"]]
-    if ((curDiff > 0) && (!is.null(search_metadata)) && ("next_results" %in% names(search_metadata)) &&
-          (grep("max_id", search_metadata[["next_results"]]) > 0)) {
-      max_id = strsplit(strsplit(search_metadata[["next_results"]], "max_id=")[[1]][2], "&")[[1]][1]
-      params[["max_id"]] = max_id   
+    if ((curDiff > 0)) { #&& (length(newList) == params[["count"]])) {
+      params[["max_id"]] = as.character(as.integer64(min(curIds)) - 1)      
     } else {
-      ## We've hit the end of what Twitter wants to give us
       break
     }
   }

@@ -23,14 +23,13 @@ retweetsOfMe(n=25, maxID=NULL, sinceID=NULL, ...)
   \item{includeRts}{If \code{FALSE} any native retweets (not old style RT retweets)
   		       will be stripped from the results} 
   \item{excludeReplies}{if \code{TRUE} any replies are stripped from the results}
-  \item{...}{Optional arguments to be passed to \code{\link{getURL}}}
+  \item{...}{Optional arguments to be passed to \code{\link{GET}}}
 }
 \value{
   A list of \code{\link{status}} objects
 }
 \author{ Jeff Gentry }
-\seealso{ \code{\link{getUser}}, \code{\link{status}},
-  \code{\link{registerTwitterOAuth}}} 
+\seealso{ \code{\link{getUser}}, \code{\link{status}}} 
 \examples{
   \dontrun{
         ut <- userTimeline('barackobama', n=100)

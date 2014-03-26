@@ -21,6 +21,7 @@ setRefClass("user",
               verified="logical",
               screenName="character",
               location="character",
+              lang="character",
               id="character",
               lastStatus="status",
               listedCount="numeric",
@@ -32,31 +33,38 @@ setRefClass("user",
                 if (!missing(json)) {
                   if (!is.null(json[['status']]))
                     lastStatus <<- buildStatus(json[['status']])
+                  
                   if (is.character(json[['description']]))
                     description <<- json[['description']]
+                  
                   if (!is.null(json[['statuses_count']]))
                     statusesCount <<- as.numeric(json[['statuses_count']])
+                  
                   if (!is.null(json[['followers_count']]))
                     followersCount <<- as.numeric(json[['followers_count']])
+                  
                   if (!is.null(json[['friends_count']]))
                     friendsCount <<- as.numeric(json[['friends_count']])
 
                   ## NOTE: Twitter uses the british spelling for historical reasons
-                  if (!is.null(json[['favourites_count']])) {
-                    favoritesCount <<- as.numeric(json[['favourites_count']])
+                  favorites_count = get_json_value(json, c("favourites_count", "favorites_count"))
+                  if (!is.null(favorites_count)) {
+                    favoritesCount <<- as.numeric(favorites_count)
                   }
-                  
-                  
+                                    
                   if ((!is.null(json[['url']]))&&(!is.na(json[['url']])))
                     url <<- json[['url']]
+
                   if (is.character(json[['name']]))
                     name <<- json[['name']]
-                  if (is.null(json[['created_at']])) {
+                  
+                  created_at = get_json_value(json, c("created_at", "created"))
+                  if (is.null(created_at)) {
                     created <<- Sys.time()
+                  } else {
+                    created <<- twitterDateToPOSIX(created_at)
                   }
-                  else {
-                    created <<- twitterDateToPOSIX(json[['created_at']])
-                  }
+                  
                   if ((is.null(json[['protected']])) ||
                       (json[['protected']] == FALSE))
                     protected <<- FALSE
@@ -68,27 +76,40 @@ setRefClass("user",
                     verified <<- FALSE
                   else
                     verified <<- TRUE
+
                   if (is.character(json[['screen_name']]))
                     screenName <<- json[['screen_name']]
-                  if (!is.null(json[["id_str"]])) {
-                    id <<- as.character(json[["id_str"]])
+                  
+                  # Note: id_str must be checked first!
+                  id_field = get_json_value(json, c("id_str", "id"))
+                  if (!is.null(id_field)) {
+                    id <<- as.character(id_field)
                   }
+                  
                   if (!is.null(json[['location']])) {
                     location <<- json[['location']]
                   }
+
+                  if (!is.null(json[['lang']])) {
+                    lang <<- json[['lang']]
+                  }
+                  
                   if (!is.null(json[["listed_count"]])) {
                     listedCount <<- json[["listed_count"]]
                   }
+                  
                   if ((is.null(json[["followRequestSent"]])) ||
                       (json[["followRequestSent"]] == FALSE)) {
                     followRequestSent <<- FALSE
                   } else {
                     followRequestSent <<- TRUE
                   }
+                  
                   if (!is.null(json[["profile_image_url"]])) {
                     profileImageUrl <<- json[["profile_image_url"]]
                   }
                 }
+                
                 callSuper(...)
               },
               getFollowerIDs = function(n=NULL, ...) {
