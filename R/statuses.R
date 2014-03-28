@@ -162,13 +162,13 @@ updateStatus <- function(text, lat=NULL, long=NULL, placeID=NULL,
   params[['status']] <- text
 
   if (is.null(mediaPath)){
-	json = twInterfaceObj$doAPICall('statuses/update',
-                                 params=params, method='POST', ...)
+	endpoint = 'statuses/update'
   } else {
+  	endpoint = 'statuses/update_with_media'
     params[['media']] <- upload_file(mediaPath)
-	json = twInterfaceObj$doAPICall('statuses/update_with_media',
-                                 params=params, method='POST', multipart=TRUE, ...)
   }
+  json = twInterfaceObj$doAPICall(endpoint,
+                                 params=params, method='POST', ...)
   return(buildStatus(json))
 }
             
