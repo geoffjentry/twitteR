@@ -41,9 +41,9 @@ setRefClass("status",
                     screenName <<- "Unknown"
                   }
                   
-                  #browser()
-                  if (!is.null(json[['text']]))
+                  if (!is.null(json[['text']])) {
                     text <<- json[['text']]
+                  }
                   
                   if ((is.null(json[['favorited']])) ||
                       (json[["favorited"]] == FALSE)) {
