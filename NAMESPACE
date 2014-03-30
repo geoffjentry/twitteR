@@ -1,4 +1,4 @@
-import(bit64, rjson, methods)
+import(httr, bit64, rjson, methods)
 exportClasses('status', 'user', 'directMessage')
 exportMethods(as.data.frame, screenName, show, favorited, replyToSN,
               statusesCount, tweetCount, followersCount,

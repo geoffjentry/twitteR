@@ -22,7 +22,7 @@ register_mysql_backend(db_name, host, user, password, ...)
   \item{host}{Hostname the database is on}
   \item{user}{username to connect to the database with}
   \item{password}{password to connect to the database with}
-  \item{dots}{extra arguments to pass to \code{dbConnect}}
+  \item{...}{extra arguments to pass to \code{dbConnect}}
 }
 \details{
   Currently only \code{RSQLite} and \code{RMySQL} are supported. To use either

@@ -41,6 +41,7 @@ setRefClass("status",
                     screenName <<- "Unknown"
                   }
                   
+                  #browser()
                   if (!is.null(json[['text']]))
                     text <<- json[['text']]
                   

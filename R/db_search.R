@@ -9,7 +9,7 @@ search_twitter_and_store = function(searchString, table_name="tweets", lang=NULL
   new_tweets = suppressWarnings(searchTwitter(searchString, n=5000, sinceID=since_id, lang=lang, 
                                               locale=locale, retryOnRateLimit=retryOnRateLimit, ...))
   if (length(new_tweets) > 0) {
-    store_db(new_tweets, table_name)
+    store_tweets_db(new_tweets, table_name)
   }
   
   length(new_tweets)
