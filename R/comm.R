@@ -47,6 +47,7 @@ doAPICall = function(cmd, params=NULL, method="GET", retryCount=5,
     }
     out = GET(url, query=query, config(token=get_oauth_sig()))
   }
+
   httr_status = out$status
   http_message = http_status(out)$message
   
