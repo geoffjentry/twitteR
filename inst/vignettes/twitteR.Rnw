@@ -117,7 +117,7 @@ on just how much it will actually return. In general you can only go back a hand
 of days worth of tweets.
 
 <<search>>=
-   tweets <- searchTwitter('#rstats', n=50)
+   tweets = searchTwitter('#rstats', n=50)
    head(tweets)
 @
 
@@ -147,7 +147,7 @@ follow, retweets, and more. The \Rfunction{getUser} function returns
 a \Rclass{user} object, which can then be polled for further information.
 
 <<getUser>>=
-   crantastic <- getUser('crantastic')
+   crantastic = getUser('crantastic')
    crantastic$getDescription()
    crantastic$getFollowersCount()
    crantastic$getFriends(n=5)
@@ -166,7 +166,7 @@ by itself but there is a convenience method to convert an entire list,
 \Rpackage{twitteR} class:
 
 <<dataFrame>>=
-   df <- twListToDF(tweets)
+   df = twListToDF(tweets)
    head(df)
 @ 
 
@@ -205,7 +205,7 @@ user's name or an object of class \Rclass{user} (more on this
 later).  For this example, let's use the user \emph{cranatic}.
 
 <<userTimeline>>=
-   cran_tweets <- userTimeline('cranatic')
+   cran_tweets = userTimeline('cranatic')
    cran_tweets[1:5]
 @
 
@@ -215,7 +215,7 @@ to retrieve an arbitrarily large number of tweets up to limits set by
 the Twitter API, which vary based on the specific type of request.
 
 <<userTimeline2>>=
-   cran_tweets_large <- userTimeline('cranatic', n=100)
+   cran_tweets_large = userTimeline('cranatic', n=100)
    length(cran_tweets_large)
 @
 
