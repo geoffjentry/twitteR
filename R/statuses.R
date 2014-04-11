@@ -6,6 +6,72 @@ setValidity('statusList', function(object) {
   listClassValidity(object, 'status')
 })
 
+#' Class to contain a Twitter status
+#' 
+#' Container for Twitter status messages, including the text as well as basic
+#' information
+#' 
+#' The \code{status} class is implemented as a reference class.  This class was
+#' previously implemented as an S4 class, and for backward compatibility
+#' purposes the old S4 accessor methods have been left in, although new code
+#' should not be written with these.  An instance of a generator for this class
+#' is provided as a convenience to the user as it is configured to handle most
+#' standard cases.  To access this generator, use the object
+#' \code{statusFactory}.  Accessor set & get methods are provided for every
+#' field using reference class \code{$accessors()} methodology (see
+#' \code{\link{setRefClass}} for more details).  As an example, the
+#' \code{screenName} field could be accessed using \code{object$getScreenName}
+#' and \code{object$setScreenName}.
+#' 
+#' The constructor of this object assumes that the user is passing in a JSON
+#' encoded Twitter status.  It is also possible to directly pass in the
+#' arguments.
+#' 
+#' @name status-class
+#' @aliases status-class statusFactory status buildStatus show,status-method
+#' as.data.frame,status-method text,status-method favorited,status-method
+#' favorited replyToSN,status-method replyToSN created,status-method
+#' truncated,status-method truncated replyToSID,status-method replyToSID
+#' id,status-method id replyToUID,status-method replyToUID
+#' statusSource,status-method statusSource screenName,status-method statusText
+#' statusText,status-method retweetCount,status-method retweetCount
+#' retweeted,status-method retweeted [[,twitterObjList-method
+#' as.data.frame,twitterObj-method show,twitterObjList-method
+#' @docType class
+#' @section Fields: \describe{ \item{list("text")}{The text of the
+#' status}\item{:}{The text of the status} \item{list("screenName")}{Screen
+#' name of the user who posted this status}\item{:}{Screen name of the user who
+#' posted this status} \item{list("id")}{ID of this status}\item{:}{ID of this
+#' status} \item{list("replyToSN")}{Screen name of the user this is in reply
+#' to}\item{:}{Screen name of the user this is in reply to}
+#' \item{list("replyToUID")}{ID of the user this was in reply to}\item{:}{ID of
+#' the user this was in reply to} \item{list("statusSource")}{Source user agent
+#' for this tweet}\item{:}{Source user agent for this tweet}
+#' \item{list("created")}{When this status was created}\item{:}{When this
+#' status was created} \item{list("truncated")}{Whether this status was
+#' truncated}\item{:}{Whether this status was truncated}
+#' \item{list("favorited")}{Whether this status has been
+#' favorited}\item{:}{Whether this status has been favorited}
+#' \item{list("retweeted")}{TRUE if this status has been
+#' retweeted}\item{:}{TRUE if this status has been retweeted}
+#' \item{list("retweetCount")}{The number of times this status has been
+#' retweeted}\item{:}{The number of times this status has been retweeted} }
+#' @author Jeff Gentry
+#' @seealso \code{\link{userTimeline}}, \code{\link{setRefClass}}
+#' @keywords classes
+#' @examples
+#' 
+#'    \dontrun{
+#'      st <- statusFactory$new(screenName="test", text="test message")
+#'      st$getScreenName()
+#'      st$getText()
+#' 
+#'      ## Assume 'json' is the return from a Twitter call
+#'      st <- statusFactory$new(json)
+#'      st$getScreenName()
+#'    }
+#'    
+#'
 setRefClass("status",
             contains='twitterObj',
             fields = list(
@@ -149,6 +215,51 @@ setMethod("show", signature="status", function(object) {
     print(paste(screenName(object), object$text, sep=": "))
 })
 
+
+
+#' Functions to manipulate Twitter status
+#' 
+#' These functions can be used to set or delete a user's Twitter status
+#' 
+#' These messages will only operate properly if the user is authenticated via
+#' \code{OAuth}
+#' 
+#' The \code{tweet} and \code{updateStatus} functions are the same.
+#' 
+#' To delete a status message, pass in an object of class \code{\link{status}},
+#' such as from the return value of \code{updateStatus}.
+#' 
+#' @aliases updateStatus deleteStatus tweet
+#' @param text The text to use for a new status
+#' @param status An object of class \code{\link{status}}
+#' @param lat If not \code{NULL}, the latitude the status refers to.  Ignored
+#' if no \code{long} parameter is provideded
+#' @param long If not \code{NULL}, the longitude the status refers to.  Ignored
+#' if no \code{lat} parameter is provideded
+#' @param placeID If not \code{NULL}, provideds a place in the world.  See
+#' Twitter documentation for details
+#' @param displayCoords Whether or not to put a pin on the exact coordinates a
+#' tweet has been sent from, \code{true} or \code{false} if not \code{NULL}
+#' @param inReplyTo If not \code{NULL}, denotes the status this is in reply to.
+#' Either an object of class \code{\link{status}} or an ID value
+#' @param mediaPath If not \code{NULL}, file path to a supported media format
+#' (PNG, JPG and GIF) to be included in the status update
+#' @param ... Optional arguments to be passed to \code{\link{GET}}
+#' @return The \code{updateStatus} function will return an object of class
+#' \code{\link{status}}.
+#' 
+#' The \code{deleteStatus} returns \code{TRUE} on success and an error if
+#' failure occurs.
+#' @author Jeff Gentry
+#' @keywords interface
+#' @examples
+#' 
+#'    \dontrun{
+#'       ns <- updateStatus('this is my new status message')
+#'       ## ooops, we want to remove it!
+#'       deleteStatus(ns)
+#'    }
+#' 
 updateStatus <- function(text, lat=NULL, long=NULL, placeID=NULL,
                          displayCoords=NULL, inReplyTo=NULL, mediaPath=NULL, ...) {
   if (!has_oauth_token())
@@ -198,11 +309,58 @@ deleteStatus = function(status, ...) {
   }
 }
 
+
+
+#' A function to return one specific tweet
+#' 
+#' This function will take a numeric ID of a tweet and return it to the user
+#' 
+#' 
+#' @param id Numerical ID of a specific tweet
+#' @param \dots Optional arguments to be passed to \code{\link{GET}}
+#' @return An object of class \code{\link{status}}
+#' @author Jeff Gentry
+#' @seealso \code{\link{status}}
+#' @keywords interface
+#' @examples
+#' 
+#'  \dontrun{
+#'     showStatus('123')
+#'  }
+#' 
 showStatus = function(id, ...) {
   check_id(id)  
   buildStatus(twInterfaceObj$doAPICall(paste('statuses', 'show', id, sep='/'), ...))
 }
 
+
+
+#' Functions to work with retweets
+#' 
+#' These functions can be used to return retweets or users who retweeted a
+#' tweet
+#' 
+#' 
+#' @aliases retweets retweeters
+#' @param id The ID of the tweet to get retweet information on
+#' @param n The number of results to return, up to 100
+#' @param \dots Further arguments to pass on to httr
+#' @return For \code{retweets} the n most recent retweets of the original
+#' tweet.
+#' 
+#' For \code{retweeters} the n most recent users who have retweeted this tweet.
+#' @author Jeff Gentry
+#' @seealso \code{\link{showStatus}}
+#' @keywords ~kwd1 ~kwd2
+#' @examples
+#' 
+#'   \dontrun{
+#'      retweets("21947795900469248")
+#'      
+#'      st = showStatus("21947795900469248")
+#'      retweeters(st$getId())
+#'   }
+#' 
 retweets = function(id, n=20, ...) {
   check_id(id)
 
@@ -224,6 +382,31 @@ retweeters = function(id, n=20, ...) {
   json
 }
 
+
+
+#' A function to get favorite tweets
+#' 
+#' Returns the n most recently favorited tweets from the specified user.
+#' 
+#' 
+#' @param user The Twitter user to detail, can be \code{character} or an
+#' \code{\link{user}} object.
+#' @param n Number of tweets to retrieve, up to a maximum of 200
+#' @param max_id Maximum ID to search for
+#' @param since_id Minimum ID to search for
+#' @param \dots Optional arguments to pass along to RCurl
+#' @return A list of \code{link{status}} objects corresponding to the \code{n}
+#' most recent tweets
+#' @author Jeff Gentry
+#' @seealso \code{\link{getUser}}, \code{\link{status}}
+#' @references \url{https://dev.twitter.com/docs/api/1.1/get/favorites/list}
+#' @keywords interface
+#' @examples
+#' 
+#'   \dontrun{
+#'       fav = favorites("barackobama", n=100)
+#'   }
+#' 
 favorites = function(user, n=20, max_id=NULL, since_id=NULL, ...) {
   uParams = parseUsers(user)
   cmd = "favorites/list"
@@ -233,6 +416,33 @@ favorites = function(user, n=20, max_id=NULL, since_id=NULL, ...) {
   return(statusBase(cmd, params, n, 200, ...))
 }
 
+#' Functions to view Twitter timelines
+#' 
+#' These functions will allow you to retrieve various timelines within the
+#' Twitter universe
+#' 
+#' 
+#' @aliases userTimeline homeTimeline mentions retweetsOfMe
+#' @param user The Twitter user to detail, can be \code{character} or an
+#' \code{\link{user}} object.
+#' @param n Number of tweets to retrieve, up to a maximum of 3200
+#' @param maxID Maximum ID to search for
+#' @param sinceID Minimum (not inclusive) ID to search for
+#' @param includeRts If \code{FALSE} any native retweets (not old style RT
+#' retweets) will be stripped from the results
+#' @param excludeReplies if \code{TRUE} any replies are stripped from the
+#' results
+#' @param ... Optional arguments to be passed to \code{\link{GET}}
+#' @return A list of \code{\link{status}} objects
+#' @author Jeff Gentry
+#' @seealso \code{\link{getUser}}, \code{\link{status}}
+#' @keywords interface
+#' @examples
+#' 
+#'   \dontrun{
+#'         ut <- userTimeline('barackobama', n=100)
+#'   }
+#' 
 userTimeline = function(user, n=20, maxID=NULL, sinceID=NULL, includeRts=FALSE, excludeReplies=FALSE, ...) {
   uParams <- parseUsers(user)
   cmd <- 'statuses/user_timeline'

@@ -1,5 +1,3 @@
-
-
 store_tweets_db = function(tweets, table_name="tweets") {
   if (inherits(tweets, "status")) {
     tweets = list(tweets)
@@ -8,6 +6,37 @@ store_tweets_db = function(tweets, table_name="tweets") {
   store_db(tweets, table_name)
 }
 
+
+
+#' Functions to persist/load twitteR data to a database
+#' 
+#' These functions allow a user to store twitteR based data to a database
+#' backend as well as retrieving previously stored data
+#' 
+#' 
+#' @aliases load_tweets_db load_users_db store_tweets_db store_users_db
+#' @param tweets A list of \code{status} objects to persist to the database
+#' @param users A list of \code{user} objects to persist to the database
+#' @param as.data.frame if \code{TRUE}, data will be returned as a data.frame
+#' instead of twitteR objects
+#' @param table_name The database table to use for storing and loading
+#' @return \code{store_tweets_db} and \code{store_users_db} return \code{TRUE}
+#' of \code{FALSE} based on their success or not. The loading functions return
+#' either a \code{data.frame} of the data (representing the underlying table)
+#' or a list of the appropriate \code{twitteR} objects.
+#' @author Jeff Gentry
+#' @seealso \code{\link{register_db_backend}},
+#' \code{\link{register_sqlite_backend}}, \code{\link{register_mysql_backend}}
+#' @keywords utilities
+#' @examples
+#' 
+#'    \dontrun{
+#'     register_sqlite_backend("/path/to/sqlite/file")
+#'     tweets = searchTwitter("#scala")
+#'     store_tweets_db(tweets)
+#'     from_db = load_tweets_db()
+#'    }
+#' 
 load_tweets_db = function(as.data.frame=FALSE, table_name="tweets") {
   tweet_df = load_from_db(table_name)
   

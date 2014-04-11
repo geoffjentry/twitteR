@@ -2,6 +2,28 @@ getTwitterOAuth = function(consumer_key, consumer_secret) {
   stop("ROAuth is no longer used in favor of httr, please see ?setup_twitter_oauth")
 }
 
+
+
+#' Register OAuth credentials to twitter R session
+#' 
+#' These functions are deprecated
+#' 
+#' These functions are deprecated, see \code{\link{setup_twitter_oauth}}
+#' 
+#' @aliases registerTwitterOAuth getTwitterOAuth
+#' @param consumer_key The consumer key supplied by Twitter
+#' @param consumer_secret The consumer secret supplied by Twitter
+#' @param oauth An object of class \code{OAuth}
+#' @return \code{TRUE} on success, otherwise an error will be thrown
+#' @author Jeff Gentry
+#' @seealso \code{setup_twitter_oauth}
+#' @keywords interface
+#' @examples
+#' 
+#'   \dontrun{
+#'      fakeExample = 5
+#'   }
+#' 
 registerTwitterOAuth <- function(oauth) {
   stop("ROAuth is no longer used in favor of httr, please see ?setup_twitter_oauth")
 }
@@ -30,6 +52,37 @@ get_twitter_token_via_browser = function(app, ...) {
   oauth1.0_token(oauth_endpoints('twitter'), app)
 }
 
+
+
+#' Sets up the OAuth credentials for a twitteR session
+#' 
+#' This function wraps the OAuth authentication handshake functions from the
+#' httr package for a twitteR session
+#' 
+#' The \code{httr} package can cache authentication. See \code{\link{Token}}
+#' for details
+#' 
+#' If both \code{access_token} and \code{access_secret} are set (i.e. not
+#' \code{NULL}), these will be supplied directly to the OAuth authentication
+#' instead of the browser based authentication dance one would normally
+#' experience. This requires you to already know the access tokens for your
+#' Twitter app. The usefuleness of this feature is primarily in a headless
+#' environment where a web browser is not available.
+#' 
+#' @param consumer_key The consumer key supplied by Twitter
+#' @param consumer_secret The consumer secret supplied by Twitter
+#' @param access_token The access token supplied by Twitter
+#' @param access_secret The access secret supplied by Twitter
+#' @return This is called for its side effect
+#' @author Jeff Gentry
+#' @seealso \code{\link{Token}}, \code{\link{GET}}, \code{\link{POST}}
+#' @keywords interface
+#' @examples
+#' 
+#'  \dontrun{
+#'     setup_twitter_oauth("CONSUMER_KEY", "CONSUMER_SECRET")
+#'  }
+#' 
 setup_twitter_oauth = function(consumer_key, consumer_secret, access_token=NULL, access_secret=NULL) {
   app <- oauth_app("twitter", key=consumer_key, secret=consumer_secret)
   

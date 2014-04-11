@@ -44,7 +44,42 @@ register_mysql_backend = function(db_name, host, user, password, ...) {
   invisible(db_handle)
 }
 
-
+#' Functions to setup a database backend for twitteR
+#' 
+#' twitteR can have a database backend registered from which to store and load
+#' tweet and user data. These functions provide mechanisms for setting up the
+#' connection within twitteR
+#' 
+#' Currently only \code{RSQLite} and \code{RMySQL} are supported. To use either
+#' of these DBI implementations the appropriate packages will need to be
+#' installed.
+#' 
+#' The \code{register_sqlite_backend} and \code{register_mysql_backend} are
+#' convenience wrappers to both create the DBI connection and call
+#' \code{register_db_backend} for you.
+#' 
+#' @aliases register_db_backend register_sqlite_backend register_mysql_backend
+#' @param db_handle A DBI connection
+#' @param sqlite_file File path for a SQLite file
+#' @param db_name Name of the database to connect to
+#' @param host Hostname the database is on
+#' @param user username to connect to the database with
+#' @param password password to connect to the database with
+#' @param ... extra arguments to pass to \code{dbConnect}
+#' @return The DBI connection, invisibly
+#' @author Jeff Gentry
+#' @seealso \code{\link{store_tweets_db}}, \code{\link{store_users_db}},
+#' \code{\link{load_tweets_db}}, \code{\link{load_users_db}}
+#' @keywords utilities
+#' @examples
+#' 
+#'    \dontrun{
+#'     register_sqlite_backend("/path/to/sqlite/file")
+#'     tweets = searchTwitter("#scala")
+#'     store_tweets_db(tweets)
+#'     from_db = load_tweets_db()
+#'    }
+#' 
 register_db_backend = function(db_handle) {
   require_dbi_package(db_handle)
   assign("db_handle", db_handle, envir=db_backend_cache)  
