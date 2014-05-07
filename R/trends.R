@@ -1,13 +1,21 @@
 availableTrendLocations = function(...) {
   locs = twInterfaceObj$doAPICall("trends/available", ...)
-  return(import_trends(locs))
+  if (is.null(locs)) {
+    NULL
+  } else {
+    import_trends(locs)
+  }
 }
 
 closestTrendLocations = function(lat, long, ...) {
   params=list(lat=lat, long=long)
   
   locs = twInterfaceObj$doAPICall("trends/closest", params=params, ...)
-  return(import_trends(locs))
+  if (is.null(locs)) {
+    NULL
+  } else {
+    import_trends(locs)
+  }
 }
 
 buildTrendLocationDf = function(loc_json) {
@@ -22,6 +30,9 @@ getTrends <- function(woeid, exclude=NULL, ...) {
   params <- buildCommonArgs(exclude=exclude)
   params[["id"]] = woeid
   jsonList <- twInterfaceObj$doAPICall("trends/place", params=params, ...)
+  if (is.null(jsonList)) {
+    return(NULL)
+  }
   trends <- jsonList[[1]][['trends']]
   trend_rows = lapply(trends, function(x) {
     return(c(name=x$name, url=x$url, promoted_content=x$promoted_content,

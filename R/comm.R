@@ -50,7 +50,7 @@ doAPICall = function(cmd, params=NULL, method="GET", retryCount=5,
 
   httr_status = out$status
   http_message = http_status(out)$message
-  
+    
   if (httr_status %in% c(500, 502)) {
     print(http_message)
     print(paste("This error is likely transient, retrying up to", retryCount, "more times ..."))
@@ -58,33 +58,33 @@ doAPICall = function(cmd, params=NULL, method="GET", retryCount=5,
     Sys.sleep(1)
     return(recall_func(retryCount - 1, rateLimitCount=retryOnRateLimit))         
   } else if (httr_status == 429) {
-    print(http_message)
     if (retryOnRateLimit > 0) {
       ## We're rate limited. Wait a while and try again
-      print("Rate limited .... blocking for a minute ...")
+      newRateLimit = retryOnRateLimit - 1
+      print(paste("Rate limited .... blocking for a minute and retrying up to", newRateLimit, "times ..."))
       Sys.sleep(60)
-      return(recall_func(retryCount, retryOnRateLimit - 1))      
+      return(recall_func(retryCount, newRateLimit))      
     } else {
       ## FIXME: very experimental - the idea is that if we're rate limited,
       ## just give a warning and return. This should result in rate limited
       ## operations returning the partial result
       warning("Rate limit encountered & retry limit reached - returning partial results")
-      ## Setting out to {} will have the JSON creator provide an empty list
-      out = "{}" 
+      return(NULL)
     }
   } else if (httr_status == 401) {
     stop("OAuth authentication error:\nThis most likely means that you have incorrectly called setup_twitter_oauth()'")    
+  } else {
+    ## Generic catch-all for any other errors
+    stop_for_status(out)
   }
-  ## Generic catch-all for any other errors
-  stop_for_status(out)
- 
+  
   json = tw_from_response(out, ...)
 
   if (length(json[["errrors"]]) > 0) {
     stop(json[["errors"]][[1]][["message"]])
   }
   
-  return(json)  
+  out = json  
 }
 
 setRefClass('twAPIInterface',
@@ -122,8 +122,13 @@ doPagedAPICall = function(cmd, num, params=NULL, method='GET', ...) {
   params[['count']] <- count
   while (total > 0) {
     params[['page']] <- page
-    jsonList <- c(jsonList,
-                  twInterfaceObj$doAPICall(cmd, params, method, ...))
+    results = twInterfaceObj$doAPICall(cmd, params, method, ...)
+    if (is.null(results)) {
+      return(jsonList)
+    }
+  
+    jsonList <- c(jsonList, results)
+    
     total <- total - count
     page <- page + 1
   }
@@ -145,6 +150,9 @@ doCursorAPICall = function(cmd, type, num=NULL, params=NULL, method='GET', ...) 
   while(cursor != 0) {
     params[['cursor']] <- cursor
     curResults <- twInterfaceObj$doAPICall(cmd, params, method, ...)
+    if (is.null(curResults)) {
+      return(vals)
+    }
     vals <- c(vals, curResults[[type]])
     if ((!is.null(num)) && (length(vals) >= num))
       break
@@ -167,6 +175,9 @@ doRppAPICall = function(cmd, num, params, ...) {
   ids = list()
   while (curDiff > 0) {
     fromJSON <- twInterfaceObj$doAPICall(cmd, params, 'GET', ...)
+    if (is.null(fromJSON)) {
+      return(jsonList)
+    }
     newList <- fromJSON$statuses
     
     curIds = sapply(newList, function(x) x[["id"]])

@@ -142,7 +142,11 @@ statusFactory = getRefClass("status")
 statusFactory$accessors(names(statusFactory$fields()))
 
 buildStatus = function(json) {
-  return(statusFactory$new(json))
+  if (is.null(json)) {
+    NULL
+  } else {
+    statusFactory$new(json)
+  }
 }
 
 setMethod("show", signature="status", function(object) {

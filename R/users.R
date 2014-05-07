@@ -142,9 +142,13 @@ setRefClass("user",
 userFactory <- getRefClass("user")
 userFactory$accessors(names(userFactory$fields()))
 
-buildUser <- function(json)
-  userFactory$new(json)
-
+buildUser <- function(json) {
+  if (is.null(json)) {
+    NULL
+  } else {
+    userFactory$new(json)
+  }
+}
 
 setMethod("show", signature="user", function(object) {
     print(screenName(object))
