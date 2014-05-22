@@ -4,7 +4,7 @@ Rtweets <- function(n=25, lang=NULL, since=NULL, ...) {
 
 searchTwitter <- function(searchString, n=25, lang=NULL,
                           since=NULL, until=NULL, locale=NULL,
-                          geocode=NULL, sinceID=NULL, 
+                          geocode=NULL, sinceID=NULL, maxID=NULL,
                           retryOnRateLimit=120, ...) {
 
   
@@ -45,7 +45,7 @@ searchTwitter <- function(searchString, n=25, lang=NULL,
   }
 
   params <- buildCommonArgs(lang=lang, locale=locale, since=since_date, until=until_date,
-                            geocode=geocode, since_id=sinceID)
+                            geocode=geocode, since_id=sinceID, max_id=maxID)
   params[['q']] <- searchString
   params[["include_entities"]] = TRUE
   
