@@ -4,7 +4,7 @@ get_json_value = function(json, names) {
       return(json[[name]])
     }
   }
-  
+
   NULL
 }
 
@@ -36,7 +36,7 @@ getAPIStr <- function(cmd, version=1.1) {
 
 buildCommonArgs <- function(lang=NULL, since=NULL, until=NULL, locale=NULL,
                             geocode=NULL, since_id=NULL, max_id=NULL,
-                            lat=NULL, long=NULL, place_id=NULL,
+                            result_type=NULL, lat=NULL, long=NULL, place_id=NULL,
                             display_coordinates=NULL,
                             in_reply_to_status_id=NULL, exclude=NULL,
                             date=NULL) {
@@ -62,31 +62,31 @@ parseUsers <- function(users) {
         x
     })
   }
-  
+
   numUsers <- suppressWarnings(as.numeric(users))
   uids <- numUsers[!is.na(numUsers)]
   screen.names <- setdiff(users, uids)
-  
+
   return(buildUserList(uids, screen.names))
 }
 
 buildUserList = function(uids, screen_names) {
-  user_list = list()  
+  user_list = list()
   if (length(uids) > 0) {
     user_list$user_id = paste(uids, collapse=',')
   }
   if (length(screen_names) > 0) {
     user_list$screen_name = paste(screen_names, collapse=',')
   }
-  
-  return(user_list)  
+
+  return(user_list)
 }
 
 twListToDF <- function(twList) {
   if (length(twList) == 0) {
     stop("Empty list passed to twListToDF")
   }
-  
+
   ## iff all elements of twList are from a class defined in this
   ## package, and all of the same class, will collapse these into
   ## a data.frame and return
@@ -106,22 +106,22 @@ strip_retweets = function(tweets, strip_manual=TRUE, strip_mt=TRUE) {
   }
   ## Find/remove the tweets flagged as retweets
   is_retweets = which(sapply(tweets, function(x) x$getIsRetweet()))
-  
+
   if (length(is_retweets) > 0) {
     filtered_tweets = tweets[-is_retweets]
   } else {
     filtered_tweets = tweets
   }
-  
+
   if (strip_manual) {
     statuses = sapply(filtered_tweets, function(x) x$getText())
-    
+
     if (strip_mt) {
       rt_pattern = "(RT|MT)"
     } else {
       rt_pattern = "RT"
     }
-    
+
     ## Find and remove RT based retweets. This will be overeager but we're not losing many
     ## tweets anyways
     split_tweets = sapply(strsplit(statuses, paste0("[[:space:]]?", rt_pattern)), function(x) x[1])
@@ -130,6 +130,6 @@ strip_retweets = function(tweets, strip_manual=TRUE, strip_mt=TRUE) {
       filtered_tweets = filtered_tweets[-manual_retweets]
     }
   }
-  
+
   filtered_tweets
 }
