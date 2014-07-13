@@ -9,12 +9,12 @@
 }
 \usage{
 searchTwitter(searchString, n=25, lang=NULL, since=NULL, until=NULL,
-              locale=NULL, geocode=NULL, sinceID=NULL,
-	            retryOnRateLimit=120, ...)
+              locale=NULL, geocode=NULL, sinceID=NULL, maxID=NULL,
+	            result_type=NULL, retryOnRateLimit=120, ...)
 Rtweets(n=25, lang=NULL, since=NULL, ...)
 }
 \arguments{
-  \item{searchString}{Search query to issue to twitter}
+  \item{searchString}{Search query to issue to twitter. Use "+" to separate query terms.}
   \item{n}{The maximum number of tweets to return}
   \item{lang}{If not \code{NULL}, restricts tweets to the given
     language, given by an ISO 639-1 code}
@@ -29,6 +29,10 @@ Rtweets(n=25, lang=NULL, since=NULL, ...)
     \code{Details} below for more information}
   \item{sinceID}{If not \code{NULL}, returns tweets with IDs greater
     (ie newer) than the specified ID}
+  \item{maxID}{If not \code{NULL}, returns tweets with IDs smaller
+    (ie older) than the specified ID}
+  \item{resultType}{If not \code{NULL}, returns filtered tweets as per value.
+    See details for allowed values.}
   \item{retryOnRateLimit}{If non-zero the search command will block retry up to
     X times if the rate limit is experienced. This might lead to a much longer run
     time but the task will eventually complete if the retry count is high enough}
@@ -42,6 +46,9 @@ Rtweets(n=25, lang=NULL, since=NULL, ...)
   argument.  Authorized tweets are public tweets as well as those
   protected tweets that are available to the user after authenticating
   via \code{\link{registerTwitterOAuth}}.
+
+  The \code{searchString} is always required. Terms can contain spaces,
+  and multiple terms should be separated with "+".
 
   For the \code{geocode} argument, the values are given in the format
   \code{latitude,longitude,radius}, where the radius can have either
@@ -57,10 +64,9 @@ Rtweets(n=25, lang=NULL, since=NULL, ...)
 
   The \code{resultType} argument specifies the type of search results received
   in API response. Default is \code{mixed}.
-  Allowed values:
-  \code{mixed}: Includes popular + real time results
-  \code{recent}: returns the most recent results
-  \code{popular}: returns only the most popular results
+  Allowed values are \code{mixed} (includes popular + real time results),
+  \code{recent} (returns the most recent results) and \code{popular}
+  (returns only the most popular results).
 
   The \code{Rtweets} function is a wrapper around \code{searchTwitter}
   which hardcodes in a search for \code{#rstats}.
