@@ -5,7 +5,7 @@ Rtweets <- function(n=25, lang=NULL, since=NULL, ...) {
 searchTwitter <- function(searchString, n=25, lang=NULL,
                           since=NULL, until=NULL, locale=NULL,
                           geocode=NULL, sinceID=NULL, maxID=NULL,
-                          resultType='mixed',
+                          resultType=NULL,
                           retryOnRateLimit=120, ...) {
 
 
