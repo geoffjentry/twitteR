@@ -47,7 +47,7 @@ searchTwitter <- function(searchString, n=25, lang=NULL,
 
   params <- buildCommonArgs(lang=lang, locale=locale, since=since_date, until=until_date,
                             geocode=geocode, since_id=sinceID, max_id=maxID,
-                            resultType=result_type )
+                            result_type=resultType )
   params[['q']] <- searchString
   params[["include_entities"]] = TRUE
 
