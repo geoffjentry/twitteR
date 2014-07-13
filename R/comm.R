@@ -167,7 +167,6 @@ doRppAPICall = function(cmd, num, params, ...) {
   if (! 'q' %in% names(params))
     stop("parameter 'q' must be supplied")
   maxResults <- twInterfaceObj$getMaxResults()
-  params[['q']] <- URLencode(params[['q']])
   params[['count']] <- ifelse(num < maxResults, num, maxResults)
 
   curDiff <- num
