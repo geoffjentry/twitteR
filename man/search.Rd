@@ -86,6 +86,11 @@ Rtweets(n=25, lang=NULL, since=NULL, ...)
 
   	## geocoded results
   	searchTwitter('patriots', geocode='42.375,-71.1061111,10mi')
+
+    ## using resultType
+    searchTwitter('world cup+brazil', resultType="popular", n=15)
+    searchTwitter('from:hadleywickham', resultType="recent", n=10)
+
   }
 }
 \keyword{ interface }
