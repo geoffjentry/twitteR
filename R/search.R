@@ -5,17 +5,18 @@ Rtweets <- function(n=25, lang=NULL, since=NULL, ...) {
 searchTwitter <- function(searchString, n=25, lang=NULL,
                           since=NULL, until=NULL, locale=NULL,
                           geocode=NULL, sinceID=NULL, maxID=NULL,
+                          resultType=NULL,
                           retryOnRateLimit=120, ...) {
 
-  
+
   if (nchar(searchString) > 1000) {
     stop("searchString can only be up to 1000 characters")
   }
-  
+
   if (n <= 0)
         stop("n must be positive")
     n <- as.integer(n)
-  
+
   if (is.null(since)) {
     since_date = NULL
   } else {
@@ -24,7 +25,7 @@ searchTwitter <- function(searchString, n=25, lang=NULL,
   if (is.null(until)) {
     until_date = NULL
   } else {
-    until_date = strsplit(until, " ")[[1]][1] 
+    until_date = strsplit(until, " ")[[1]][1]
     if (until_date == since_date) {
       ## If since & until are on the same day nothing will be returned. Move
       ## until up a day and then we'll filter this later
@@ -45,13 +46,14 @@ searchTwitter <- function(searchString, n=25, lang=NULL,
   }
 
   params <- buildCommonArgs(lang=lang, locale=locale, since=since_date, until=until_date,
-                            geocode=geocode, since_id=sinceID, max_id=maxID)
+                            geocode=geocode, since_id=sinceID, max_id=maxID,
+                            result_type=resultType )
   params[['q']] <- searchString
   params[["include_entities"]] = TRUE
-  
+
   jsonList <- doRppAPICall("search/tweets", n, params=params, retryOnRateLimit=retryOnRateLimit, ...)
   statuses = import_statuses(jsonList)
-  
+
   datetimes = sapply(statuses, function(x) x$getCreated())
   if (is.null(since)) {
     since_statuses = seq_along(statuses)
