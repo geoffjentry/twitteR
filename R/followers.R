@@ -1,15 +1,18 @@
-followers <- function(user, n=NULL, ...) {
-  ffBase('followers', user, n, ...)
+followers <- function(user_id, n=NULL, ...) {
+  ffBase('followers', user_id, n, ...)
 }
 
-friends <- function(user, n=NULL, ...) {
-  ffBase('friends', user, n, ...)
+friends <- function(user_id, n=NULL, ...) {
+  ffBase('friends', user_id, n, ...)
 }
 
-ffBase <- function(type, user, n=NULL, ...) {
-  params <- parseUsers(user)
-  
-  doCursorAPICall(paste(type, 'ids', sep='/'), 'ids', num=n, params=params, method='GET', ...)
+ffBase <- function(type, user_id, n=NULL, ...) {
+  if (can_access_other_account(user_id)) {
+    params <- parseUsers(user_id)
+    doCursorAPICall(paste(type, 'ids', sep='/'), 'ids', num=n, params=params, method='GET', ...)
+  } else {
+    warning("Can not lookup relationships for user id ", user_id)
+  }
 }
 
 friendships = function(screen_names=character(), user_ids=character(), ...) {

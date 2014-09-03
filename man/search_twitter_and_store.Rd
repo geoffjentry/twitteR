@@ -8,7 +8,8 @@ A convenience function designed to wrap the process of running a twitter search 
 If this is called more than once, the search will start with the most recent tweet already stored.
 }
 \usage{
-search_twitter_and_store(searchString, table_name = "tweets", lang = NULL, locale = NULL, geocode = NULL, retryOnRateLimit = 120, ...)
+search_twitter_and_store(searchString, table_name = "tweets", lang = NULL, 
+  locale = NULL, geocode = NULL, retryOnRateLimit = 120, ...)
 }
 \arguments{
   \item{searchString}{The search string to use, e.g. as one would in \code{\link{searchTwitter}}}

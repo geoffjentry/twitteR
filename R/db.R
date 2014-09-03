@@ -92,14 +92,14 @@ convert_logical_column = function(column) {
 escape_character_columns = function(df, db_handle) {
   escape_character_column = function(column) {
     nas = which(is.na(column))
-    new_column = dbEscapeStrings(db_handle, column)
+    new_column = RMySQL:::dbEscapeStrings(db_handle, column)
     new_column[nas] = NA
     new_column
   }
   
   # Some DBI types have issues with stuff like \n in character fields,
   # strip these out if dbEscapeStrings exists
-  if (exists("dbEscapeStrings")) {
+  if (attr(class(db_handle), "package") == "RMySQL") {
     char_columns = which(sapply(df, class) == "character")
     for (column in char_columns) {
       df[, column] = escape_character_column(df[, column])

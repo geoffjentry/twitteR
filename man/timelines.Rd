@@ -9,7 +9,8 @@
   the Twitter universe
 }
 \usage{
-userTimeline(user, n=20, maxID=NULL, sinceID=NULL, includeRts=FALSE, excludeReplies=FALSE, ...)
+userTimeline(user, n=20, maxID=NULL, sinceID=NULL, includeRts=FALSE, 
+  excludeReplies=FALSE, ...)
 homeTimeline(n=25, maxID=NULL, sinceID=NULL, ...)
 mentions(n=25, maxID=NULL, sinceID=NULL, ...)
 retweetsOfMe(n=25, maxID=NULL, sinceID=NULL, ...)

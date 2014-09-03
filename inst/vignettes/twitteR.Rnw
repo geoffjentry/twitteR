@@ -278,7 +278,7 @@ Unfortunately I didn't give the package the most easily searched name! If you
 know of a good example please let me know.
 
 NB: Many of these predate the changes to using the \Rpackage{httr} package, so 
-specifics might have change, rather view these as examples of things you could do.
+specifics might have changed, rather view these as examples of things you could do.
 
 \begin{itemize}
   \item Jeffrey Stanton's free book on data science discusses \Rpackage{twitteR}: \url{http://ischool.syr.edu/media/documents/2012/3/DataScienceBook1_1.pdf}
