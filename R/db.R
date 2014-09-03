@@ -92,7 +92,7 @@ convert_logical_column = function(column) {
 escape_character_columns = function(df, db_handle) {
   escape_character_column = function(column) {
     nas = which(is.na(column))
-    new_column = RMySQL:::dbEscapeStrings(db_handle, column)
+    new_column = RMySQL::dbEscapeStrings(db_handle, column)
     new_column[nas] = NA
     new_column
   }

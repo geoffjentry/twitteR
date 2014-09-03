@@ -29,14 +29,10 @@ Rtweets(n=25, lang=NULL, since=NULL, ...)
     \code{Details} below for more information}
   \item{sinceID}{If not \code{NULL}, returns tweets with IDs greater
     (ie newer) than the specified ID}
-<<<<<<< HEAD
   \item{maxID}{If not \code{NULL}, returns tweets with IDs smaller
     (ie older) than the specified ID}
-  \item{resultType}{If not \code{NULL}, returns filtered tweets as per value.
+  \item{result_type}{If not \code{NULL}, returns filtered tweets as per value.
     See details for allowed values.}
-=======
-  \item{maxID}{If not \code{NULL}, returns tweets with IDs less (ie older) than the specified ID}
->>>>>>> Minor cleanups
   \item{retryOnRateLimit}{If non-zero the search command will block retry up to
     X times if the rate limit is experienced. This might lead to a much longer run
     time but the task will eventually complete if the retry count is high enough}
