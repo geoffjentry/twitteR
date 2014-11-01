@@ -80,7 +80,7 @@ doAPICall = function(cmd, params=NULL, method="GET", retryCount=5,
 
   json = tw_from_response(out, ...)
 
-  if (length(json[["errrors"]]) > 0) {
+  if (length(json[["errors"]]) > 0) {
     stop(json[["errors"]][[1]][["message"]])
   }
 
