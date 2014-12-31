@@ -28,7 +28,7 @@ register_sqlite_backend = function(sqlite_file, ...) {
     stop("RSQLite package must be installed to generate an SQLite handle")
   }
   
-  register_db_backend(dbConnect(dbDriver("SQLite"), sqlite_file, ...))
+  register_db_backend(dbConnect(RSQLite::SQLite(), sqlite_file, ...))
 }
 
 # Convenience function which will wrap the DBI command for a MySQL connection
@@ -37,7 +37,7 @@ register_mysql_backend = function(db_name, host, user, password, ...) {
     stop("RMySQL package must be installed to generate a MySQL handle")
   }
   
-  db_handle = register_db_backend(dbConnect(dbDriver("MySQL"), user=user, password=password, 
+  db_handle = register_db_backend(dbConnect(RMySQL::MySQL(), user=user, password=password, 
                                   dbname=db_name, host=host, ...))
   dbGetQuery(db_handle, "SET NAMES 'utf8'")
   

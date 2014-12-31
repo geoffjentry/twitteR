@@ -282,6 +282,7 @@ specifics might have changed, rather view these as examples of things you could 
 
 \begin{itemize}
   \item Jeffrey Stanton's free book on data science discusses \Rpackage{twitteR}: \url{http://ischool.syr.edu/media/documents/2012/3/DataScienceBook1_1.pdf}
+  \item Rare bird siting twitter bot: \url{https://twitter.com/crd_rare_bird}
   \item Jeffrey Breen's sentiment analysis example: \url{http://www.inside-r.org/howto/mining-twitter-airline-consumer-sentiment}
   \item Mapping your followers: \url{http://simplystatistics.org/2011/12/21/an-r-function-to-map-your-twitter-followers/}
   \item Yangchao Zhao's book on data mining w/ R \url{http://www.amazon.com/Data-Mining-Examples-Case-Studies/dp/0123969638}

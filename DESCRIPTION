@@ -5,11 +5,10 @@ Version: 1.1.8
 Author: Jeff Gentry <geoffjentry@gmail.com>
 Maintainer: Jeff Gentry <geoffjentry@gmail.com>
 Depends: R (>= 2.12.0)
-Imports: methods, bit64, rjson, httr (>= 0.3)
-Suggests: RSQLite, RSQLite.extfuns, RMySQL
+Imports: methods, bit64, rjson, DBI (>= 0.3.1), httr (>= 0.6.0)
+Suggests: RSQLite, RMySQL
 License: Artistic-2.0
 LazyData: yes
-BuildVignettes: no
 URL: http://lists.hexdump.org/listinfo.cgi/twitter-users-hexdump.org
 Collate: allGenerics.R base.R account.R statuses.R users.R trends.R 
 	 s4methods.R convert.R dm.R oauth.R comm.R followers.R search.R db.R

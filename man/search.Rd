@@ -10,7 +10,7 @@
 \usage{
 searchTwitter(searchString, n=25, lang=NULL, since=NULL, until=NULL,
               locale=NULL, geocode=NULL, sinceID=NULL, maxID=NULL,
-	            result_type=NULL, retryOnRateLimit=120, ...)
+	      resultType=NULL, retryOnRateLimit=120, ...)
 Rtweets(n=25, lang=NULL, since=NULL, ...)
 }
 \arguments{
@@ -31,7 +31,7 @@ Rtweets(n=25, lang=NULL, since=NULL, ...)
     (ie newer) than the specified ID}
   \item{maxID}{If not \code{NULL}, returns tweets with IDs smaller
     (ie older) than the specified ID}
-  \item{result_type}{If not \code{NULL}, returns filtered tweets as per value.
+  \item{resultType}{If not \code{NULL}, returns filtered tweets as per value.
     See details for allowed values.}
   \item{retryOnRateLimit}{If non-zero the search command will block retry up to
     X times if the rate limit is experienced. This might lead to a much longer run
