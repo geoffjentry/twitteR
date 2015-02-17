@@ -154,11 +154,11 @@ setMethod("show", signature="status", function(object) {
 })
 
 updateStatus <- function(text, lat=NULL, long=NULL, placeID=NULL,
-                         displayCoords=NULL, inReplyTo=NULL, mediaPath=NULL, ...) {
+                         displayCoords=NULL, inReplyTo=NULL, mediaPath=NULL, bypassCharLimit=FALSE, ...) {
   if (!has_oauth_token())
     stop("updateStatus requires OAuth authentication")
 
-  if (nchar(text) > 140)
+  if (nchar(text) > 140 && !bypassCharLimit)
     stop("Status can not be more than 140 characters")
 
   params = buildCommonArgs(lat=lat, long=long, place_id=placeID,
