@@ -36,6 +36,8 @@ Anand Patil
       credentials = list(access_token = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\%2FAAAAAAAAAAAAAAAAAAAA\%3DAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),
       cache = FALSE
     )
+
+    use_oauth_token(token)
   }
 }
 \keyword{interface}
