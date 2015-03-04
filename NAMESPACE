@@ -9,6 +9,7 @@ exportMethods(as.data.frame, screenName, show, favorited, replyToSN,
 export("search_twitter_and_store")
 export("get_latest_tweet_id")
 export("setup_twitter_oauth")
+export("use_oauth_token")
 export("register_db_backend")
 export("register_sqlite_backend")
 export("register_mysql_backend")
