@@ -260,6 +260,21 @@ retweetsOfMe <- function(n=25, maxID=NULL, sinceID=NULL, ...) {
   return(authStatusBase(n, 'retweets_of_me', maxID=maxID, sinceID=sinceID, ...))
 }
 
+listTimeline <- function (user, list_name, n = 20, maxID = NULL,
+                          sinceID = NULL, includeRts = FALSE,
+                          excludeReplies = FALSE, ...) {
+  uParams <- parseUsers(user)
+  cmd <- "lists/statuses"
+  params <- buildCommonArgs(max_id = maxID, since_id = sinceID)
+  params[["slug"]] <- list_name
+  params[["owner_screen_name"]] <- uParams[["screen_name"]]
+  params[["include_rts"]] <- ifelse(includeRts == TRUE, "true", 
+                                    "false")
+  params[["exclude_replies"]] <- ifelse(excludeReplies == TRUE, 
+                                        "true", "false")
+  return(statusBase(cmd, params, n, 3200, ...))
+}
+
 authStatusBase <- function(n, type, maxID=NULL, sinceID=NULL, ...) {
   if (!has_oauth_token()) {
     stop("OAuth is required for this functionality")

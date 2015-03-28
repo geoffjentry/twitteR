@@ -14,6 +14,8 @@ userTimeline(user, n=20, maxID=NULL, sinceID=NULL, includeRts=FALSE,
 homeTimeline(n=25, maxID=NULL, sinceID=NULL, ...)
 mentions(n=25, maxID=NULL, sinceID=NULL, ...)
 retweetsOfMe(n=25, maxID=NULL, sinceID=NULL, ...)
+listTimeline(user, list_name, n=20, maxID=NULL, sinceID=NULL, includeRts=FALSE, 
+  excludeReplies=FALSE, ...)
 }
 \arguments{
   \item{user}{ The Twitter user to detail, can be \code{character} or
@@ -24,6 +26,7 @@ retweetsOfMe(n=25, maxID=NULL, sinceID=NULL, ...)
   \item{includeRts}{If \code{FALSE} any native retweets (not old style RT retweets)
   		       will be stripped from the results} 
   \item{excludeReplies}{if \code{TRUE} any replies are stripped from the results}
+  \item{list_name}{ Target list name, used for \code{listTimeline}}
   \item{...}{Optional arguments to be passed to \code{\link{GET}}}
 }
 \value{
