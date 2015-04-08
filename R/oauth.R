@@ -45,6 +45,10 @@ setup_twitter_oauth = function(consumer_key, consumer_secret, access_token=NULL,
   check_twitter_oauth()
 }
 
+use_oauth_token = function(twitter_token) {
+  assign("oauth_token", twitter_token, envir=oauth_cache)
+}
+
 has_oauth_token = function() {
   exists("oauth_token", envir=oauth_cache)
 }
