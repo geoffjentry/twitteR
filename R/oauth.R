@@ -19,7 +19,7 @@ get_twitter_token_via_sign = function(app, access_token, access_secret) {
   print("Using direct authentication")
   params <- list(as_header = TRUE)
   credentials <- list(oauth_token = access_token, 
-                      oauth_token_secret = access_token_secret)
+                      oauth_token_secret = access_secret)
   twitter_token <- Token1.0$new(endpoint = NULL, params = params, 
                                 app = app, credentials = credentials)
 
