@@ -17,12 +17,16 @@ check_twitter_oauth = function() {
 
 get_twitter_token_via_sign = function(app, access_token, access_secret) {
   print("Using direct authentication")
-  sig = sign_oauth1.0(app, token=access_token, token_secret=access_secret)
-  if (! (is.list(sig)) && ("token" %in% names(sig))) {
-    stop("Invalid response from sig_oauth1.0")
-  }
+  params <- list(as_header = TRUE)
+  credentials <- list(oauth_token = access_token, 
+                      oauth_token_secret = access_token_secret)
+  twitter_token <- Token1.0$new(endpoint = NULL, params = params, 
+                                app = app, credentials = credentials)
 
-  sig[["token"]]
+  if (is.null(twitter_token))
+    stop("Invalid response for twitter_token")
+
+  twitter_token
 }
 
 get_twitter_token_via_browser = function(app, ...) {
