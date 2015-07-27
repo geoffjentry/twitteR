@@ -24,7 +24,7 @@ require_dbi_package = function(db_handle) {
 
 # Convenience function which will wrap some of the DBI commands to get a SQLiteConnection
 register_sqlite_backend = function(sqlite_file, ...) {
-  if (!require("RSQLite")) {
+  if (!requireNamespace("RSQLite")) {
     stop("RSQLite package must be installed to generate an SQLite handle")
   }
   
@@ -33,7 +33,7 @@ register_sqlite_backend = function(sqlite_file, ...) {
 
 # Convenience function which will wrap the DBI command for a MySQL connection
 register_mysql_backend = function(db_name, host, user, password, ...) {
-  if (!require("RMySQL")) {
+  if (!requireNamespace("RMySQL")) {
     stop("RMySQL package must be installed to generate a MySQL handle")
   }
   

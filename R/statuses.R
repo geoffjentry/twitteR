@@ -154,7 +154,8 @@ setMethod("show", signature="status", function(object) {
 })
 
 updateStatus <- function(text, lat=NULL, long=NULL, placeID=NULL,
-                         displayCoords=NULL, inReplyTo=NULL, mediaPath=NULL, bypassCharLimit=FALSE, ...) {
+                         displayCoords=NULL, inReplyTo=NULL, mediaPath=NULL, 
+                         bypassCharLimit=FALSE, ...) {
   if (!has_oauth_token())
     stop("updateStatus requires OAuth authentication")
 
@@ -200,6 +201,14 @@ deleteStatus = function(status, ...) {
     }
     return(FALSE)
   }
+}
+
+lookup_statuses = function(ids, ...) {
+  sapply(ids, check_id)
+  cmd = "statuses/lookup"
+  params = list(id=paste(ids, collapse=","))
+  # FIXME: Note that this is set to GET but twitter recommends POST. See issue #78
+  return(sapply(twInterfaceObj$doAPICall(cmd, params=params, method="GET", ...), buildStatus))
 }
 
 showStatus = function(id, ...) {

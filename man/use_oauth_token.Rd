@@ -23,7 +23,7 @@ use_oauth_token(twitter_token)
 Anand Patil
 }
 \seealso{
-\code{\link{use_twitter_token}}, \code{\link{Token}}
+\code{\link{Token}}
 }
 \examples{
  \dontrun{
@@ -33,7 +33,7 @@ Anand Patil
       params = list(as_header=TRUE),
       app = oauth_app("fun.with.twitter", "no.key", "no.secret"),
       endpoint = oauth_endpoints("twitter"),
-      credentials = list(access_token = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\%2FAAAAAAAAAAAAAAAAAAAA\%3DAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),
+      credentials = list(access_token = "AAAAAAAAAAAAAAAAAAA\%3DAAAAAAAAAAAAAA"),
       cache = FALSE
     )
 

@@ -1,4 +1,5 @@
 import(httr, bit64, rjson, DBI, methods)
+importFrom("utils", "URLencode")
 exportClasses('status', 'user', 'directMessage')
 exportMethods(as.data.frame, screenName, show, favorited, replyToSN,
               statusesCount, tweetCount, followersCount,
@@ -45,6 +46,7 @@ export('homeTimeline')
 export('mentions')
 export('retweetsOfMe')
 export('showStatus')
+export('lookup_statuses')
 export('getUser')
 export('lookupUsers')
 export("updateStatus")

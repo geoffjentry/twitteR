@@ -20,7 +20,7 @@ favorites(user, n = 20, max_id = NULL, since_id = NULL, ...)
 A list of \code{link{status}} objects corresponding to the \code{n} most recent tweets
 }
 \references{
-\url{https://dev.twitter.com/docs/api/1.1/get/favorites/list}
+\url{https://dev.twitter.com/rest/reference/get/favorites/list}
 }
 \author{
 Jeff Gentry

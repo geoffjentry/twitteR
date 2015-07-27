@@ -12,7 +12,7 @@ load_tweets_db = function(as.data.frame=FALSE, table_name="tweets") {
   tweet_df = load_from_db(table_name)
   
   if (as.data.frame) {
-    if (length(setdiff(colnames(df), tweet_columns)) > 0) {
+    if (length(setdiff(colnames(tweet_df), tweet_columns)) > 0) {
       stop("Malformed tweet data.frame, columns don't match")
     }
     
@@ -42,7 +42,7 @@ load_users_db = function(as.data.frame=FALSE, table_name="users") {
   users_df = load_from_db(table_name)
   
   if (as.data.frame) {
-    if (length(setdiff(colnames(df), user_columns)) > 0) {
+    if (length(setdiff(colnames(users_df), user_columns)) > 0) {
       stop("Malformed user data.frame, columns don't match")
     }
     
