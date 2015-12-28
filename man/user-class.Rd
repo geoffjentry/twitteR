@@ -101,7 +101,7 @@
   although new code should not be written with these.  An instance of a
   generator for this class is provided as a convenience to the user as
   it is configured to handle most standard cases.  To access this
-  generator, user the object \code{userFactory}.  Accessor set & get
+  generator, use the object \code{userFactory}.  Accessor set & get
   methods are provided for every field using reference class
   \code{$accessors()} methodology (see \code{\link{setRefClass}} for
   more details).  As an example, the \code{screenName} field could be
