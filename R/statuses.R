@@ -322,3 +322,24 @@ build_urls_data_frame = function(json) {
     data.frame(url=character(), expanded_url=character(), dispaly_url=character(), indices=numeric(), stringsAsFactors=FALSE)
   }
 }
+
+retweetStatus <- function(status, ...) {
+  if (!has_oauth_token()) {
+    stop("retweetStatus requires OAuth authentication")
+  }
+  if (!inherits(status, 'status')) {
+    stop("status argument must be of class status")
+  }
+  
+  json = twInterfaceObj$doAPICall(paste('statuses/retweet',
+                                        status$getId(), sep='/'),
+                                  method='POST', ...)
+  if (is.null(json$errors)) {
+    return(TRUE)
+  } else {
+    for (error in json$errors) {
+      cat(error$message, error$code, fill = TRUE)
+    }
+    return(FALSE)
+  }
+}
