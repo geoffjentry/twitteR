@@ -33,6 +33,7 @@
 \alias{[[,twitterObjList-method}
 \alias{as.data.frame,twitterObj-method}
 \alias{show,twitterObjList-method}
+\alias{retweetStatus}
 \title{Class to contain a Twitter status}
 \description{Container for Twitter status messages, including the text
   as well as basic information}
