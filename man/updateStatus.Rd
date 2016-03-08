@@ -20,10 +20,10 @@ deleteStatus(status, ...)
   \item{text}{The text to use for a new status }
   \item{status}{An object of class \code{\link{status}}}
   \item{lat}{If not \code{NULL}, the latitude the status refers to.  Ignored if no \code{long} 
-  	parameter is provideded}
+  	parameter is provided}
   \item{long}{If not \code{NULL}, the longitude the status refers to.  Ignored if no \code{lat} 
-  	parameter is provideded}
-  \item{placeID}{If not \code{NULL}, provideds a place in the world.  See Twitter documentation for details}
+  	parameter is provided}
+  \item{placeID}{If not \code{NULL}, provides a place in the world.  See Twitter documentation for details}
   \item{displayCoords}{Whether or not to put a pin on the exact coordinates a tweet has been sent from, 
         \code{true} or \code{false} if not \code{NULL}}
   \item{inReplyTo}{If not \code{NULL}, denotes the status this is in reply to.  Either an object of
