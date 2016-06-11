@@ -64,7 +64,8 @@ parseUsers <- function(users) {
   }
 
   numUsers <- suppressWarnings(as.numeric(users))
-  uids <- numUsers[!is.na(numUsers)]
+  uids <- c(numUsers[!is.na(numUsers) & as.character(numUsers) == as.character(users)],
+            users[!is.na(numUsers) & as.character(numUsers) != as.character(users)])
   screen.names <- setdiff(users, uids)
 
   return(buildUserList(uids, screen.names))
