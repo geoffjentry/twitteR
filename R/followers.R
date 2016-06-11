@@ -10,7 +10,7 @@ ffBase <- function(type, user_id, n=NULL, ...) {
   if (!can_access_other_account(user_id)) {
     warning("Cannot lookup relationships for user id ", user_id, ", query may fail!")
   }
-  params <- parseUsers(user_id)
+  params <- c(parseUsers(user_id), list(stringify_ids=TRUE))
   doCursorAPICall(paste(type, 'ids', sep='/'), 'ids', num=n, params=params, method='GET', ...)
 }
 
