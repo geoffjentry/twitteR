@@ -22,11 +22,12 @@ searchTwitter <- function(searchString, n=25, lang=NULL,
   } else {
     since_date = strsplit(since, " ")[[1]][1]
   }
+    
   if (is.null(until)) {
     until_date = NULL
   } else {
     until_date = strsplit(until, " ")[[1]][1]
-    if (until_date == since_date) {
+    if ((!is.null(since_date)) && (until_date == since_date)) {
       ## If since & until are on the same day nothing will be returned. Move
       ## until up a day and then we'll filter this later
       until_date = as.Date(since_date) + 1
