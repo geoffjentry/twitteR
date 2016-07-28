@@ -27,6 +27,7 @@ setRefClass("status",
               latitude="character",
               location="character",
               language="character",
+              profileImageURL="character",
               urls="data.frame"
               ),
             methods=list(
@@ -34,11 +35,13 @@ setRefClass("status",
                 if (!missing(json)) {
                   locationName <- NA
                   languageName <- NA
+                  profileImageURLName <- NA
                   if ('user' %in% names(json)) {
                     userObj <- userFactory$new(json[['user']])
                     screenName <<- userObj$getScreenName()
 		    locationName <- json$user$location
 		    languageName <- json$user$lang
+		    profileImageURLName <- json$user$profile_image_url
                   } else if ('from_user' %in% names(json)) {
                     screenName <<- json[['from_user']]
                   } else if ("screen_name" %in% names(json)) {
@@ -47,7 +50,8 @@ setRefClass("status",
                     screenName <<- "Unknown"
                   }
                   location <<- locationName
-                  language <<- locationName
+                  language <<- languageName
+                  profileImageURL <<- profileImageURLName
                   
                   if (!is.null(json[['text']])) {
                     text <<- json[['text']]
