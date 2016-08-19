@@ -1,7 +1,7 @@
 tweet_columns = c("text", "favorited", "favoriteCount", "replyToSN", "created", 
                   "truncated", "replyToSID", "id", "replyToUID", "statusSource", 
                   "screenName", "retweetCount", "isRetweet", "retweeted", "longitude", 
-                  "latitude")
+                  "latitude", "location", "language", "profileImageURL")
 
 user_columns = c("description", "statusesCount", "followersCount", "favoritesCount",
                  "friendsCount", "url", "name", "created", "protected", "verified",
