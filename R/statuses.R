@@ -49,6 +49,16 @@ setRefClass("status",
                   }  else {
                     screenName <<- "Unknown"
                   }
+                  if ('location' %in% names(json)) {
+                    locationName <- json$location
+                  }
+                  if ('language' %in% names(json)) {
+                    languageName <- json$language
+                  }
+                  if ('profile_image_u_r_l' %in% names(json)) {
+                    profileImageURLName <- json$profile_image_u_r_l
+                  }
+                  
                   location <<- locationName
                   language <<- languageName
                   profileImageURL <<- profileImageURLName
