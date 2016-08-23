@@ -1,11 +1,11 @@
 Package: twitteR
-Title: R based Twitter client
-Description: Provides an interface to the Twitter web API
-Version: 1.1.8
+Title: R Based Twitter Client
+Description: Provides an interface to the Twitter web API.
+Version: 1.1.9
 Author: Jeff Gentry <geoffjentry@gmail.com>
 Maintainer: Jeff Gentry <geoffjentry@gmail.com>
 Depends: R (>= 2.12.0)
-Imports: methods, bit64, rjson, DBI (>= 0.3.1), httr (>= 0.6.0)
+Imports: methods, bit64, rjson, DBI (>= 0.3.1), httr (>= 1.0.0)
 Suggests: RSQLite, RMySQL
 License: Artistic-2.0
 LazyData: yes

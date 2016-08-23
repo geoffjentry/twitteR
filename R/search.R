@@ -22,11 +22,12 @@ searchTwitter <- function(searchString, n=25, lang=NULL,
   } else {
     since_date = strsplit(since, " ")[[1]][1]
   }
+    
   if (is.null(until)) {
     until_date = NULL
   } else {
     until_date = strsplit(until, " ")[[1]][1]
-    if (until_date == since_date) {
+    if ((!is.null(since_date)) && (until_date == since_date)) {
       ## If since & until are on the same day nothing will be returned. Move
       ## until up a day and then we'll filter this later
       until_date = as.Date(since_date) + 1
@@ -54,16 +55,16 @@ searchTwitter <- function(searchString, n=25, lang=NULL,
   jsonList <- doRppAPICall("search/tweets", n, params=params, retryOnRateLimit=retryOnRateLimit, ...)
   statuses = import_statuses(jsonList)
 
-  datetimes = sapply(statuses, function(x) x$getCreated())
+  datetimes = sapply(statuses, function(x) as.Date(x$getCreated()))
   if (is.null(since)) {
     since_statuses = seq_along(statuses)
   } else {
-    since_statuses = which(datetimes >= as.numeric(as.POSIXct(since, tz="UTC")))
+    since_statuses = which(datetimes >= as.numeric(as.Date(since)))
   }
   if (is.null(until)) {
     until_statuses = seq_along(statuses)
   } else {
-    until_statuses = which(datetimes <= as.numeric(as.POSIXct(until, tz="UTC")))
+    until_statuses = which(datetimes <= as.numeric(as.Date(until)))
   }
   good_statuses = intersect(since_statuses, until_statuses)
   return(statuses[good_statuses])

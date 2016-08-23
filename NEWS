@@ -14,6 +14,8 @@ BUG FIXES
     o getCurRateLimitInfo now requires at least one supported resource family
 
 NEW FEATURES
+    o Added lookup_statuses, which will retrieve a vector of tweet IDs
+
     o Added resultType to searchTwitter, provided by Ajay Gopal
 
     o Added maxID to searchTwitter, provided by Paul Nulty

@@ -25,14 +25,23 @@ setRefClass("status",
               retweeted="logical",
               longitude="character",
               latitude="character",
+              location="character",
+              language="character",
+              profileImageURL="character",
               urls="data.frame"
               ),
             methods=list(
               initialize = function(json, ...) {
                 if (!missing(json)) {
+                  locationName <- NA
+                  languageName <- NA
+                  profileImageURLName <- NA
                   if ('user' %in% names(json)) {
                     userObj <- userFactory$new(json[['user']])
                     screenName <<- userObj$getScreenName()
+		    locationName <- json$user$location
+		    languageName <- json$user$lang
+		    profileImageURLName <- json$user$profile_image_url
                   } else if ('from_user' %in% names(json)) {
                     screenName <<- json[['from_user']]
                   } else if ("screen_name" %in% names(json)) {
@@ -40,6 +49,9 @@ setRefClass("status",
                   }  else {
                     screenName <<- "Unknown"
                   }
+                  location <<- locationName
+                  language <<- languageName
+                  profileImageURL <<- profileImageURLName
                   
                   if (!is.null(json[['text']])) {
                     text <<- json[['text']]
@@ -154,11 +166,12 @@ setMethod("show", signature="status", function(object) {
 })
 
 updateStatus <- function(text, lat=NULL, long=NULL, placeID=NULL,
-                         displayCoords=NULL, inReplyTo=NULL, mediaPath=NULL, ...) {
+                         displayCoords=NULL, inReplyTo=NULL, mediaPath=NULL, 
+                         bypassCharLimit=FALSE, ...) {
   if (!has_oauth_token())
     stop("updateStatus requires OAuth authentication")
 
-  if (nchar(text) > 140)
+  if (nchar(text) > 140 && !bypassCharLimit)
     stop("Status can not be more than 140 characters")
 
   params = buildCommonArgs(lat=lat, long=long, place_id=placeID,
@@ -200,6 +213,14 @@ deleteStatus = function(status, ...) {
     }
     return(FALSE)
   }
+}
+
+lookup_statuses = function(ids, ...) {
+  sapply(ids, check_id)
+  cmd = "statuses/lookup"
+  params = list(id=paste(ids, collapse=","))
+  # FIXME: Note that this is set to GET but twitter recommends POST. See issue #78
+  return(sapply(twInterfaceObj$doAPICall(cmd, params=params, method="GET", ...), buildStatus))
 }
 
 showStatus = function(id, ...) {
@@ -260,6 +281,21 @@ retweetsOfMe <- function(n=25, maxID=NULL, sinceID=NULL, ...) {
   return(authStatusBase(n, 'retweets_of_me', maxID=maxID, sinceID=sinceID, ...))
 }
 
+listTimeline <- function (user, list_name, n = 20, maxID = NULL,
+                          sinceID = NULL, includeRts = FALSE,
+                          excludeReplies = FALSE, ...) {
+  uParams <- parseUsers(user)
+  cmd <- "lists/statuses"
+  params <- buildCommonArgs(max_id = maxID, since_id = sinceID)
+  params[["slug"]] <- list_name
+  params[["owner_screen_name"]] <- uParams[["screen_name"]]
+  params[["include_rts"]] <- ifelse(includeRts == TRUE, "true", 
+                                    "false")
+  params[["exclude_replies"]] <- ifelse(excludeReplies == TRUE, 
+                                        "true", "false")
+  return(statusBase(cmd, params, n, 3200, ...))
+}
+
 authStatusBase <- function(n, type, maxID=NULL, sinceID=NULL, ...) {
   if (!has_oauth_token()) {
     stop("OAuth is required for this functionality")
@@ -296,5 +332,26 @@ build_urls_data_frame = function(json) {
     return(do.call("rbind", lapply(massaged_urls, as.data.frame, stringsAsFactors=FALSE)))
   } else {
     data.frame(url=character(), expanded_url=character(), dispaly_url=character(), indices=numeric(), stringsAsFactors=FALSE)
+  }
+}
+
+retweetStatus <- function(status, ...) {
+  if (!has_oauth_token()) {
+    stop("retweetStatus requires OAuth authentication")
+  }
+  if (!inherits(status, 'status')) {
+    stop("status argument must be of class status")
+  }
+  
+  json = twInterfaceObj$doAPICall(paste('statuses/retweet',
+                                        status$getId(), sep='/'),
+                                  method='POST', ...)
+  if (is.null(json$errors)) {
+    return(TRUE)
+  } else {
+    for (error in json$errors) {
+      cat(error$message, error$code, fill = TRUE)
+    }
+    return(FALSE)
   }
 }
