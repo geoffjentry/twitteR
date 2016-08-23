@@ -33,9 +33,9 @@ setRefClass("status",
             methods=list(
               initialize = function(json, ...) {
                 if (!missing(json)) {
-                  locationName <- NA
-                  languageName <- NA
-                  profileImageURLName <- NA
+                  locationName <- 'Unknown'
+                  languageName <- 'Unknown'
+                  profileImageURLName <- 'Unknown'
                   if ('user' %in% names(json)) {
                     userObj <- userFactory$new(json[['user']])
                     screenName <<- userObj$getScreenName()
