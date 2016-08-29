@@ -40,7 +40,7 @@ can_access_other_account = function(other_id) {
     other_user = getUser(other_id)
     if (other_user$getProtected()) {
       relationship = friendships(user_ids = other_id)
-      return(relationship[1, "following"])
+      return(as.logical(relationship[1, "following"]))
     }
   }
   
