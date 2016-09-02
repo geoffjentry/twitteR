@@ -1,6 +1,6 @@
 ## DEPRECATION
 
-This is the start of a relatively leisurely deprecation period for `twitteR`, in favor of using [`rwteet`](https://github.com/mkearney/rtweet). Please start looking to switch over to that package. If you have any questions contact myself or @mkearney
+This is the start of a relatively leisurely deprecation period for `twitteR`, in favor of using [`rtweet`](https://github.com/mkearney/rtweet). Please start looking to switch over to that package. If you have any questions contact myself or @mkearney
 
 ## twitteR
 twitteR is an R package which provides access to the Twitter API. Most functionality of the API is supported, with a bias towards API calls that are more useful in data analysis as opposed to daily interaction. 
