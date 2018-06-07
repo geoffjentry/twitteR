@@ -108,9 +108,9 @@ dmSend <- function(text, user, ...) {
   } else {
     uParams <- parseUsers(user)
   }
-  if (nchar(text) > 140) {
-    stop("Maximum of 140 chars may be sent via a direct message")
-  }
+  # if (nchar(text) > 140) {
+  #   stop("Maximum of 140 chars may be sent via a direct message")
+  # }
   params <- c(list(...)[["params"]], list(text=text))
   params[["user_id"]] <- uParams[["user_id"]]
   params[["screen_name"]] <- uParams[["screen_name"]]
